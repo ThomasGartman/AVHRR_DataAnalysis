@@ -1,0 +1,1 @@
+The AVHRR data will be located in this directory. All scripts that import data should be pointed to this directory.
