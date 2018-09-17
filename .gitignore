@@ -1,0 +1,5 @@
+#Not passing actual data to github
+data/*
+
+#Except the location file
+!data/dataLocation.txt
