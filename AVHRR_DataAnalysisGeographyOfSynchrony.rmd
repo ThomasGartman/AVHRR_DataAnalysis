@@ -3,3 +3,5 @@ title: Reproducing the Geography of Synchrony Results
 author: Thomas Gartman
 output: html_document
 ---
+
+Hello This is a test of the document features.
