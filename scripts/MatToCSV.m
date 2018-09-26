@@ -34,7 +34,11 @@ xlam = transpose(xlam);
 ylam = transpose(ylam);
 
 figXlam = figureImageScaler(xlam);
+set(figXlam, 'Name', 'X Lamber Projection', 'NumberTitle', 'off');
+title('X Lamber Projection');
 figYlam = figureImageScaler(ylam);
+set(figYlam, 'Name', 'Y Lamber Projection', 'NumberTitle', 'off');
+title('Y Lamber Projection');
 %Thomas can do the same with lat and lin vectors
 %maybe use find to find the lat and lon of the origin in the projection
 %as an exercise
@@ -56,6 +60,8 @@ m = reshape(m, [4587,2889]);
 %imagesc(m);
 %load in the actual NVDI data
 
+warning('off', 'MATLAB:nargchk:deprecated'); %Apparently this system is using a deperciated function...
+m2html('mfiles', 'scripts' ,'htmldir', 'docs', 'recursive', 'on', 'global', 'on');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Since this function is temperary, the full matlab documentation structure 
 % will not be implemented to document figureImageScaler
