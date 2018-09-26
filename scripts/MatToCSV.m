@@ -5,6 +5,8 @@
 % will eventually be converted to a mat to CSV reader for R
 % Last Edited: September 26th, 2018
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+clc;
+clear all;
 
 %load in datafiles
 %load in location information, lamber projection
@@ -31,6 +33,8 @@ ylam = reshape(ylam, [2889,4587]);
 xlam = transpose(xlam);
 ylam = transpose(ylam);
 
+figXlam = figureImageScaler(xlam);
+figYlam = figureImageScaler(ylam);
 %Thomas can do the same with lat and lin vectors
 %maybe use find to find the lat and lon of the origin in the projection
 %as an exercise
@@ -41,7 +45,7 @@ lat = reshape(lat, [2889,4587]);
 
 %plot some lat and long isoclines, as an exercise
 %imagesc(xlam, ylam, mxvi);
-    m = mxdt(:,1);
+m = mxdt(:,1);
  %   for i = [1:2889]
  %       for j = [1:4587]
  %           m(i + j - 1) = mxdt(2890 - i + 4588 - j,1);
@@ -49,5 +53,25 @@ lat = reshape(lat, [2889,4587]);
  %       disp(i);
  %   end
 m = reshape(m, [4587,2889]);
-imagesc(m);
+%imagesc(m);
 %load in the actual NVDI data
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Since this function is temperary, the full matlab documentation structure 
+% will not be implemented to document figureImageScaler
+%
+% This function's purpose is to generate multiple figures without declaring
+% multiple figures in the script itself
+%
+% Args:
+%   data - a vector of data to form an image from
+%
+% Returns:
+%   Figure of data image
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function f = figureImageScaler(data)
+    f = figure;
+    imagesc(data);
+    colormap('jet');
+    colorbar;
+end
