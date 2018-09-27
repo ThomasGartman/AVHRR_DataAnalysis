@@ -46,6 +46,8 @@ title('Y Lamber Projection');
 %LAT AND LON ARE IN DEGREES
 lon = reshape(lon, [4587,2889]);
 lat = reshape(lat, [2889,4587]);
+lon = transpose(lon);
+lat = transpose(lat);
 
 %plot some lat and long isoclines, as an exercise
 %imagesc(xlam, ylam, mxvi);
