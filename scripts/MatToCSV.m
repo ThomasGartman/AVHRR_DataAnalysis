@@ -55,16 +55,21 @@ figLat = figureImageScaler(lat);
 set(figLat, 'Name', 'Latitude', 'NumberTitle','off');
 title('Latitude');
 
+%Make figure of Active Weeks in the united states for the year 1989
+activeWeeks = mxdt(:,1);
 %plot some lat and long isoclines, as an exercise
 %imagesc(xlam, ylam, mxvi);
-m = mxdt(:,1);
  %   for i = [1:2889]
  %       for j = [1:4587]
  %           m(i + j - 1) = mxdt(2890 - i + 4588 - j,1);
  %       end
  %       disp(i);
  %   end
-m = reshape(m, [4587,2889]);
+activeWeeks = reshape(activeWeeks, [4587,2889]);
+activeWeeks = transpose(activeWeeks);
+figActiveWeeks = figureImageScaler(activeWeeks);
+set(figActiveWeeks, 'Name', 'Length of Active Weeks', 'NumberTitle','off');
+title('Length of Active Weeks');
 %imagesc(m);
 %load in the actual NVDI data
 
