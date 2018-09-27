@@ -33,21 +33,27 @@ ylam = reshape(ylam, [2889,4587]);
 xlam = transpose(xlam);
 ylam = transpose(ylam);
 
+%Make figures from lamber projection
 figXlam = figureImageScaler(xlam);
 set(figXlam, 'Name', 'X Lamber Projection', 'NumberTitle', 'off');
 title('X Lamber Projection');
 figYlam = figureImageScaler(ylam);
 set(figYlam, 'Name', 'Y Lamber Projection', 'NumberTitle', 'off');
 title('Y Lamber Projection');
-%Thomas can do the same with lat and lin vectors
-%maybe use find to find the lat and lon of the origin in the projection
-%as an exercise
 
-%LAT AND LON ARE IN DEGREES
+%LAT AND LON ARE IN DEGREES 
 lon = reshape(lon, [4587,2889]);
 lat = reshape(lat, [2889,4587]);
 lon = transpose(lon);
 lat = transpose(lat);
+
+%Make figures from pure lat/lon values. Should be skewed
+figLon = figureImageScaler(lon);
+set(figLon, 'Name', 'Longitude', 'NumberTitle','off');
+title('Longitude');
+figLat = figureImageScaler(lat);
+set(figLat, 'Name', 'Latitude', 'NumberTitle','off');
+title('Latitude');
 
 %plot some lat and long isoclines, as an exercise
 %imagesc(xlam, ylam, mxvi);
