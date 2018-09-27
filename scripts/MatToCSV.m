@@ -10,10 +10,11 @@ clear all;
 
 %load in datafiles
 %load in location information, lamber projection
-load('mat/avhrr_1km_map_coords.mat') %lamber projection
-load('mat/avhrr_1km_pixel_latlon.mat') 
-load('mat/avhrr_vpm_1989_2015_mxvi.mat') %NDVI
-load('mat/avhrr_vpm_1989_2015_mxdt.mat') %Growing Season
+load('data/mat/avhrr_1km_map_coords.mat') %lamber projection
+load('data/mat/avhrr_1km_pixel_latlon.mat') 
+load('data/mat/avhrr_vpm_1989_2015_mxvi.mat') %NDVI
+load('data/mat/avhrr_vpm_1989_2015_mxdt.mat') %Growing Season
+load('data/mat/avhrr_cover_frac_nlcd2011.mat') %Land Cover codes. Using to get water
 
 %Rename variables
 xlam = avhrr_lamaz_map_coord_x;
@@ -55,28 +56,41 @@ figLat = figureImageScaler(lat);
 set(figLat, 'Name', 'Latitude', 'NumberTitle','off');
 title('Latitude');
 
-%Make figure of Active Weeks in the united states for the year 1989
-activeWeeks = mxdt(:,1);
-%plot some lat and long isoclines, as an exercise
-%imagesc(xlam, ylam, mxvi);
- %   for i = [1:2889]
- %       for j = [1:4587]
- %           m(i + j - 1) = mxdt(2890 - i + 4588 - j,1);
- %       end
- %       disp(i);
- %   end
-activeWeeks = reshape(activeWeeks, [4587,2889]);
-activeWeeks = transpose(activeWeeks);
-figActiveWeeks = figureImageScaler(activeWeeks);
-set(figActiveWeeks, 'Name', 'Length of Active Weeks', 'NumberTitle','off');
-title('Length of Active Weeks');
-%imagesc(m);
-%load in the actual NVDI data
+%create matrix of water pixels
+waterLocations = nlcd_cls_frac(:,1);
+clear nlcd_cls_frac;
+waterLocations = reshape(waterLocations, [4587, 2889]);
+waterLocations = transpose(waterLocations);
+
+%Make figure of NDVI in the united states for the year 1989
+ndvi = mxvi(:,1);
+clear mxvi;
+ndvi = reshape(ndvi, [4587,2889]);
+ndvi = transpose(ndvi);
+
+%Alter NDVI matrix by removing water/NonUS pixels
+for i = 1:2889
+    for j = 1:4587
+        if(waterLocations(i, j) == 1 || waterLocations(i, j) == 2)
+            ndvi(i, j) = 2;
+        end
+    end
+end
+
+%setup colormap
+alteredJet = jet;
+alteredJet(64,:) = 0;
+
+figNDVI = figureImageScaler(ndvi);
+set(figNDVI, 'Name', 'Normalized Difference Vegetation Index for 1989', 'NumberTitle','off');
+title('Normalized Difference Vegetation Index for 1989');
+caxis([0 1]);
+colormap(alteredJet);
 
 warning('off', 'MATLAB:nargchk:deprecated'); %Apparently this system is using a deperciated function...
 m2html('mfiles', 'scripts' ,'htmldir', 'docs', 'recursive', 'on', 'global', 'on');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Since this function is temperary, the full matlab documentation structure 
+% Since this function is temporary, the full matlab documentation structure 
 % will not be implemented to document figureImageScaler
 %
 % This function's purpose is to generate multiple figures without declaring

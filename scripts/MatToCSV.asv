@@ -10,10 +10,11 @@ clear all;
 
 %load in datafiles
 %load in location information, lamber projection
-load('mat/avhrr_1km_map_coords.mat') %lamber projection
-load('mat/avhrr_1km_pixel_latlon.mat') 
-load('mat/avhrr_vpm_1989_2015_mxvi.mat') %NDVI
-load('mat/avhrr_vpm_1989_2015_mxdt.mat') %Growing Season
+load('data/mat/avhrr_1km_map_coords.mat') %lamber projection
+load('data/mat/avhrr_1km_pixel_latlon.mat') 
+load('data/mat/avhrr_vpm_1989_2015_mxvi.mat') %NDVI
+load('data/mat/avhrr_vpm_1989_2015_mxdt.mat') %Growing Season
+load('data/mat/avhrr_cover_frac_nlcd2011.dat') %Land Cover codes. Using to get water
 
 %Rename variables
 xlam = avhrr_lamaz_map_coord_x;
@@ -33,36 +34,36 @@ ylam = reshape(ylam, [2889,4587]);
 xlam = transpose(xlam);
 ylam = transpose(ylam);
 
+%Make figures from lamber projection
 figXlam = figureImageScaler(xlam);
 set(figXlam, 'Name', 'X Lamber Projection', 'NumberTitle', 'off');
 title('X Lamber Projection');
 figYlam = figureImageScaler(ylam);
 set(figYlam, 'Name', 'Y Lamber Projection', 'NumberTitle', 'off');
 title('Y Lamber Projection');
-%Thomas can do the same with lat and lin vectors
-%maybe use find to find the lat and lon of the origin in the projection
-%as an exercise
 
-%LAT AND LON ARE IN DEGREES
+%LAT AND LON ARE IN DEGREES 
 lon = reshape(lon, [4587,2889]);
 lat = reshape(lat, [2889,4587]);
 lon = transpose(lon);
 lat = transpose(lat);
 
-figLon = figureImageScalar(lon);
+%Make figures from pure lat/lon values. Should be skewed
+figLon = figureImageScaler(lon);
 set(figLon, 'Name', 'Longitude', 'NumberTitle','off');
-title(');
+title('Longitude');
+figLat = figureImageScaler(lat);
+set(figLat, 'Name', 'Latitude', 'NumberTitle','off');
+title('Latitude');
 
-%plot some lat and long isoclines, as an exercise
-%imagesc(xlam, ylam, mxvi);
-m = mxdt(:,1);
- %   for i = [1:2889]
- %       for j = [1:4587]
- %           m(i + j - 1) = mxdt(2890 - i + 4588 - j,1);
- %       end
- %       disp(i);
- %   end
-m = reshape(m, [4587,2889]);
+%Make figure of Active Weeks in the united states for the year 1989
+ndvi = mxvi(:,1);
+
+ndvi = reshape(ndvi, [4587,2889]);
+ndvi = transpose(ndvi);
+figActiveWeeks = figureImageScaler(ndvi);
+set(figActiveWeeks, 'Name', 'Length of Active Weeks', 'NumberTitle','off');
+title('Length of Active Weeks');
 %imagesc(m);
 %load in the actual NVDI data
 
