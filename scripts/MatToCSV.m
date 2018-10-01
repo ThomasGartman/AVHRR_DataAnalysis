@@ -68,6 +68,9 @@ clear nlcd_cls_frac;
 waterLocations = reshape(waterLocations, [4587, 2889]);
 waterLocations = transpose(waterLocations);
 
+%Set up gif creation
+axis tight manual;
+fileName = 'NDVI1989To2015.gif';
 figNDVI = gobjects(27, 1);
 for k = 1:27
     disp(strcat(string('Figure '), int2str(k), string(' of '), int2str(27)))
@@ -90,6 +93,17 @@ for k = 1:27
     title(['Normalized Difference Vegetation Index for '  int2str(1988 + k)]);
     caxis([0 1]);
     colormap(alteredJet);
+    
+    %finish making the gif
+    frame = getframe(figNDVI(k));
+    im = frame2im(frame);
+    [imind, cm] = rgb2ind(im, 256);
+    
+    if k == 1
+        imwrite(imind, cm, fileName, 'gif', 'Loopcount', inf);
+    else
+        imwrite(imind, cm, fileName, 'gif', 'WriteMode', 'append');
+    end
 end
 clear mxvi;
 
