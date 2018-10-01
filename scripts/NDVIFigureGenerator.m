@@ -99,10 +99,10 @@ for k = 1:27
     im = frame2im(frame);
     [imind, cm] = rgb2ind(im, 256);
     
-    if n == 1
-        imwrite(imind, cm, filename, 'gif', 'Loopcount', inf);
+    if k == 1
+        imwrite(imind, cm, fileName, 'gif', 'Loopcount', inf);
     else
-        imwrite(imind, cm, filename, 'gif', 'WriteMode', 'append;);
+        imwrite(imind, cm, fileName, 'gif', 'WriteMode', 'append');
     end
 end
 clear mxvi;
