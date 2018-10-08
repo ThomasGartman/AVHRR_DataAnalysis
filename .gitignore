@@ -5,3 +5,4 @@ data/*
 #Except the location file
 !data/dataLocation.txt
 *.asv
+.Rproj.user
