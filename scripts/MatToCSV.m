@@ -1,10 +1,10 @@
 %MatToCSV in AVHRRGeographyOfSpatialSynchronyReproduce
-%Version 1.0.0  Last Editied October 1st, 2018
+%Version 1.1.0  Last Editied October 1st, 2018
 %
 %Takes in matlab files for AVHRR Data and converts them to csv files
 %
 %Preconditions:
-%   1. .mat files for the AVHRR data are located in a data folder which is 
+%   1. .mat files for the AVHRR data are located in a data folder which is
 %   not in the same folder as this script
 %
 %   2. This file must be located in a script folder which is in the same
@@ -34,6 +34,11 @@
 %   outside of the United States). The structure is a vector of dimension
 %   13251843, where each index represents a land cover code for a 1km by
 %   1km pixel.
+%
+%Structure of exported data:
+%		A CSV file for every year of data structured as x coordinate, y coordinate,
+%		and NDVI value. There will be 27 CSV files of length 13251843x3.
+
 
 clc;
 clear all;
@@ -49,23 +54,30 @@ clear nlcd_cls_frac;
 waterLocations = reshape(waterLocations, [4587, 2889]);
 waterLocations = transpose(waterLocations);
 
+%ndvi allows for altering of raw NDVI data read in as mxvi
+%reformedNDVI preps the data for being exported as a csv
 for k = 1:27
     ndvi = mxvi(:,k);
     ndvi = reshape(ndvi, [4587,2889]);
     ndvi = transpose(ndvi);
+		reformedNDVI = zeros(13251843, 3);
 
     %Alter NDVI matrix by removing water/NonUS pixels
+		%Once the NDVI data is cleaned and prepped, prepare for export
     for i = 1:2889
         for j = 1:4587
             if(waterLocations(i, j) == 1 || waterLocations(i, j) == 2)
                 ndvi(i, j) = 2;
             end
+						reformedNDVI(i + (j - 1)*2889, 1) = j; %x coord
+						reformedNDVI(i + (j - 1)*2889, 2) = i; %y coord
+						reformedNDVI(i + (j - 1)*2889, 3) = ndvi(i, j); %NDVI value
         end
     end
-    
+
     %make CSV Files
     fileName = char(strcat(string('AVHRR_NDVI_WaterRemoved_'), int2str(k + 1988), string('.csv')));
-    csvwrite(fileName,ndvi);
+    csvwrite(fileName,reformedNDVI);
     movefile *.csv data/csvFiles/;
 end
 clear mxvi;
