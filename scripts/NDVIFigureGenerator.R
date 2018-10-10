@@ -1,6 +1,7 @@
 #' Load Dependent Libraries
 
 library("ggplot2")
+library("reshape2")
 
 #' Create NDVI figures and a gif for the AVHRR NDVI figure
 
