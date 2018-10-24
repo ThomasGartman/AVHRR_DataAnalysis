@@ -58,7 +58,7 @@ for k = 1:27
     for i = 1:2889
         for j = 1:4587
             if(waterLocations(i, j) == 1 || waterLocations(i, j) == 2)
-                ndvi(i, j) = 2;
+                ndvi(i, j) = 0;
             end
         end
     end
