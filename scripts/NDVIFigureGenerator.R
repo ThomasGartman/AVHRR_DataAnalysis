@@ -17,11 +17,11 @@ GIFCreator <- function(dataArray, colorMap =c("#000000", "#00008F", "#00009F", "
 
   for(i in 1:27)
   {
-    png(file = paste("NormalizedDifferenceVegitationIndex", (i + 1988), ".png", sep=""), width=640, height=480)
-    image(x, y, dataArray[[i]], ylim=c(2889,1), main = paste("Normalized Difference Vegitation Index for ", (i + 1988), sep=""),
+    png(file = paste("NormalizedDifferenceVegetationIndex", (i + 1988), ".png", sep=""), width=640, height=480)
+    image(x, y, dataArray[[i]], ylim=c(2889,1), main = paste("Normalized Difference Vegetation Index for ", (i + 1988), sep=""),
           xlab="Horizontal Coordinate (Kilometers)", ylab="Vertical Coordinate (Kilometers)", col=colorMap)
     dev.off()
   }
   
-  system('magick convert -delay 100 -loop 0 *.png NDVI1989To2015.gif')
+  system('magick convert -delay 90 -loop 0 *.png NDVI1989To2015.gif')
 }
