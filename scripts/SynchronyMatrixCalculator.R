@@ -36,16 +36,17 @@ SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radi
     for(j in yExtent[1]:yExtent[2])
     {
       count = 0;
+      corNum = 0.0;
       #For each pixel, calculate the synchrony of each point around the radius
-      for(k in i-radius:i+radius)
+      for(k in (i-radius):(i+radius))
       {
-        for(m in j-radius:j+radius)
+        for(m in (j-radius):(j+radius))
         {
           if(median(dataArray[i, j, tExtent[1]:tExtent[2]]) == 0)
           {
             next;
           }
-          if((k != i || m != j) && median(dataArray[k, m, tExtent[1]:tExtent[2]]) != 0)
+          if((k > 0 && m > 0 && i > 0 && j > 0) && (k != i || m != j) && median(dataArray[k, m, tExtent[1]:tExtent[2]]) != 0)
           {
             #corMatrix[k+1-(i-radius), m+1-(j-radius)] = cor(dataArray[i, j,tExtent[1]:tExtent[2]], dataArray[k, m, tExtent[1]:tExtent[2]]);
             if(is.na(cor(dataArray[i, j,tExtent[1]:tExtent[2]], dataArray[k, m, tExtent[1]:tExtent[2]])))
