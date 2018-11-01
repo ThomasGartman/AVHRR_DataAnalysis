@@ -1,4 +1,6 @@
 source("../../scripts/NDVIFigureGenerator.R")
+source("../../scripts/SynchronyMatrixCalculator.R")
 source("../../scripts/NDVIDataGenerator.R")
 dataArray <- ArrayDataGenerator("data/csvFiles/")
-GIFCreator(dataArray)
+synchronyMatrix <- SynchronyMatrixCalculator(dataArray, c(1000,1010), c(1000,1010), c(1,10), 10)
+#GIFCreator(dataArray)
