@@ -25,7 +25,7 @@
 SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radius, coorTest = "pearson")
 {
   #First, preallocate a matrix of length xExtent, yExtent
-  synchronyMatrix <- matrix(data=NA, nrow=yExtent[2]-yExtent[1]+1, ncol=xExtent[2]-xExtent[1]+1);
+  synchronyMatrix <- matrix(data=NA, nrow=xExtent[2]-xExtent[1]+1, ncol=yExtent[2]-yExtent[1]+1);
   corNum = 0.0;
   count = 0;
   
@@ -47,14 +47,15 @@ SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radi
           }
           if((k > 0 && m > 0 && i > 0 && j > 0) && (k != i || m != j) && median(dataArray[k, m, tExtent[1]:tExtent[2]]) != 0)
           {
-            if(is.na(cor(dataArray[i, j,tExtent[1]:tExtent[2]], dataArray[k, m, tExtent[1]:tExtent[2]])))
+            correlationVal = cor(dataArray[i, j,tExtent[1]:tExtent[2]], dataArray[k, m, tExtent[1]:tExtent[2]])
+            if(is.na(correlationVal))
             {
               print(dataArray[i, j,tExtent[1]:tExtent[2]]);
               print(dataArray[k, m, tExtent[1]:tExtent[2]]);
             }
             else
             {
-              corNum = corNum + cor(dataArray[i, j,tExtent[1]:tExtent[2]], dataArray[k, m, tExtent[1]:tExtent[2]]);
+              corNum = corNum + correlationVal;
               count = count + 1;
             }
           }#end if
@@ -65,7 +66,7 @@ SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radi
       #if count == 0, this means that the pixel is a water pixel
       if(count == 0)
       {
-        synchronyMatrix[i + 1 - xExtent[1], j + 1 - yExtent[1]] = 0;
+        synchronyMatrix[i + 1 - xExtent[1], j + 1 - yExtent[1]] = NA;
       }
       else
       {
