@@ -50,8 +50,8 @@ SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radi
             correlationVal = cor(dataArray[i, j,tExtent[1]:tExtent[2]], dataArray[k, m, tExtent[1]:tExtent[2]])
             if(is.na(correlationVal))
             {
-              print(dataArray[i, j,tExtent[1]:tExtent[2]]);
-              print(dataArray[k, m, tExtent[1]:tExtent[2]]);
+              #print(dataArray[i, j,tExtent[1]:tExtent[2]]);
+              #print(dataArray[k, m, tExtent[1]:tExtent[2]]);
             }
             else
             {
@@ -72,8 +72,9 @@ SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radi
       {
         synchronyMatrix[i + 1 - xExtent[1], j + 1 - yExtent[1]] = corNum/(count);
       }
-      print(paste("Synchrony Value for point (", i, ",", j, "): ", synchronyMatrix[i + 1 - xExtent[1], j + 1 - yExtent[1]], sep=""));
+      #print(paste("Synchrony Value for point (", i, ",", j, "): ", synchronyMatrix[i + 1 - xExtent[1], j + 1 - yExtent[1]], sep=""));
     }#end for
+    print(i);
   }#end for
   synchronyMatrix;
 }
