@@ -62,6 +62,6 @@ SynchronyMapCreator <- function(synchronyMatrix, xExtent, yExtent, tExtent, radi
                      "#FF6000", "#FF5000", "#FF4000", "#FF3000", "#FF2000", "#FF1000", "#FF0000", "#EF0000", "#DF0000", "#CF0000",
                      "#BF0000", "#AF0000", "#9F0000", "#8F0000"), zlim=c(0,1), legend.only=TRUE, add=TRUE);
   usr<-par('usr');
-  text(usr[1] + 85, usr[3] - 5, paste("Number of Negative Coorelation Points: ", numNegPoints, sep=""))
+  text(usr[1] + 85, usr[3] - 5, paste("Number of Negative Correlation Points: ", numNegPoints, sep=""))
   dev.off();
 }

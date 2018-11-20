@@ -1,11 +1,20 @@
 source("../../scripts/SynchronyMatrixCalculator.R")
 source("../../scripts/NDVIDataGenerator.R")
+source("../../scripts/NDVIDetrender.R")
 source("../../scripts/SynchronyMapCreator.R")
+
 dataArray <- ArrayDataGenerator("data/csvFiles/")
-synchronyMatrix <- SynchronyMatrixCalculator(dataArray, c(2800,3200), c(2300,2500), c(2,14), 5)
-SynchronyMapCreator(synchronyMatrix, c(2800,3200), c(2300,2500), c(2,14), 5, "NDVISynchronyMap_MississippiDelta_1990to2002_r5_Pearson.png", "NDVI Synchrony Map Mississippi Delta, 1990 to 2002, radius = 5, Pearson correlation")
-synchronyMatrix <- SynchronyMatrixCalculator(dataArray, c(2800,3200), c(2300,2500), c(15,27), 5)
-SynchronyMapCreator(synchronyMatrix, c(2800,3200), c(2300,2500), c(15,27), 5, "NDVISynchronyMap_MississippiDelta_2003to2015_r5_Pearson.png", "NDVI Synchrony Map Mississippi Delta, 2003 to 2015, radius = 5, Pearson correlation")
+detrendedDataArray <- NDVIDetrender(dataArray, 4587, 2889, 27);
+
+
+synchronyMatrix1 <- SynchronyMatrixCalculator(dataArray, c(2800,3200), c(2300,2500), c(2,14), 5)
+synchronyMatrix1Detrended <- SynchronyMatrixCalculator(detrendedDataArray, c(2800,3200), c(2300,2500), c(2,14), 5)
+SynchronyMapCreator(synchronyMatrix1, c(2800,3200), c(2300,2500), c(2,14), 5, "NDVIDetrendedSynchronyMap_MississippiDelta_1990to2002_r5_Pearson.png", "NDVI Detrended Synchrony Map Mississippi Delta, 1990 to 2002, radius = 5, Pearson correlation")
+
+synchronyMatrix2 <- SynchronyMatrixCalculator(dataArray, c(2800,3200), c(2300,2500), c(15,27), 5)
+synchronyMatrix2Detrended <- SynchronyMatrixCalculator(detrendedDataArray, c(2800,3200), c(2300,2500), c(15,27), 5)
+SynchronyMapCreator(synchronyMatrix2, c(2800,3200), c(2300,2500), c(15,27), 5, "NDVIDetrendedSynchronyMap_MississippiDelta_2003to2015_r5_Pearson.png", "NDVI Detrended Synchrony Map Mississippi Delta, 2003 to 2015, radius = 5, Pearson correlation")
+
 
 synchronyMatrix <- SynchronyMatrixCalculator(dataArray, c(3800,4100), c(2600,2800), c(2,14), 5)
 SynchronyMapCreator(synchronyMatrix, c(3800,4100), c(2600,2800), c(2,14), 5, "NDVISynchronyMap_SouthFlorida_1990to2002_r5_Pearson.png", "NDVI Synchrony Map South Florida, 1990 to 2002, radius = 5, Pearson correlation")
