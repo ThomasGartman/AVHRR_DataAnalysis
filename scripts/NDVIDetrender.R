@@ -7,26 +7,37 @@
 #' @param numCol    The number of columns in the dataArray
 #' @param numRow    The number of rows in the dataArray
 #' @param numYears  The number of years in the dataArray
+#' @param breakYear The last year in the first dataset
 #' 
 #' @return A detrended dataArray
 #' 
 #' @export
-NDVIDetrender <- function(dataArray, numCol, numRow, numYears)
+NDVIDetrender <- function(dataArray, numCol, numRow, numYears, breakYear)
 {
   #preallocate a new array
   detrendedDataArray = array(data=NA, dim=c(numCol, numRow, numYears));
   
   #for each year, create a linear model based on x and y coordinates
   #then find the residuals of the linear model and input them into the detrendedDataArray
-  times <- 1:numYears
+  times <- 1:breakYear
   for(i in 1:numCol)
   {
     print(i);
     for(j in 1:numRow)
     {
-      detrendedDataArray[i, j,] = residuals(lm(dataArray[i,j,]~times))
+      detrendedDataArray[i, j,times] = residuals(lm(dataArray[i,j,times]~times))
     }
   }
 
+  
+  times <- (breakYear+1):numYears
+  for(i in 1:numCol)
+  {
+    print(i);
+    for(j in 1:numRow)
+    {
+      detrendedDataArray[i, j,times] = residuals(lm(dataArray[i,j,times]~times))
+    }
+  }
  detrendedDataArray;
 }
