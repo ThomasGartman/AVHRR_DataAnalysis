@@ -12,6 +12,7 @@
 #' @return A detrended dataArray
 #' 
 #' @export
+library("wsyn")
 NDVIDetrender <- function(dataArray, numCol, numRow, numYears, breakYear)
 {
   #preallocate a new array
@@ -25,7 +26,7 @@ NDVIDetrender <- function(dataArray, numCol, numRow, numYears, breakYear)
     print(i);
     for(j in 1:numRow)
     {
-      detrendedDataArray[i, j,times] = residuals(lm(dataArray[i,j,times]~times))
+      detrendedDataArray[i, j,times] = cleandat(dataArray[i,j,times],times,2)$cdat[1:length(times)]
     }
   }
 
@@ -36,7 +37,7 @@ NDVIDetrender <- function(dataArray, numCol, numRow, numYears, breakYear)
     print(i);
     for(j in 1:numRow)
     {
-      detrendedDataArray[i, j,times] = residuals(lm(dataArray[i,j,times]~times))
+      detrendedDataArray[i, j,times] = cleandat(dataArray[i,j,times],times,2)$cdat[1:length(times)]
     }
   }
  detrendedDataArray;

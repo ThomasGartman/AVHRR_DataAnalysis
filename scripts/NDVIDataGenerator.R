@@ -7,7 +7,7 @@ ArrayDataGenerator <- function(pathName)
   dataFiles <- list.files(pattern="*.csv")
   frames <- lapply(dataFiles, function(x) {read.csv(file=x, header=FALSE)})
   matrices <- lapply(frames, function(x) t(data.matrix(x)))
-  
+
   #Make an array from the list of matrices
   dataArray <- array(NA, dim=c(4587, 2889, 27))
   

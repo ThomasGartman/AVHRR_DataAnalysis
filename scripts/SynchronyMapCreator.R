@@ -49,7 +49,7 @@ SynchronyMapCreator <- function(synchronyMatrix, xExtent, yExtent, tExtent, radi
   
   
   #Plot map
-  png(file = fileName, width=760, height=480);
+  png(file = fileName, width=1024, height=768);
   plot.new();
   par("mar"=c(5,4,4,7))
   image(xExtent[1]:xExtent[2], yExtent[1]:yExtent[2], synchronyMatrix, ylim=c(yExtent[2],yExtent[1]), 

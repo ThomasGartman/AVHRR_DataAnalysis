@@ -41,7 +41,7 @@ SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radi
       {
         for(m in (j-radius):(j+radius))
         {
-          if(median(dataArray[i, j, tExtent[1]:tExtent[2]]) == 0)
+          if(is.na(dataArray[i, j, tExtent[1]:tExtent[2]]) || median(dataArray[i, j, tExtent[1]:tExtent[2]]) == 0)
           {
             next;
           }
