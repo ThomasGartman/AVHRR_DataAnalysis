@@ -37,7 +37,7 @@ SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radi
       count = 0;
       corNum = 0.0;
       #For each pixel, calculate the synchrony of each point around the radius
-      for(k in (i-radius):(i+radius))
+      for(k in (i-radius):(i+radius))#only consider points in a square around the specific synchrony point
       {
         for(m in (j-radius):(j+radius))
         {
@@ -47,17 +47,20 @@ SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radi
           }
           if((k > 0 && m > 0 && i > 0 && j > 0) && (k != i || m != j) && median(dataArray[k, m, tExtent[1]:tExtent[2]]) != 0)
           {
-            correlationVal = cor(dataArray[i, j,tExtent[1]:tExtent[2]], dataArray[k, m, tExtent[1]:tExtent[2]])
-            if(is.na(correlationVal))
+            if(radius*radius >= abs((i - k)^2 + (j-m)^2)) #check to see if it is within the circle of radius R.
             {
-              #print(dataArray[i, j,tExtent[1]:tExtent[2]]);
-              #print(dataArray[k, m, tExtent[1]:tExtent[2]]);
-            }
-            else
-            {
-              corNum = corNum + correlationVal;
-              count = count + 1;
-            }
+              correlationVal = cor(dataArray[i, j,tExtent[1]:tExtent[2]], dataArray[k, m, tExtent[1]:tExtent[2]])
+              if(is.na(correlationVal))
+              {
+                #print(dataArray[i, j,tExtent[1]:tExtent[2]]);
+                #print(dataArray[k, m, tExtent[1]:tExtent[2]]);
+              }
+              else
+              {
+                corNum = corNum + correlationVal;
+                count = count + 1;
+              }
+            }#end if
           }#end if
         }#end for
       }#end for

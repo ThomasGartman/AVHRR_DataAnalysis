@@ -53,6 +53,7 @@ load('../data/AVHRR_UpdatedData/nlcd/avhrr_cover_frac_nlcd2011.mat') %Land Cover
 load('../data/AVHRR_UpdatedData/landscan/landscan_avhrr_grid_2000_2017.mat') %Landscan
 load('../data/mat/avhrr_1km_pixel_latlon.mat') %lat and long for the pixels
 
+
 %create matrix of water pixels
 lat = transpose(reshape(avhrr_pixel_lat, [4587,2889]));
 lon = transpose(reshape(avhrr_pixel_lon, [4587,2889]));

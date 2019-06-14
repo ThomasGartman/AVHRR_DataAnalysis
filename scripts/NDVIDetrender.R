@@ -30,14 +30,16 @@ NDVIDetrender <- function(dataArray, numCol, numRow, numYears, breakYear)
     }
   }
 
-  
-  times <- (breakYear+1):numYears
-  for(i in 1:numCol)
+  if(breakYear != numYears)
   {
-    print(i);
-    for(j in 1:numRow)
+    times <- (breakYear+1):numYears
+    for(i in 1:numCol)
     {
-      detrendedDataArray[i, j,times] = cleandat(dataArray[i,j,times],times,2)$cdat[1:length(times)]
+      print(i);
+      for(j in 1:numRow)
+      {
+        detrendedDataArray[i, j,times] = cleandat(dataArray[i,j,times],times,2)$cdat[1:length(times)]
+      }
     }
   }
  detrendedDataArray;
