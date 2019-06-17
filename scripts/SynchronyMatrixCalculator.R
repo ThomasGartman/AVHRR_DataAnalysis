@@ -41,7 +41,7 @@ SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radi
       {
         for(m in (j-radius):(j+radius))
         {
-          if(is.na(dataArray[i, j, tExtent[1]:tExtent[2]]) || median(dataArray[i, j, tExtent[1]:tExtent[2]]) == 0)
+          if(is.na(dataArray[i, j, tExtent[1]:tExtent[2]]) || median(dataArray[i, j, tExtent[1]:tExtent[2]]) == -1)
           {
             next;
           }
@@ -49,6 +49,10 @@ SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radi
           {
             if(radius*radius >= abs((i - k)^2 + (j-m)^2)) #check to see if it is within the circle of radius R.
             {
+              if(any(dataArray[k, m, tExtent[1]:tExtent[2]] == -1))
+              {
+                next;
+              }
               correlationVal = cor(dataArray[i, j,tExtent[1]:tExtent[2]], dataArray[k, m, tExtent[1]:tExtent[2]])
               if(is.na(correlationVal))
               {
