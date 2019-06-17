@@ -1,5 +1,5 @@
 %MatToCSV in AVHRRGeographyOfSpatialSynchronyReproduce
-%Version 1.1.0  Last Editied June 14th, 2019
+%Version 1.1.1  Last Editied June 17th, 2019
 %
 %Takes in matlab files for AVHRR Data and converts them to csv files
 %
@@ -18,7 +18,7 @@
 %
 %Data processing:
 %   NDVI data for each year is reshaped into US shape, then pixel locations
-%   for the water or nodata are logged with a value of 2, which is higher
+%   for the water or nodata are logged with a value of -1, which is higher
 %   than the maximum NDVI.
 %
 %Structure of imported data:
@@ -71,7 +71,7 @@ for k = 1:30
     for i = 1:2889
         for j = 1:4587
             if(waterLocations(i, j) == 1 || waterLocations(i, j) == 2)
-                ndvi(i, j) = 0;
+                ndvi(i, j) = -1;
             end
         end
     end
@@ -92,7 +92,7 @@ for k = 1:18
     for i = 1:2889
         for j = 1:4587
             if(waterLocations(i, j) == 1 || waterLocations(i, j) == 2)
-                ndvi(i, j) = 0;
+                ndvi(i, j) = -1;
             end
         end
     end
@@ -104,70 +104,70 @@ for k = 1:18
     disp(strcat("Landscan: ", int2str(k)));
 end
 
-for k = 1:16
-    percent = pct(:,k);
-    percent = reshape(percent, [4587,2889]);
-    percent = transpose(percent);
-    
-    %Alter Percent matrix by removing water/NonUS pixels
-    for i = 1:2889
-        for j = 1:4587
-            if(waterLocations(i, j) == 1 || waterLocations(i, j) == 2)
-                ndvi(i, j) = 0;
-            end
-        end
-    end
-    
-    %make CSV Files
-    fileName = char(strcat("AVHRR_NLCD_2011_WaterRemoved_", int2str(k),".csv"));
-    csvwrite(fileName,percent);
-    movefile *.csv ../data/csvFiles/;
-    disp(strcat("NLCD 2011: ", int2str(k)));
-end
-
-load('../data/AVHRR_UpdatedData/nlcd/avhrr_cover_frac_nlcd2006.mat')
-for k = 1:16
-    percent = pct(:,k);
-    percent = reshape(percent, [4587,2889]);
-    percent = transpose(percent);
-    
-    %Alter Percent matrix by removing water/NonUS pixels
-    for i = 1:2889
-        for j = 1:4587
-            if(waterLocations(i, j) == 1 || waterLocations(i, j) == 2)
-                ndvi(i, j) = 0;
-            end
-        end
-    end
-    
-    %make CSV Files
-    fileName = char(strcat("AVHRR_NLCD_2006_WaterRemoved_", int2str(k),".csv"));
-    csvwrite(fileName,percent);
-    movefile *.csv ../data/csvFiles/;
-    disp(strcat("NLCD 2006: ", int2str(k)));
-end
-
-load('../data/AVHRR_UpdatedData/nlcd/avhrr_cover_frac_nlcd2001.mat')
-for k = 1:16
-    percent = pct(:,k);
-    percent = reshape(percent, [4587,2889]);
-    percent = transpose(percent);
-    
-    %Alter Percent matrix by removing water/NonUS pixels
-    for i = 1:2889
-        for j = 1:4587
-            if(waterLocations(i, j) == 1 || waterLocations(i, j) == 2)
-                ndvi(i, j) = 0;
-            end
-        end
-    end
-    
-    %make CSV Files
-    fileName = char(strcat("AVHRR_NLCD_2001_WaterRemoved_", int2str(k),".csv"));
-    csvwrite(fileName,percent);
-    movefile *.csv ../data/csvFiles/;
-    disp(strcat("NLCD 2001: ", int2str(k)));
-end
+% for k = 1:16
+%     percent = pct(:,k);
+%     percent = reshape(percent, [4587,2889]);
+%     percent = transpose(percent);
+%     
+%     %Alter Percent matrix by removing water/NonUS pixels
+%     for i = 1:2889
+%         for j = 1:4587
+%             if(waterLocations(i, j) == 1 || waterLocations(i, j) == 2)
+%                 ndvi(i, j) = 0;
+%             end
+%         end
+%     end
+%     
+%     %make CSV Files
+%     fileName = char(strcat("AVHRR_NLCD_2011_WaterRemoved_", int2str(k),".csv"));
+%     csvwrite(fileName,percent);
+%     movefile *.csv ../data/csvFiles/;
+%     disp(strcat("NLCD 2011: ", int2str(k)));
+% end
+% 
+% load('../data/AVHRR_UpdatedData/nlcd/avhrr_cover_frac_nlcd2006.mat')
+% for k = 1:16
+%     percent = pct(:,k);
+%     percent = reshape(percent, [4587,2889]);
+%     percent = transpose(percent);
+%     
+%     %Alter Percent matrix by removing water/NonUS pixels
+%     for i = 1:2889
+%         for j = 1:4587
+%             if(waterLocations(i, j) == 1 || waterLocations(i, j) == 2)
+%                 ndvi(i, j) = 0;
+%             end
+%         end
+%     end
+%     
+%     %make CSV Files
+%     fileName = char(strcat("AVHRR_NLCD_2006_WaterRemoved_", int2str(k),".csv"));
+%     csvwrite(fileName,percent);
+%     movefile *.csv ../data/csvFiles/;
+%     disp(strcat("NLCD 2006: ", int2str(k)));
+% end
+% 
+% load('../data/AVHRR_UpdatedData/nlcd/avhrr_cover_frac_nlcd2001.mat')
+% for k = 1:16
+%     percent = pct(:,k);
+%     percent = reshape(percent, [4587,2889]);
+%     percent = transpose(percent);
+%     
+%     %Alter Percent matrix by removing water/NonUS pixels
+%     for i = 1:2889
+%         for j = 1:4587
+%             if(waterLocations(i, j) == 1 || waterLocations(i, j) == 2)
+%                 ndvi(i, j) = 0;
+%             end
+%         end
+%     end
+%     
+%     %make CSV Files
+%     fileName = char(strcat("AVHRR_NLCD_2001_WaterRemoved_", int2str(k),".csv"));
+%     csvwrite(fileName,percent);
+%     movefile *.csv ../data/csvFiles/;
+%     disp(strcat("NLCD 2001: ", int2str(k)));
+% end
 
 fileName = char(strcat("AVHRR_LAT.csv"));
 csvwrite(fileName,lat);

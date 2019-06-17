@@ -13,29 +13,27 @@ source("scripts/SynchronyMapCreator.R")
 source("scripts/NDVITimeSeriesGrapher.R")
 
 ##########################################################
-# Data input and cleanup
+# Data input and Initial Processing
 ##########################################################
+source("scripts/CSVInput.R")
 setwd("data/csvFiles/")
 
-NDVIdataArray <- ArrayDataGenerator()
-NDVIdetrendedDataArray <- NDVIDetrender(NDVIdataArray, 4587, 2889, 30, 15);
-NDVIdetrendedDataArrayLong <- NDVIDetrender(NDVIdataArray, 4587, 2889, 30, 30);
+NDVIdataArray <- CSVInput("AVHRR_NDVI_WaterRemoved_*", 30)
+LandscanPop <- CSVInput("AVHRR_Landscan_Population_WaterRemoved_*", 18)
+latMatrix <- as.matrix(read.csv("AVHRR_LAT.csv"))
+lonMatrix <- as.matrix(read.csv("AVHRR_LON.csv"))
 
-dataFiles <- list.files(pattern="AVHRR_LAT.csv")
-frames <- lapply(dataFiles, function(x) {read.csv(file=x, header=FALSE)})
-latMatrix <- as.matrix(lapply(frames, function(x) t(data.matrix(x)))[[1]])
+if(file.exists("AVHRR_DetrendedNDVIShort_2018.csv")){
+  NDVIdetrendedDataArray <- CSVInput("AVHRR_DetrendedNDVIShort*", 30)
+}else{
+  NDVIdetrendedDataArray <- NDVIDetrender(NDVIdataArray, 4587, 2889, 30, 15);
+}
 
-dataFiles <- list.files(pattern="AVHRR_LON.csv")
-frames <- lapply(dataFiles, function(x) {read.csv(file=x, header=FALSE)})
-lonMatrix <- as.matrix(lapply(frames, function(x) t(data.matrix(x)))[[1]])
-
-landscanPop <- LandscanDataGenerator()
-
-NLCD2001 <- NLCDDataGenerator(2001)
-
-NLCD2006 <- NLCDDataGenerator(2006)
-
-NLCD2011 <- NLCDDataGenerator(2011)
+if(file.exists("AVHRR_DetrendedNDVILong_2018.csv")){
+  NDVIdetrendedDataArrayLong <- CSVInput("AVHRR_DetrendedNDVILong*", 30)
+}else{
+  NDVIdetrendedDataArrayLong <- NDVIDetrender(NDVIdataArray, 4587, 2889, 30, 30);
+}
 
 setwd("../../images")
 ##########################################################
