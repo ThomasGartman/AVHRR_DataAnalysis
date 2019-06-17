@@ -1,9 +1,6 @@
 ##########################################################
 # Functions Called
 ##########################################################
-source("scripts/NDVIDataGenerator.R")
-source("scripts/LandscanDataGenerator.R")
-source("scripts/NLCDDataGenerator.R")
 
 source("scripts/SynchronyMatrixCalculator.R")
 source("scripts/NDVIDetrender.R")

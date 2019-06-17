@@ -42,5 +42,21 @@ NDVIDetrender <- function(dataArray, numCol, numRow, numYears, breakYear)
       }
     }
   }
+  
+  #Write Results to CSVs
+  if(breakYear == numYears)
+  {
+    for(i in 1:numYears)
+    {
+      write.csv(detrendedDataArray[,,i], paste("AHRR_DetrendedNDVIShort_", 1988+i, ".csv"))
+    }
+  }
+  else
+  {
+    for(i in 1:numYears)
+    {
+      write.csv(detrendedDataArray[,,i], paste("AHRR_DetrendedNDVILong_", 1988+i, ".csv"))
+    }
+  }
  detrendedDataArray;
 }
