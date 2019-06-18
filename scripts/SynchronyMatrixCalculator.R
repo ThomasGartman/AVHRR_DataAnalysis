@@ -85,6 +85,6 @@ SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radi
     print(i);
   }#end for
   #save synchrony matrix
-  write.csv(synchronyMatrix, title);
+  write.csv(synchronyMatrix, title, row.names=FALSE);
   synchronyMatrix;
 }

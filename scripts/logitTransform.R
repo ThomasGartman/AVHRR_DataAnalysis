@@ -4,8 +4,9 @@
 #'     @param synchronyMatrix A matrix of dimensions numCols amd numRows of synchrony values ranging from -1 to 1.
 #'     @param numCols The number of columns of the synchrony matrix
 #'     @param numRows The number of rows of he synchrony matrix
+#'     @param title The name of the csv file
 
-logitTransformSynchrony <- function(synchronyMatrix, numCols, numRows)
+logitTransformSynchrony <- function(synchronyMatrix, numCols, numRows, title)
 {
   transformedMatrix <- matrix(data=NULL, ncol = numCols, nrow = numRows)
   #First, transform the domain (-1, 1) to (0, 1), then perform logit transformation
@@ -16,4 +17,6 @@ logitTransformSynchrony <- function(synchronyMatrix, numCols, numRows)
       transformedMatrix[i,j] = log(((synchronyMatrix[i,j] + 1)/2.0)/(1 - ((synchronyMatrix[i,j] + 1)/2.0)))
     }
   }
+  write.csv(transformedMatrix, title, row.names=FALSE)
+  transformedMatrix
 }
