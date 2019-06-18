@@ -12,6 +12,7 @@
 #'   radius: Number of pixels to make a square synchrony matrix. TODO - Define this as a circular radius in kilometers.
 #'   coorTest: The statistical coorelation test used to generate the synchrony matrix. Options are pearson, kendall, and
 #'             spearman tests. Defaults to pearson.
+#'   title: Title of csv file that stores synchrony matrix.
 #' 
 #' Preconditions:
 #'   1. All argument values are valid
@@ -22,7 +23,7 @@
 #'   
 #' Returns:
 #'   A matrix of the synchrony values of the map at the specified region.
-SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radius, coorTest = "pearson")
+SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radius, coorTest = "pearson", title)
 {
   #First, preallocate a matrix of length xExtent, yExtent
   synchronyMatrix <- matrix(data=NA, nrow=xExtent[2]-xExtent[1]+1, ncol=yExtent[2]-yExtent[1]+1);
@@ -83,5 +84,7 @@ SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radi
     }#end for
     print(i);
   }#end for
+  #save synchrony matrix
+  write.csv(synchronyMatrix, title);
   synchronyMatrix;
 }
