@@ -4,6 +4,7 @@
 source("scripts/SynchronyMatrixCalculator.R")
 source("scripts/CSVInput.R")
 source("scripts/NDVIDetrender.R")
+source("scripts/logitTransform.R")
 source("sripts/NDVITemporalAverage.R")
 
 ##########################################################
