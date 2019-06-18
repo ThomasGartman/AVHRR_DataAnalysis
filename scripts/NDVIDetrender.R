@@ -48,14 +48,14 @@ NDVIDetrender <- function(dataArray, numCol, numRow, numYears, breakYear)
   {
     for(i in 1:numYears)
     {
-      write.csv(detrendedDataArray[,,i], paste("AHRR_DetrendedNDVIShort_", 1988+i, ".csv"))
+      write.csv(detrendedDataArray[,,i], paste("AVHRR_DetrendedNDVIShort_", 1988+i, ".csv", sep=""))
     }
   }
   else
   {
     for(i in 1:numYears)
     {
-      write.csv(detrendedDataArray[,,i], paste("AHRR_DetrendedNDVILong_", 1988+i, ".csv"))
+      write.csv(detrendedDataArray[,,i], paste("AVHRR_DetrendedNDVILong_", 1988+i, ".csv", sep=""))
     }
   }
  detrendedDataArray;
