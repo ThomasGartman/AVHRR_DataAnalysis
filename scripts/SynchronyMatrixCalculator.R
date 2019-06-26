@@ -42,7 +42,7 @@ SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radi
       {
         for(m in (j-radius):(j+radius))
         {
-          if(is.na(dataArray[i, j, tExtent[1]:tExtent[2]]))
+          if(any(is.na(dataArray[i, j, tExtent[1]:tExtent[2]])))
           {
             next;
           }
