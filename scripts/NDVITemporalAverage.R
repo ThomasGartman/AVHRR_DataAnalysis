@@ -6,7 +6,7 @@
 #'     @param endYear The last year to be included in the average
 NDVITemporalAverage <- function(matrix, startYear, endYear)
 {
-  tempAveMatrix <- matrix(data=NULL, ncol = 4587, nrows=2889)
+  tempAveMatrix <- matrix(data=NA, ncol = 4587, nrow=2889)
   tempAveMatrix <- apply(matrix[,,startYear:endYear], 1, FUN=mean)
   tempAveMatrix
 }

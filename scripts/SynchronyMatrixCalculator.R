@@ -23,7 +23,7 @@
 #'   
 #' Returns:
 #'   A matrix of the synchrony values of the map at the specified region.
-SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radius, coorTest = "pearson", title)
+SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radius, coorTest = "pearson", atitle)
 {
   #First, preallocate a matrix of length xExtent, yExtent
   synchronyMatrix <- matrix(data=NA, nrow=xExtent[2]-xExtent[1]+1, ncol=yExtent[2]-yExtent[1]+1);
@@ -42,25 +42,16 @@ SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radi
       {
         for(m in (j-radius):(j+radius))
         {
-          if(is.na(dataArray[i, j, tExtent[1]:tExtent[2]]) || median(dataArray[i, j, tExtent[1]:tExtent[2]]) == -1)
+          if(is.na(dataArray[i, j, tExtent[1]:tExtent[2]]))
           {
             next;
           }
-          if((k > 0 && m > 0 && i > 0 && j > 0) && (k != i || m != j) && median(dataArray[k, m, tExtent[1]:tExtent[2]]) != 0)
+          if((k > 0 && m > 0 && i > 0 && j > 0) && (k != i || m != j))
           {
             if(radius*radius >= abs((i - k)^2 + (j-m)^2)) #check to see if it is within the circle of radius R.
             {
-              if(any(dataArray[k, m, tExtent[1]:tExtent[2]] == -1))
-              {
-                next;
-              }
               correlationVal = cor(dataArray[i, j,tExtent[1]:tExtent[2]], dataArray[k, m, tExtent[1]:tExtent[2]])
-              if(is.na(correlationVal))
-              {
-                #print(dataArray[i, j,tExtent[1]:tExtent[2]]);
-                #print(dataArray[k, m, tExtent[1]:tExtent[2]]);
-              }
-              else
+              if(!is.na(correlationVal))
               {
                 corNum = corNum + correlationVal;
                 count = count + 1;
@@ -80,11 +71,10 @@ SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radi
       {
         synchronyMatrix[i + 1 - xExtent[1], j + 1 - yExtent[1]] = corNum/(count);
       }
-      #print(paste("Synchrony Value for point (", i, ",", j, "): ", synchronyMatrix[i + 1 - xExtent[1], j + 1 - yExtent[1]], sep=""));
+      
     }#end for
     print(i);
   }#end for
-  #save synchrony matrix
-  write.csv(synchronyMatrix, title, row.names=FALSE);
+
   synchronyMatrix;
 }

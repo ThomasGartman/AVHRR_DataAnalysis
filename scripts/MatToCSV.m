@@ -1,5 +1,5 @@
 %MatToCSV in AVHRRGeographyOfSpatialSynchronyReproduce
-%Version 1.1.1  Last Editied June 17th, 2019
+%Version 1.1.1  Last Editied June 25th, 2019
 %
 %Takes in matlab files for AVHRR Data and converts them to csv files
 %
@@ -18,8 +18,7 @@
 %
 %Data processing:
 %   NDVI data for each year is reshaped into US shape, then pixel locations
-%   for the water or nodata are logged with a value of -1, which is higher
-%   than the maximum NDVI.
+%   for the water or nodata are logged with a value of NaN.
 %
 %Structure of imported data:
 %   avhrr_vpm_1989_2015_mxvi.mat contains the NDVI data, called mxvi, is a
@@ -71,7 +70,7 @@ for k = 1:30
     for i = 1:2889
         for j = 1:4587
             if(waterLocations(i, j) == 1 || waterLocations(i, j) == 2)
-                ndvi(i, j) = -1;
+                ndvi(i, j) = NaN;
             end
         end
     end
@@ -92,7 +91,7 @@ for k = 1:18
     for i = 1:2889
         for j = 1:4587
             if(waterLocations(i, j) == 1 || waterLocations(i, j) == 2)
-                ndvi(i, j) = -1;
+                population(i, j) = NaN;
             end
         end
     end

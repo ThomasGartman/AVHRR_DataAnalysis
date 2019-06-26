@@ -26,7 +26,10 @@ NDVIDetrender <- function(dataArray, numCol, numRow, numYears, breakYear)
     print(i);
     for(j in 1:numRow)
     {
-      detrendedDataArray[i, j,times] = cleandat(dataArray[i,j,times],times,2)$cdat[1:length(times)]
+      if(!is.na(dataArray[i, j, times]))
+      {
+      	detrendedDataArray[i, j,times] = cleandat(dataArray[i,j,times],times,2)$cdat[1:length(times)]
+      }
     }
   }
 
@@ -38,25 +41,13 @@ NDVIDetrender <- function(dataArray, numCol, numRow, numYears, breakYear)
       print(i);
       for(j in 1:numRow)
       {
-        detrendedDataArray[i, j,times] = cleandat(dataArray[i,j,times],times,2)$cdat[1:length(times)]
+	if(!is.na(dataArray[i, j, times]))
+	{
+          detrendedDataArray[i, j,times] = cleandat(dataArray[i,j,times],times,2)$cdat[1:length(times)]
+      	}
       }
     }
   }
   
-  #Write Results to CSVs
-  if(breakYear == numYears)
-  {
-    for(i in 1:numYears)
-    {
-      write.csv(detrendedDataArray[,,i], paste("AVHRR_DetrendedNDVIShort_", 1988+i, ".csv", sep=""), row.names = FALSE)
-    }
-  }
-  else
-  {
-    for(i in 1:numYears)
-    {
-      write.csv(detrendedDataArray[,,i], paste("AVHRR_DetrendedNDVILong_", 1988+i, ".csv", sep=""). row.names = FALSE)
-    }
-  }
  detrendedDataArray;
 }

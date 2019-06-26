@@ -8,8 +8,8 @@
 
 CSVInput <- function(pat, numFiles)
 {
-  dataFiles <- list.files(pattern=pat)
-  frames <- lapply(dataFiles, function(x) {read.csv(file=x, header=FALSE)})
+  dataFiles <- list.files(path = "data/csvFiles/", pattern=pat)
+  frames <- lapply(dataFiles, function(x) {read.csv(file=paste("data/csvFiles/", x, sep=""), header=FALSE)})
   matrices <- lapply(frames, function(x) t(data.matrix(x)))
 
   #Make an array from the list of matrices
@@ -19,5 +19,6 @@ CSVInput <- function(pat, numFiles)
   {
     dataArray[,,i] <- as.matrix(matrices[[i]])
   }
+  dataArray[is.nan(dataArray)] <- NA
   dataArray
 }
