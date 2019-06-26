@@ -4,6 +4,11 @@
 AVHRRDataGenerator <- function()
 {
   ##########################################################
+  # libraries required
+  ##########################################################
+  require("tseries")
+  
+  ##########################################################
   # Functions Called
   ##########################################################
   source("scripts/SynchronyMatrixCalculator.R")
@@ -18,7 +23,7 @@ AVHRRDataGenerator <- function()
 
   #Raw data
   print("Loading in Raw Data.....")
-  NDVIdataArray <- CSVInput("AVHRR_NDVI_WaterRemoved_*", 30)
+  NDVIdataArray <- CSVInput("AVHRR_NDVI_WaterRemoved_", 30, 0, TRUE)
     
   #detrended data
   print("Detrending NDVI data.....")
@@ -32,7 +37,7 @@ AVHRRDataGenerator <- function()
   }
   else
   {
-    NDVIdetrendedDataArray <- CSVInput("AVHRR_DetrendedNDVIShort*", 30)
+    NDVIdetrendedDataArray <- CSVInput("AVHRR_DetrendedNDVIShort_", 30, 1, FALSE)
   }
   
   if(!file.exists("data/csvFiles/AVHRR_DetrendedNDVILong_2018.csv"))
@@ -45,7 +50,7 @@ AVHRRDataGenerator <- function()
   }
   else
   {
-    NDVIdetrenddedDataArrayLong <- CSVInput("AVHRR_DetrendedNDVILong*", 30)
+    NDVIdetrenddedDataArrayLong <- CSVInput("AVHRR_DetrendedNDVILong_", 30, 1)
   }
 
   ##synchrony matrices
@@ -58,7 +63,7 @@ AVHRRDataGenerator <- function()
   }
   else
   {
-    synchronyMatrix1DetrendedNOLA <- t(as.matrix(read.csv("data/csvFiles/AVHRR_Synchrony1NOLA.csv", headers=TRUE)))
+    synchronyMatrix1DetrendedNOLA <- read.matrix("data/csvFiles/AVHRR_Synchrony1NOLA.csv", sep=",", skip=1)
   }
   if(!file.exists("data/csvFiles/AVHRR_Synchrony2NOLA.csv"))
   {
@@ -67,7 +72,7 @@ AVHRRDataGenerator <- function()
   }
   else
   {
-    synchronyMatrix2DetrendedNOLA <- t(as.matrix(read.csv("data/csvFiles/AVHRR_Synchrony2NOLA.csv", headers=TRUE)))
+    synchronyMatrix2DetrendedNOLA <- read.matrix("data/csvFiles/AVHRR_Synchrony2NOLA.csv", sep=",", skip=1)))
   }
   if(!file.exists("data/csvFiles/AVHRR_SynchronyLongNOLA.csv"))
   {
@@ -76,7 +81,7 @@ AVHRRDataGenerator <- function()
   }
   else
   {
-    synchronyMatrixLongDetrendedNOLA <- t(as.matrix(read.csv("data/csvFiles/AVHRR_SynchronyLongNOLA.csv", headers=TRUE)))
+    synchronyMatrixLongDetrendedNOLA <- read.matrix("data/csvFiles/AVHRR_SynchronyLongNOLA.csv", sep=",", skip=1)))
   }
   
   #Everglades
@@ -88,7 +93,7 @@ AVHRRDataGenerator <- function()
   }
   else
   {
-    synchronyMatrix1DetrendedEverglades <- t(as.matrix(read.csv("data/csvFiles/AVHRR_Synchrony1Everglades.csv", headers = TRUE)))
+    synchronyMatrix1DetrendedEverglades <- read.matrix("data/csvFiles/AVHRR_Synchrony1Everglades.csv", headers = TRUE)))
   }
   if(!file.exists("data/csvFiles/AVHRR_Synchrony2Everglades.csv"))
   {
@@ -97,7 +102,7 @@ AVHRRDataGenerator <- function()
   }
   else
   {
-    synchronyMatrix2DetrendedEverglades <- t(as.matrix(read.csv("data/csvFiles/AVHRR_Synchrony2Everglades.csv", headers = TRUE)))
+    synchronyMatrix2DetrendedEverglades <- read.matrix("data/csvFiles/AVHRR_Synchrony2Everglades.csv", headers = TRUE)))
   }
   if(!file.exists("data/csvFiles/AVHRR_SynchronyLongEverglades.csv"))
   {
@@ -106,7 +111,7 @@ AVHRRDataGenerator <- function()
   }
   else
   {
-    synchronyMatrixLongDetrendedEverglades <- t(as.matrix(read.csv("data/csvFiles/AVHRR_SynchronyLongEverglades.csv", headers = TRUE)))
+    synchronyMatrixLongDetrendedEverglades <- read.matrix("data/csvFiles/AVHRR_SynchronyLongEverglades.csv", headers = TRUE)))
   }
   
   #Central Valley
@@ -118,7 +123,7 @@ AVHRRDataGenerator <- function()
   }
   else
   {
-    synchronyMatrix1DetrendedCV <- t(as.matrix(read.csv("data/csvFiles/AVHRR_Synchrony1CV.csv", headers=TRUE)))
+    synchronyMatrix1DetrendedCV <- read.matrix("data/csvFiles/AVHRR_Synchrony1CV.csv", sep=",", skip=1)))
   }
   if(!file.exists("data/csvFiles/AVHRR_Synchrony2CV.csv"))
   {
@@ -127,7 +132,7 @@ AVHRRDataGenerator <- function()
   }
   else
   {
-    synchronyMatrix2DetrendedCV <- t(as.matrix(read.csv("data/csvFiles/AVHRR_Synchrony2CV.csv", headers=TRUE)))
+    synchronyMatrix2DetrendedCV <- read.matrix("data/csvFiles/AVHRR_Synchrony2CV.csv", sep=",", skip=1)))
   }
   if(!file.exists("data/csvFiles/AVHRR_SynchronyLongCV.csv"))
   {
@@ -136,7 +141,7 @@ AVHRRDataGenerator <- function()
   }
   else
   {
-    synchronyMatrixLongDetrendedCV <- t(as.matrix(read.csv("data/csvFiles/AVHRR_SynchronyLongCV.csv", headers=TRUE)))
+    synchronyMatrixLongDetrendedCV <- read.matrix("data/csvFiles/AVHRR_SynchronyLongCV.csv", sep=",", skip=1)))
   }
   
   ##Transformed Matrices

@@ -6,18 +6,23 @@
 #'     2. Each Matrix is in the AVHRR coordinate system
 #'     3. One year represents one matrix.
 
-CSVInput <- function(pat, numFiles)
+CSVInput <- function(pat, numFiles, skipNum, transpose=FALSE)
 {
-  dataFiles <- list.files(path = "data/csvFiles/", pattern=pat)
-  frames <- lapply(dataFiles, function(x) {read.csv(file=paste("data/csvFiles/", x, sep=""), header=FALSE)})
-  matrices <- lapply(frames, function(x) t(data.matrix(x)))
-
-  #Make an array from the list of matrices
+  require("tseries")
+  
   dataArray <- array(NA, dim=c(4587, 2889, numFiles))
   
   for(i in 1:numFiles)
   {
-    dataArray[,,i] <- as.matrix(matrices[[i]])
+    dataFile <- paste("data/csvFiles/", pat, sep="")
+    if(transpose)
+    {
+      dataArray[,,i] <- t(read.matrix(file=dataFile, sep=",", skip=skipNum))
+    }
+    else
+    {
+      dataArray[,,i] <- read.matrix(file=dataFile, sep=",", skip=skipNum)
+    }
   }
   dataArray[is.nan(dataArray)] <- NA
   dataArray
