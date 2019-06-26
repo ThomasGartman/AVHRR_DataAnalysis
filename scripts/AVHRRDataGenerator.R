@@ -21,7 +21,7 @@ AVHRRDataGenerator <- function()
   NDVIdataArray <- CSVInput("AVHRR_NDVI_WaterRemoved_*", 30)
     
   #detrended data
-  print("Detrendeding NDVI data.....")
+  print("Detrending NDVI data.....")
   if(!file.exists("data/csvFiles/AVHRR_DetrendedNDVIShort_2018.csv"))
   {
     NDVIdetrendedDataArray <- NDVIDetrender(NDVIdataArray, 4587, 2889, 30, 15);
