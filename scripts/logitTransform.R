@@ -12,3 +12,15 @@ logitTransform <- function(synchronyMatrix, numCols, numRows)
   tranformedMatrix <- log(((synchronyMatrix + 1)/2.0)/(1 - ((synchronyMatrix + 1)/2.0)))
   transformedMatrix
 }
+
+
+#mylogit<-function(p)
+#{
+#	p<-(p+1)/2
+#	return(log(p/(1-p)))
+#}
+
+#pretrans<-function(p)
+#{
+#	return((p+1)/2)
+#}
