@@ -14,7 +14,7 @@ CSVInput <- function(pat, numFiles, skipNum, transpose=FALSE)
   
   for(i in 1:numFiles)
   {
-    dataFile <- paste("data/csvFiles/", pat, sep="")
+    dataFile <- paste("data/csvFiles/", pat, i + 1988, ".csv", sep="")
     if(transpose)
     {
       dataArray[,,i] <- t(read.matrix(file=dataFile, sep=",", skip=skipNum))

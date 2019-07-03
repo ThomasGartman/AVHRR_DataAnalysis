@@ -9,6 +9,6 @@ logitTransform <- function(synchronyMatrix, numCols, numRows)
 {
   transformedMatrix <- matrix(data=NA, ncol = numCols, nrow = numRows)
   #First, transform the domain (-1, 1) to (0, 1), then perform logit transformation
-  tranformedMatrix <- log(((synchronyMatrix + 1)/2.0)/(1 - ((synchronyMatrix + 1)/2.0)))
+  transformedMatrix <- log(((synchronyMatrix + 1)/2.0)/(1 - ((synchronyMatrix + 1)/2.0)))
   transformedMatrix
 }
