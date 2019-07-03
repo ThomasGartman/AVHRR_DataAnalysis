@@ -34,8 +34,8 @@ SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radi
   {
     for(j in yExtent[1]:yExtent[2])
     {
-      count = 0;
-      corNum = 0.0;
+      count <- 0;
+      corNum <- 0;
       #For each pixel, calculate the synchrony of each point around the radius
       for(k in (i-radius):(i+radius))#only consider points in a square around the specific synchrony point
       {
@@ -46,14 +46,16 @@ SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radi
             next;
           }
           if((k > 0 && m > 0 && i > 0 && j > 0) && (k != i || m != j))
+            #***DAN: watch out, you can still go off the bottom or right
+            #***DAN: get rid of checks for i, j, kjust check *Extent inputs at beginning
           {
-            if(radius*radius >= abs((i - k)^2 + (j-m)^2)) #check to see if it is within the circle of radius R.
+            if(radius*radius >= (i - k)^2 + (j-m)^2) #check to see if it is within the circle of radius R.
             {
-              correlationVal = cor(dataArray[i, j,tExtent[1]:tExtent[2]], dataArray[k, m, tExtent[1]:tExtent[2]])
+              correlationVal <- cor(dataArray[i, j,tExtent[1]:tExtent[2]], dataArray[k, m, tExtent[1]:tExtent[2]])
               if(!is.na(correlationVal))
               {
-                corNum = corNum + correlationVal;
-                count = count + 1;
+                corNum <- corNum + correlationVal;
+                count <- count + 1;
               }
             }#end if
           }#end if
@@ -64,11 +66,11 @@ SynchronyMatrixCalculator <- function(dataArray, xExtent, yExtent, tExtent, radi
       #if count == 0, this means that the pixel is a water pixel
       if(count == 0)
       {
-        synchronyMatrix[i + 1 - xExtent[1], j + 1 - yExtent[1]] = NA;
+        synchronyMatrix[i + 1 - xExtent[1], j + 1 - yExtent[1]] <- NA;
       }
       else
       {
-        synchronyMatrix[i + 1 - xExtent[1], j + 1 - yExtent[1]] = corNum/(count);
+        synchronyMatrix[i + 1 - xExtent[1], j + 1 - yExtent[1]] <- corNum/(count);
       }
       
     }#end for
