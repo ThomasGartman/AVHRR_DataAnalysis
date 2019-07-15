@@ -3,51 +3,48 @@
 #' Model NDVI data as a function that takes in x and y coordinates and returns an NDVI value. Create a linear model then
 #' compute the residuals of that data.
 #' 
-#' @param dataArray The array of data to be detrended.
-#' @param numCol    The number of columns in the dataArray
-#' @param numRow    The number of rows in the dataArray
-#' @param numYears  The number of years in the dataArray
-#' @param breakYear The last year in the first dataset
+#' @param data The array of data to be detrended.
+#' @param years The range of years to detrend.
 #' 
-#' @return A detrended dataArray
+#' @return Detrended data
 #' 
 #' @export
 library("wsyn")
-NDVIDetrender <- function(dataArray, numCol, numRow, numYears, breakYear)
+NDVIDetrender <- function(data, years)
 {
-  #preallocate a new array
-  detrendedDataArray = array(data=NA, dim=c(numCol, numRow, numYears));
-  
-  #for each year, create a linear model based on x and y coordinates
-  #then find the residuals of the linear model and input them into the detrendedDataArray
-  times <- 1:breakYear
-  for(i in 1:numCol)
+  #Error Checking - is the data the appropriate type? 
+  if(!(is.array(data) && !is.matrix(data)) && !is.vector(data))
   {
-    print(i);
-    for(j in 1:numRow)
-    {
-      if(!is.na(dataArray[i, j, times]))
-      {
-      	detrendedDataArray[i, j,times] = cleandat(dataArray[i,j,times],times,2)$cdat[1:length(times)]
-      }
-    }
+    stop("Error in NDVIDetrender: data must be an array or vector.")
   }
-
-  if(breakYear != numYears)
+  #Error Checking - is the years a vector?
+  if(!is.vector(years) || !is.numeric(years))
   {
-    times <- (breakYear+1):numYears
-    for(i in 1:numCol)
-    {
-      print(i);
-      for(j in 1:numRow)
-      {
-	if(!is.na(dataArray[i, j, times]))
-	{
-          detrendedDataArray[i, j,times] = cleandat(dataArray[i,j,times],times,2)$cdat[1:length(times)]
-      	}
-      }
-    }
+    stop("Error in NDVIDetrender: years must be a numeric vector")
+  }
+  #Error Checking - Do the dimensions match the years?
+  if(years[1] <= 0)
+  {
+    stop("Error in NDVIDetrender: Year range starts before 1.")
+  }
+  if(is.array(data) && dim(data)[3] < years[length(years)])
+  {
+    stop("Error in NDVIDetrender: Year range ends after array ends.")
+  }
+  if(is.vector(data) && length(data) < years[length(years)])
+  {
+    stop("Error in NDVIDetrender: Year range ends after vector ends.")
   }
   
- detrendedDataArray;
+  if(is.array(data))
+  {
+    #Detrend the data array.
+    detrendedData <- cleandat(data[,,years],1:length(data[,,years]),2)$cdat[years]
+  }
+  else
+  {
+    #Detrend the data vector
+    detrendedData <- cleandat(data[years],1:length(years),2)$cdat[years]
+  }
+ return(detrendedData)
 }
