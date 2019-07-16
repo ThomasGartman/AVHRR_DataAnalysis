@@ -60,7 +60,7 @@ SynchronyMatrixCalculator <- function(dataArray, years, radius, coorTest = "pear
   
   
   #First, preallocate a matrix of dataArray dimensions
-  synchronyMatrix <- matrix(data=NA, nrow=dim(dataArray)[[2]], ncol=dim(dataArray)[[1]])
+  synchronyMatrix <- matrix(data=NA, nrow=dim(dataArray)[[1]], ncol=dim(dataArray)[[2]])
   
   #Calcuate the coorelation matrix for a specific set of pixels
   for(i in 1:dim(dataArray)[[1]])

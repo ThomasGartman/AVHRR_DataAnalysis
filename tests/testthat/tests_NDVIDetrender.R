@@ -26,7 +26,6 @@ test_that("Test exception: years is a numeric vector",{
   
   expect_error(NDVIDetrender(array2, years2), NA)
   expect_error(NDVIDetrender(vector2, years2), NA)
-  expect_error(NDVIDetrender(vector2, years2), NA)
   expect_error(NDVIDetrender(array2, years2F1), "Error in NDVIDetrender: years must be a numeric vector")
   expect_error(NDVIDetrender(vector2, years2F1), "Error in NDVIDetrender: years must be a numeric vector")
   expect_error(NDVIDetrender(array2, years2F2), "Error in NDVIDetrender: years must be a numeric vector")

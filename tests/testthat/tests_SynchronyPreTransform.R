@@ -1,0 +1,53 @@
+source("../../scripts/SynchronyPreTransform.R")
+
+test_that("Test exception: Are values Greater than -1?", {
+  vecS <- runif(1000, -1, 1)
+  matS <- matrix(runif(1000, -1, 1), nrow = 10, ncol = 10)
+  arrS <- array(runif(1000, -1, 1), dim = c(2, 5, 10))
+  datframeS <- data.frame(runif(1000, -1, 1))
+  vecF <- c(.2, .3, .6, -2, -.3)
+  matF <- matrix(runif(1000, -100, -1), nrow = 10, ncol = 10)
+  arrF <- array(runif(1000, -12312, -1), dim = c(2, 5, 10))
+  datframeF <- data.frame(runif(1000, -123, -1))
+  
+  expect_error(SynchronyPreTransform(vecS), NA)
+  expect_error(SynchronyPreTransform(matS), NA)
+  expect_error(SynchronyPreTransform(arrS), NA)
+  expect_error(SynchronyPreTransform(datframeS), NA)
+  expect_error(SynchronyPreTransform(vecF), "Synchrony Pre-Transform Error: Some values equal to or less than -1.")
+  expect_error(SynchronyPreTransform(matF), "Synchrony Pre-Transform Error: Some values equal to or less than -1.")
+  expect_error(SynchronyPreTransform(arrF), "Synchrony Pre-Transform Error: Some values equal to or less than -1.")
+  expect_error(SynchronyPreTransform(datframeF), "Synchrony Pre-Transform Error: Some values equal to or less than -1.")
+})
+
+test_that("Test exception: Are values Less than 1?", {
+  vecS <- runif(1000, -1, 1)
+  matS <- matrix(runif(1000, -1, 1), nrow = 10, ncol = 10)
+  arrS <- array(runif(1000, -1, 1), dim = c(2, 5, 10))
+  datframeS <- data.frame(runif(1000, -1, 1))
+  vecF <- c(.2, .3, .6, 2, -.3)
+  matF <- matrix(runif(1000, 1, 100), nrow = 10, ncol = 10)
+  arrF <- array(runif(1000, 1, 1546), dim = c(2, 5, 10))
+  datframeF <- data.frame(runif(1000, 1, 1123))
+  
+  expect_error(SynchronyPreTransform(vecS), NA)
+  expect_error(SynchronyPreTransform(matS), NA)
+  expect_error(SynchronyPreTransform(arrS), NA)
+  expect_error(SynchronyPreTransform(datframeS), NA)
+  expect_error(SynchronyPreTransform(vecF), "Synchrony Pre-Transform Error: Some values equal to or greater than 1.")
+  expect_error(SynchronyPreTransform(matF), "Synchrony Pre-Transform Error: Some values equal to or greater than 1.")
+  expect_error(SynchronyPreTransform(arrF), "Synchrony Pre-Transform Error: Some values equal to or greater than 1.")
+  expect_error(SynchronyPreTransform(datframeF), "Synchrony Pre-Transform Error: Some values equal to or greater than 1.")
+})
+
+test_that("Test return value: Are the values correct?",{
+  vec <- runif(1000, 0, 1)
+  mat <- matrix(runif(1000, 0, 1), nrow = 10, ncol = 10)
+  arr <- array(runif(1000, 0, 1), dim <- c(2, 5, 10))
+  datframe <- data.frame(runif(1000, 0, 1))
+  
+  expect_equal(SynchronyPreTransform(vec), (vec + 1)/2)
+  expect_equal(SynchronyPreTransform(mat), (mat + 1)/2)
+  expect_equal(SynchronyPreTransform(arr), (arr + 1)/2)
+  expect_equal(SynchronyPreTransform(datframe), (datframe + 1)/2)
+})
