@@ -14,10 +14,10 @@ test_that("Test exception: Are values Greater than -1?", {
   expect_error(SynchronyPreTransform(matS), NA)
   expect_error(SynchronyPreTransform(arrS), NA)
   expect_error(SynchronyPreTransform(datframeS), NA)
-  expect_error(SynchronyPreTransform(vecF), "Synchrony Pre-Transform Error: Some values equal to or less than -1.")
-  expect_error(SynchronyPreTransform(matF), "Synchrony Pre-Transform Error: Some values equal to or less than -1.")
-  expect_error(SynchronyPreTransform(arrF), "Synchrony Pre-Transform Error: Some values equal to or less than -1.")
-  expect_error(SynchronyPreTransform(datframeF), "Synchrony Pre-Transform Error: Some values equal to or less than -1.")
+  expect_error(SynchronyPreTransform(vecF), "Synchrony Pre-Transform Error: Some values less than -1.")
+  expect_error(SynchronyPreTransform(matF), "Synchrony Pre-Transform Error: Some values less than -1.")
+  expect_error(SynchronyPreTransform(arrF), "Synchrony Pre-Transform Error: Some values less than -1.")
+  expect_error(SynchronyPreTransform(datframeF), "Synchrony Pre-Transform Error: Some values less than -1.")
 })
 
 test_that("Test exception: Are values Less than 1?", {
@@ -34,10 +34,10 @@ test_that("Test exception: Are values Less than 1?", {
   expect_error(SynchronyPreTransform(matS), NA)
   expect_error(SynchronyPreTransform(arrS), NA)
   expect_error(SynchronyPreTransform(datframeS), NA)
-  expect_error(SynchronyPreTransform(vecF), "Synchrony Pre-Transform Error: Some values equal to or greater than 1.")
-  expect_error(SynchronyPreTransform(matF), "Synchrony Pre-Transform Error: Some values equal to or greater than 1.")
-  expect_error(SynchronyPreTransform(arrF), "Synchrony Pre-Transform Error: Some values equal to or greater than 1.")
-  expect_error(SynchronyPreTransform(datframeF), "Synchrony Pre-Transform Error: Some values equal to or greater than 1.")
+  expect_error(SynchronyPreTransform(vecF), "Synchrony Pre-Transform Error: Some values greater than 1.")
+  expect_error(SynchronyPreTransform(matF), "Synchrony Pre-Transform Error: Some values greater than 1.")
+  expect_error(SynchronyPreTransform(arrF), "Synchrony Pre-Transform Error: Some values greater than 1.")
+  expect_error(SynchronyPreTransform(datframeF), "Synchrony Pre-Transform Error: Some values greater than 1.")
 })
 
 test_that("Test return value: Are the values correct?",{

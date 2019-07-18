@@ -38,12 +38,27 @@ NDVIDetrender <- function(data, years)
   
   if(is.array(data))
   {
+    detrendedData <- array(data = NA, dim = c(dim(data)[[1]], dim(data)[[2]], length(years)))
     #Detrend the data array.
-    detrendedData <- cleandat(data[,,years],1:length(data[,,years]),2)$cdat[years]
+    for(i in 1:dim(data)[[1]])
+    {
+      for(j in 1:dim(data)[[2]])
+      {
+        if(any(is.na(data[i, j,])))
+        {
+          next
+        }
+        detrendedData[i, j, ] <- cleandat(data[i,j,years],1:length(years),2)$cdat[years]
+      }
+    }
   }
   else
   {
     #Detrend the data vector
+    if(any(is.na(data)))
+    {
+      return(NA)
+    }
     detrendedData <- cleandat(data[years],1:length(years),2)$cdat[years]
   }
  return(detrendedData)

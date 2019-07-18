@@ -33,7 +33,7 @@ AVHRRDataGenerator <- function(force = FALSE)
   NDVIdetrendedDataArray <- array(data = NA, dim = c(4587, 2889, 30))
   if(force || !file.exists("data/csvFiles/AVHRR_DetrendedNDVIShort_2018.csv"))
   {
-    NDVIdetrendedDataArray[,,1:15] <- NDVIDetrender(NDVIdataArray, 1:30)
+    NDVIdetrendedDataArray[,,1:15] <- NDVIDetrender(NDVIdataArray, 1:15)
     NDVIdetrendedDataArray[,,16:30] <- NDVIDetrender(NDVIdataArray, 16:30)
     for(i in 1:30)
     {
@@ -49,7 +49,7 @@ AVHRRDataGenerator <- function(force = FALSE)
   NDVIdetrendedDataArrayLong <- array(data = NA, dim = c(4587, 2889, 30))
   if(force || !file.exists("data/csvFiles/AVHRR_DetrendedNDVILong_2018.csv"))
   {
-    NDVIdetrendedDataArrayLong[,,1:30] <- NDVIDetrender(NDVIdataArray, 30);
+    NDVIdetrendedDataArrayLong[,,1:30] <- NDVIDetrender(NDVIdataArray, 1:30);
     for(i in 1:30)
     {
       write.csv(NDVIdetrendedDataArray[,,i], paste("data/csvFiles/AVHRR_DetrendedNDVILong_", 1988+i, ".csv", sep=""), row.names = FALSE)

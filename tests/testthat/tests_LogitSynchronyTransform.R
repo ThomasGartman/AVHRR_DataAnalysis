@@ -34,10 +34,10 @@ test_that("Test exception: Are values Less than 1?", {
   expect_error(LogitSynchronyTransform(matS), NA)
   expect_error(LogitSynchronyTransform(arrS), NA)
   expect_error(LogitSynchronyTransform(datframeS), NA)
-  expect_error(LogitSynchronyTransform(vecF), "Logit Synchrony Transform Error: Some values equal to or greater than 1.")
-  expect_error(LogitSynchronyTransform(matF), "Logit Synchrony Transform Error: Some values equal to or greater than 1.")
-  expect_error(LogitSynchronyTransform(arrF), "Logit Synchrony Transform Error: Some values equal to or greater than 1.")
-  expect_error(LogitSynchronyTransform(datframeF), "Logit Synchrony Transform Error: Some values equal to or greater than 1.")
+  expect_error(LogitSynchronyTransform(vecF), "Logit Synchrony Transform Error: Some values greater than 1.")
+  expect_error(LogitSynchronyTransform(matF), "Logit Synchrony Transform Error: Some values greater than 1.")
+  expect_error(LogitSynchronyTransform(arrF), "Logit Synchrony Transform Error: Some values greater than 1.")
+  expect_error(LogitSynchronyTransform(datframeF), "Logit Synchrony Transform Error: Some values greater than 1.")
 })
 
 test_that("Test return value: Are the values correct?",{

@@ -2,13 +2,13 @@
 #' 
 SynchronyPreTransform <- function(data)
 {
-  if(any(data <= -1))
+  if(any(data < -1, na.rm=TRUE))
   {
-    stop("Synchrony Pre-Transform Error: Some values equal to or less than -1.")
+    stop("Synchrony Pre-Transform Error: Some values less than -1.")
   }
-  if(any(data >= 1))
+  if(any(data > 1, na.rm=TRUE))
   {
-    stop("Synchrony Pre-Transform Error: Some values equal to or greater than 1.")
+    stop("Synchrony Pre-Transform Error: Some values greater than 1.")
   }
   
   return ((data + 1)/2)
