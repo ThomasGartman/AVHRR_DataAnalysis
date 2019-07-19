@@ -73,3 +73,25 @@ test_that("Test exception: year range must end before or on vector range",{
   expect_error(NDVIDetrender(vector5, years5S), NA)
   expect_error(NDVIDetrender(vector5, years5F), "Error in NDVIDetrender: Year range ends after vector ends.")
 })
+
+test_that("Test Return Values: Am I getting the correct value?", {
+  array6 <- array(runif(1000, -1, 1), dim=c(10,10,10))
+  residuals6 <- array(NA, dim=c(10,10,5))
+  array7 <- array(c(NA, runif(999, -1, 1)), dim=c(10,10,10))
+  residuals7 <- array(NA, dim=c(10,10,5))
+  years6 <- 1:5
+  
+  for(i in 1:10)
+  {
+    for(j in 1:10)
+    {
+      residuals6[i,j,years6] <- as.vector(residuals(lm(array6[i,j,years6] ~ years6)))
+      residuals7[i,j,years6] <- as.vector(detrend(array7[i,j,years6]))
+    }
+  }
+  
+  expect_equal(NDVIDetrender(array6, years6), residuals6)
+  expect_equal(NDVIDetrender(array7, years6), residuals7)
+  expect_true(is.na(NDVIDetrender(array7, years6)[1,1,1]))
+  expect_equal(sum(is.na(NDVIDetrender(array7, years6))), 1)
+})

@@ -9,7 +9,7 @@
 #' @return Detrended data
 #' 
 #' @export
-library("wsyn")
+require("pracma")
 NDVIDetrender <- function(data, years)
 {
   #Error Checking - is the data the appropriate type? 
@@ -38,28 +38,20 @@ NDVIDetrender <- function(data, years)
   
   if(is.array(data))
   {
-    detrendedData <- array(data = NA, dim = c(dim(data)[[1]], dim(data)[[2]], length(years)))
+    detrendedData <- data[,,years]
     #Detrend the data array.
     for(i in 1:dim(data)[[1]])
     {
       for(j in 1:dim(data)[[2]])
       {
-        if(any(is.na(data[i, j,])))
-        {
-          next
-        }
-        detrendedData[i, j, ] <- cleandat(data[i,j,years],1:length(years),2)$cdat[years]
+        detrendedData[i, j, years] <- as.vector(detrend(data[i, j,years]))
       }
     }
   }
   else
   {
     #Detrend the data vector
-    if(any(is.na(data)))
-    {
-      return(NA)
-    }
-    detrendedData <- cleandat(data[years],1:length(years),2)$cdat[years]
+    detrendedData <- as.vector(detrend(data[years]))
   }
- return(detrendedData)
+  return(detrendedData)
 }
