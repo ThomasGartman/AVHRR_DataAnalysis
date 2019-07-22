@@ -79,6 +79,8 @@ test_that("Test Return Values: Am I getting the correct value?", {
   residuals6 <- array(NA, dim=c(10,10,5))
   array7 <- array(c(NA, runif(999, -1, 1)), dim=c(10,10,10))
   residuals7 <- array(NA, dim=c(10,10,5))
+  array8 <- array(runif(10000, -1, 1), dim=c(100, 10, 10))
+  residuals8 <- array(NA, dim = c(100,10,5))
   years6 <- 1:5
   
   for(i in 1:10)
@@ -90,8 +92,17 @@ test_that("Test Return Values: Am I getting the correct value?", {
     }
   }
   
+  for(i in 1:100)
+  {
+    for(j in 1:10)
+    {
+      residuals8[i,j,years6] <- as.vector(residuals(lm(array8[i,j,years6] ~ years6)))
+    }
+  }
+  
   expect_equal(NDVIDetrender(array6, years6), residuals6)
   expect_equal(NDVIDetrender(array7, years6), residuals7)
   expect_true(is.na(NDVIDetrender(array7, years6)[1,1,1]))
   expect_equal(sum(is.na(NDVIDetrender(array7, years6))), 1)
+  expect_equal(NDVIDetrender(array8, years6), residuals8)
 })

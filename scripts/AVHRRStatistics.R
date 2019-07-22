@@ -1,4 +1,4 @@
-#' This is version 0.1.0 for the statistics required for the AVHRR project
+#' This script carries the statistics required for the AVHRR project
 #'
 #' Namely this function will need to accomplish or manage:
 #'
@@ -6,149 +6,46 @@
 #'	2. Vectorize all matrices.
 #'	3. Internally check to ensure all vectors have consistant NAs, then remove them (keep track of what was removed)
 #'	4. Begin constructing models
-AVHRRStatistics <- function()
-{
-	########################################
-	# Functions Called
-	########################################
-	source("scripts/CSVInput.R")
 
-	########################################
-	#Read in Data
-	########################################
-	#Predictor 1 - Population
-	Landscan2002Matrix <- as.matrix(read.csv("data/csvFiles/AVHRR_Landscan_Population_WaterRemoved_2002.csv"))
-	Landscan2017Matrix <- as.matrix(read.csv("data/csvFiles/AVHRR_Landscan_Population_WaterRemoved_2017.csv"))
+########################################
+# Functions Called
+########################################
+source("scripts/VectorizeMatrices.R")
 
-	#Predictor 2 - Time Averaged NDVI
-	if(file.exists("data/csvFiles/AVHRR_NDVItempAveMatrix1.csv"))
-  	{
-    	  NDVItempAveMatrix1 <- as.matrix(read.csv("data/csvFiles/AVHRR_NDVItempAveMatrix1.csv", header = FALSE))
-  	}
-	else
-	{
-	  stop("Error: AHRR_NDVItempAveMatrix1.csv does not exist.")
-	}
- 	if(file.exists("data/csvFiles/AVHRR_NDVItempAveMatrix2.csv"))
-  	{
-    	  NDVItempAveMatrix2 <- as.matrix(read.csv("data/csvFiles/AVHRR_NDVItempAveMatrix2.csv", header = FALSE))
-  	}
-	else
-	{
-	  stop("Error: AVHRR_NDVItempAveMatrix2.csv does not exist.")
-	}
-  	if(file.exists("data/csvFiles/AVHRR_NDVItempAeMatrixLong.csv"))
-  	{
-    	  NDVItempAveMatrixLong <- as.matrix(read.csv("data/csvFiles/AVHRR_NDVItempAveMatrixLong.csv", header = FALSE))
-  	}
-	else
-	{
-	  stop("Error: AVHRR_NDVItempAveMatrixLong.csv does not exist.")
-	}
+########################################
+#Read in Data
+########################################
+#Predictor 1 - Population
+Landscan2002Matrix <- as.matrix(read.csv("data/csvFiles/AVHRR_Landscan_Population_WaterRemoved_2002.csv", header = FALSE))
+Landscan2017Matrix <- as.matrix(read.csv("data/csvFiles/AVHRR_Landscan_Population_WaterRemoved_2017.csv", header = FALSE))
 
-        #Logit Transformed Synchrony Values - Our Observed Variable
-	if(file.exists("data/csvFiles/AVHRR_Transformed1NOLA.csv"))
-        {
-          transformed1NOLAMatrix <- as.matrix(read.csv("data/csvFiles/AVHRR_Transformed1NOLA.csv", header=FALSE))
-        }
-        else
-        {
-          stop("Error: AVHRR_Transformed1NOLA.csv not found.")
-        }
-        if(file.exists("data/csvFiles/AVHRR_Transformed2NOLA.csv"))
-        {
-          transformed2NOLAMatrix <- as.matrix(read.csv("data/csvFiles/AVHRR_Transformed2NOLA.csv", header=FALSE))
-        }
-        else
-        {
-          stop("Error: AVHRR_Transformed2NOLA.csv not found.")
-        }
-        if(file.exists("data/csvFiles/AVHRR_TransformedLongNOLA.csv"))
-        {
-          transformedLongNOLAMatrix <- as.matrix(read.csv("data/csvFiles/AVHRR_TransformedLongNOLA.csv", header=FALSE))
-        }
-        else
-        {
-          stop("Error: AVHRR_TransformedLongNOLA.csv not found.")
-        }
+#Predictor 2 - Time Averaged NDVI
+NDVItempAveMatrix1 <- t(as.matrix(read.csv("data/csvFiles/AVHRR_NDVItempAveMatrix1.csv"), header = FALSE))
+NDVItempAveMatrix2 <- t(as.matrix(read.csv("data/csvFiles/AVHRR_NDVItempAveMatrix2.csv"), header = FALSE))
+NDVItempAveMatrixLong <- t(as.matrix(read.csv("data/csvFiles/AVHRR_NDVItempAveMatrixLong.csv"), header = FALSE))
 
-	#Transformed Synchrony Values - the observed variable
-	#NOLA
-	if(file.exists("data/csvFiles/AVHRR_Transformed1NOLA.csv"))
-	{
-	  transformed1NOLAMatrix <- as.matrix(read.csv("data/csvFiles/AVHRR_Transformed1NOLA.csv", header=FALSE))
-	}
-	else
-	{
-	  stop("Error: AVHRR_Transformed1NOLA.csv not found.")
-	}
-	if(file.exists("data/csvFiles/AVHRR_Transformed2NOLA.csv"))
-        {
-          transformed2NOLAMatrix <- as.matrix(read.csv("data/csvFiles/AVHRR_Transformed2NOLA.csv", header=FALSE))
-        }
-        else
-        {
-          stop("Error: AVHRR_Transformed2NOLA.csv not found.")
-        }
-        if(file.exists("data/csvFiles/AVHRR_TransformedLongNOLA.csv"))
-        {
-          transformedLongNOLAMatrix <- as.matrix(read.csv("data/csvFiles/AVHRR_TransformedLongNOLA.csv", header=FALSE))
-        }
-        else
-        {
-          stop("Error: AVHRR_TransformedLongNOLA.csv not found.")
-        }
+#Our transformed synchrony variable as the observed variable
+transformedMatrix1 <- t(as.matrix(read.csv("data/csvFiles/AVHRR_Transformed1USA.csv"), header = FALSE))
+transformedMatrix2 <- t(as.matrix(read.csv("data/csvFiles/AVHRR_Transformed2USA.csv"), header = FALSE))
+transformedMatrixLong <- as.matrix(read.csv("data/csvFiles/AVHRR_TransformedLongUSA.csv"), header = FALSE)
 
-        #Everglades
-        if(file.exists("data/csvFiles/AVHRR_Transformed1Everglades.csv"))
-        {       
-          transformed1EvergladesMatrix <- as.matrix(read.csv("data/csvFiles/AVHRR_Transformed1Everglades.csv", header=FALSE))
-        }
-        else
-        {
-          stop("Error: AVHRR_Transformed1Everglades.csv not found.")
-        }
-        if(file.exists("data/csvFiles/AVHRR_Transformed1Everglades.csv"))
-        {
-          transformed2EvergladesMatrix <- as.matrix(read.csv("data/csvFiles/AVHRR_Transformed2Everglades.csv", header=FALSE))
-        }
-        else
-        {
-          stop("Error: AVHRR_Transformed2Everglades.csv not found.")
-        }
-        if(file.exists("data/csvFiles/AVHRR_TransformedLongEverglades.csv"))
-        {
-          transformedLongEvergladesMatrix <- as.matrix(read.csv("data/csvFiles/AVHRR_TransformedLongEverglades.csv", header=FALSE))
-        }
-        else
-        {
-          stop("Error: AVHRR_TransformedLongEverglades.csv not found.")
-        }
+#Coordinate Systems
+Lat <- as.matrix(read.csv("data/csvFiles/AVHRR_LAT.csv", header = FALSE))
+Lon <- as.matrix(read.csv("data/csvFiles/AVHRR_LON.csv", header = FALSE))
+ 
+# Vectorize
+vectors <- VectorizeMatrices(Landscan2002Matrix, Landscan2017Matrix, NDVItempAveMatrix1, NDVItempAveMatrix2, NDVItempAveMatrixLong,
+                             transformedMatrix1, transformedMatrix2, transformedMatrixLong, Lat, Lon)
+Landscan2002Vector <- vectors[[1]]
+Landscan2017Vector <- vectors[[2]]
+NDVItempAveVector1 <- vectors[[3]]
+NDVItempAveVector2 <- vectors[[4]]
+NDVItempAveVectorLong <- vectors[[5]]
+transformedVector1 <- vectors[[6]]
+transformedVector2 <- vectors[[7]]
+transformedVectorLong <- vectors[[8]]
+latVector <- vectors[[9]]
+lonVector <- vectors[[10]]
 
-        #Central Valley (CV)
-        if(file.exists("data/csvFiles/AVHRR_Transformed1CV.csv"))
-        {       
-          transformed1CVMatrix <- as.matrix(read.csv("data/csvFiles/AVHRR_Transformed1CV.csv", header=FALSE))
-        }
-        else
-        {
-          stop("Error: AVHRR_Transformed1CV.csv not found.")
-        }
-        if(file.exists("data/csvFiles/AVHRR_Transformed2CV.csv"))
-        {
-          transformed2CVMatrix <- as.matrix(read.csv("data/csvFiles/AVHRR_Transformed2CV.csv", header=FALSE))
-        }
-        else
-        {
-          stop("Error: AVHRR_Transformed2CV.csv not found.")
-        }
-        if(file.exists("data/csvFiles/AVHRR_TransformedLongCV.csv"))
-        {
-          transformedLongCVMatrix <- as.matrix(read.csv("data/csvFiles/AVHRR_TransformedLongCV.csv", header=FALSE))
-        }
-        else
-        {
-          stop("Error: AVHRR_TransformedLongCV.csv not found.")
-        }
-
-}
+landModel1 <- lm(transformedVector1 ~ landscan2002Vector)
+landModel2 <- lm(transformedVector2 ~ landscan2017Vector)

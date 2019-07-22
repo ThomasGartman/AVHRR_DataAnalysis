@@ -1,12 +1,24 @@
-#' Detrend NDVI data
+#' Detrend NDVI Array or Vector Data.
 #' 
-#' Model NDVI data as a function that takes in x and y coordinates and returns an NDVI value. Create a linear model then
-#' compute the residuals of that data.
+#' This function wraps the \code{pracma} library function \code{detrend} for detrending data
+#' in three dimensional arrays.
 #' 
-#' @param data The array of data to be detrended.
+#' @param data The numeric array or vector of data to be detrended.
 #' @param years The range of years to detrend.
 #' 
-#' @return Detrended data
+#' @return Array or vector object, depending on if input was an array or vector object.
+#' 
+#' @details This function assumes a structure of data where the years are the last index in the array or the index of the vector.
+#' 
+#' Normalized Difference Vegetation Index (NDVI) data is structured in the format [x,y,t], where
+#' x and y are a 2D mapping of latitude and longitude onto the Advanced Very High Resolution Radiometer coordinates.
+#' Since this data is spatial in nature, it makes sense to store in an array versus a dataframe. This function was written
+#' to break the array into [x,y,] vectors and detrend each vector separately. \code{Pracma}'s function \code{detrend} was perfect
+#' for this task since it handles missing values exactly as needed.
+#' 
+#' @author Thomas Gartman, \email{thomasgartman@@ku.edu}, with contributions from Daniel Reuman, \email{reuman@@ku.edu}.
+#' 
+#' @references 
 #' 
 #' @export
 require("pracma")
@@ -44,7 +56,7 @@ NDVIDetrender <- function(data, years)
     {
       for(j in 1:dim(data)[[2]])
       {
-        detrendedData[i, j, years] <- as.vector(detrend(data[i, j,years]))
+        detrendedData[i, j, 1:length(years)] <- as.vector(detrend(detrendedData[i, j,1:length(years)]))
       }
     }
   }

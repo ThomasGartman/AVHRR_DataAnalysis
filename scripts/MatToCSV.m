@@ -22,7 +22,7 @@
 %
 %Structure of imported data:
 %   avhrr_vpm_1989_2015_mxvi.mat contains the NDVI data, called mxvi, is a
-%   2D array with dimensions 13251843x27, where the first dimension is the
+%   2D array with dimensions 13251843x30, where the first dimension is the
 %   data and the second is the year, starting at 1989 and ending at 2015.
 %   Each data index represents a pixel on the map of the united states with
 %   dimension 4587 by 2889. Each pixel is 1km by 1km and each data point is
@@ -86,15 +86,6 @@ for k = 1:18
     population = pop(:,k);
     population = reshape(population, [4587,2889]);
     population = transpose(population);
-    
-    %Alter Population matrix by removing water/NonUS pixels
-    for i = 1:2889
-        for j = 1:4587
-            if(waterLocations(i, j) == 1 || waterLocations(i, j) == 2)
-                population(i, j) = NaN;
-            end
-        end
-    end
     
     %make CSV Files
     fileName = char(strcat("AVHRR_Landscan_Population_WaterRemoved_", int2str(k + 1999), ".csv"));
