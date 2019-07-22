@@ -40,10 +40,12 @@ test_that("Test Return Value: Vectorization correct.", {
   matrix7 <- matrix(c(1:15, NA, NA, NA, 19:20), nrow = 2, ncol=10)
   matrix8 <- matrix(c(1:10, NA, 12:20), nrow=2, ncol=10)
   matrix9 <- matrix(c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, NA, NA, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE), nrow=2, ncol=10)
+  matrix10 <- matrix(c(Inf, 2:30), nrow = 5, ncol = 6)
   
   expect_equal(VectorizeMatrices(matrix1), list(x<-1:30))
   expect_equal(VectorizeMatrices(matrix2), list(logical(0)))
   expect_equal(VectorizeMatrices(matrix1, matrix3), list(x<-1:29, y<-1:29))
   expect_equal(VectorizeMatrices(matrix4, matrix5, matrix6, matrix7), list(w<-c(9:10,13:15,20),x<-c(9:10,13:15,20),y<-c(9:10,13:15,20),z<-c(9:10,13:15,20)))
   expect_equal(VectorizeMatrices(matrix8, matrix9), list(x<-c(1:10, 12, 15:20), y<-c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE)))
+  expect_equal(VectorizeMatrices(matrix3, matrix10), list(x<-c(2:29), y<-c(2:29)))
 })

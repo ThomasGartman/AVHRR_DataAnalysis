@@ -26,5 +26,10 @@ VectorizeMatrices <- function(...)
     alteredVectors[[i]] <- vectors[[i]][!Reduce("|", lapply(vectors, is.na))]
   }
   
-  return(alteredVectors)
+  finalVectors <- alteredVectors
+  for(i in 1:length(alteredVectors))
+  {
+    finalVectors[[i]] <- alteredVectors[[i]][!Reduce("|", lapply(alteredVectors, is.infinite))]
+  }
+  return(finalVectors)
 }
