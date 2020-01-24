@@ -5,12 +5,9 @@
 #'     1. The data is structured in CSV files, 1 Matrix per CSV file
 #'     2. Each Matrix is in the AVHRR coordinate system
 #'     3. One year represents one matrix.
-
-CSVInput <- function(pat, numFiles, skipNum, transpose=FALSE)
+require("tseries")
+CSVInput <- function(pat, numFiles, skipNum, startYear, transpose=FALSE)
 {
-  require("tseries")
-  #***DAN: put requires in the file but not the function, so they run only when the function
-  #is sourced, not every time it is called
   #***DAN: use saveRDS or save (probably saveRDS is better) to save the whole 3d array once constructed
   #then you never have to load the csvs again
   
@@ -18,7 +15,7 @@ CSVInput <- function(pat, numFiles, skipNum, transpose=FALSE)
   
   for(i in 1:numFiles)
   {
-    dataFile <- paste("data/csvFiles/", pat, i + 1988, ".csv", sep="")
+    dataFile <- paste("data/csvFiles/", pat, i + startYear, ".csv", sep="")
     if(transpose)
     {
       dataArray[,,i] <- t(read.matrix(file=dataFile, sep=",", skip=skipNum))

@@ -1,13 +1,12 @@
 #' This function is designed to generate all appropriate data files from R and save them as CSV Files for
 #' additional processing by other R functions.
+##########################################################
+# libraries required
+##########################################################
+require("tseries")
 
 AVHRRDataGenerator <- function(force = FALSE)
 {
-  ##########################################################
-  # libraries required
-  ##########################################################
-  require("tseries")
-  
   ##########################################################
   # Functions Called
   ##########################################################
@@ -24,8 +23,33 @@ AVHRRDataGenerator <- function(force = FALSE)
 
   #Raw data
   print("Loading in Raw Data.....")
-  NDVIdataArray <- CSVInput("AVHRR_NDVI_WaterRemoved_", 30, 0, TRUE)
+  if(force || !file.exists("data/csvFiles/AVHRR_DetrendedNDVIShort_2018.csv") || !file.exists("data/csvFiles/AVHRR_DetrendedNDVILong_2018.csv"))
+  {
+    NDVIdataArray <- CSVInput("AVHRR_NDVI_WaterRemoved_", 30, 0, 1988, TRUE)
+  }
+  
+  #Landscan
+  print("Averaging Landscan Data.....")
+  if(force || !file.exists("data/csvFiles/AVHRR_Landscan_Population_Average_2003to2004.csv"))
+  {
+    landscanArray <- CSVInput("AVHRR_Landscan_Population_WaterRemoved_", 18, 0, 1999, TRUE)
+    landscan2003to2004Average <- apply(simplify2array(list(landscanArray[,,4], landscanArray[,,5])), 1:2, mean)
+    write.csv(landscan2003to2004Average, "data/csvFiles/AVHRR_Landscan_Population_Average_2003to2004.csv", row.names = FALSE)
+  }
+  
+  #NLCD
+  print("Averaging NLCD Ag Data.....")
+  if(force || !file.exists("data/csvFiles/AVHRR_NLCD_Agriculture_Average_2001and2006.csv"))
+  {
+    NLCDAg2001 <- t(read.matrix("data/csvFiles/AVHRR_NLCDAgriculture_WaterRemoved_2001.csv", sep = ",", skip = 0))
+    NLCDAg2006 <- t(read.matrix("data/csvFiles/AVHRR_NLCDAgriculture_WaterRemoved_2006.csv", sep = ",", skip = 0))
+    NLCDAg2001[is.nan(NLCDAg2001)] <- NA
+    NLCDAg2006[is.nan(NLCDAg2006)] <- NA
     
+    NLCD2001and2006Average <- apply(simplify2array(list(NLCDAg2001, NLCDAg2006)), 1:2, mean)
+    write.csv(NLCD2001and2006Average, "data/csvFiles/AVHRR_NLCD_Agriculture_Average_2001and2006.csv", row.names = FALSE)
+  }
+  
   #detrended data
   print("Detrending NDVI data.....")
   print("Detrending NDVI data, Short Periods.....")
@@ -42,7 +66,7 @@ AVHRRDataGenerator <- function(force = FALSE)
   }
   else
   {
-    NDVIdetrendedDataArray <- CSVInput("AVHRR_DetrendedNDVIShort_", 30, 1, FALSE)
+    NDVIdetrendedDataArray <- CSVInput("AVHRR_DetrendedNDVIShort_", 30, 1, 1988, FALSE)
   }
   
   print("Detrending NDVI data, Long Periods.....")
@@ -57,100 +81,22 @@ AVHRRDataGenerator <- function(force = FALSE)
   }
   else
   {
-    NDVIdetrenddedDataArrayLong <- CSVInput("AVHRR_DetrendedNDVILong_", 30, 1)
+    NDVIdetrenddedDataArrayLong <- CSVInput("AVHRR_DetrendedNDVILong_", 30, 1, 1988)
+  }
+  NDVIdetrendedDataArray1990 <- array(data = NA, dim = c(4587, 2889, 29))
+  if(force || !file.exists("data/csvFiles/AVHRR_DetrendedNDVILong_2018.csv"))
+  {
+    NDVIdetrendedDataArray1990[,,1:29] <- NDVIDetrender(NDVIdataArray, 2:30);
+    for(i in 1:29)
+    {
+      write.csv(NDVIdetrendedDataArray1990[,,i], paste("data/csvFiles/AVHRR_DetrendedNDVI1990to2018_", 1989+i, ".csv", sep=""), row.names = FALSE)
+    }
+  }
+  else
+  {
+    NDVIdetrenddedDataArray1990 <- CSVInput("AVHRR_DetrendedNDVILong1990to2018_", 29, 1, 1988)
   }
 
-  
-  ##synchrony matrices
-  # #NOLA
-  # print("Creating Synchrony Matrices for NOLA.....")
-  # if(!file.exists("data/csvFiles/AVHRR_Synchrony1NOLA.csv"))
-  # {
-  #   synchronyMatrix1DetrendedNOLA <- SynchronyMatrixCalculator(NDVIdetrendedDataArray, c(2800,3200), c(2300,2500), c(1,15), 5)
-  #   write.csv(synchronyMatrix1DetrendedNOLA, "data/csvFiles/AVHRR_Synchrony1NOLA.csv", row.names = FALSE)
-  # }
-  # else
-  # {
-  #   synchronyMatrix1DetrendedNOLA <- read.matrix("data/csvFiles/AVHRR_Synchrony1NOLA.csv", sep=",", skip=1)
-  # }
-  # if(!file.exists("data/csvFiles/AVHRR_Synchrony2NOLA.csv"))
-  # {
-  #   synchronyMatrix2DetrendedNOLA <- SynchronyMatrixCalculator(NDVIdetrendedDataArray, c(2800,3200), c(2300,2500), c(16,30), 5)
-  #   write.csv(synchronyMatrix2DetrendedNOLA, "data/csvFiles/AVHRR_Synchrony2NOLA.csv", row.names = FALSE)
-  # }
-  # else
-  # {
-  #   synchronyMatrix2DetrendedNOLA <- read.matrix("data/csvFiles/AVHRR_Synchrony2NOLA.csv", sep=",", skip=1)
-  # }
-  # if(!file.exists("data/csvFiles/AVHRR_SynchronyLongNOLA.csv"))
-  # {
-  #   synchronyMatrixLongDetrendedNOLA <- SynchronyMatrixCalculator(NDVIdetrendedDataArrayLong, c(2800,3200), c(2300,2500), c(1,30), 5)
-  #   write.csv(synchronyMatrixLongDetrendedNOLA, "data/csvFiles/AVHRR_SynchronyLongNOLA.csv", row.names = FALSE)
-  # }
-  # else
-  # {
-  #   synchronyMatrixLongDetrendedNOLA <- read.matrix("data/csvFiles/AVHRR_SynchronyLongNOLA.csv", sep=",", skip=1)
-  # }
-  # 
-  # #Everglades
-  # print("Creating Synchrony Matrices for Everglades.....")
-  # if(!file.exists("data/csvFiles/AVHRR_Synchrony1Everglades.csv"))
-  # {
-  #   synchronyMatrix1DetrendedEverglades <- SynchronyMatrixCalculator(NDVIdetrendedDataArray, c(3800,4100), c(2600,2800), c(1,15), 5)
-  #   write.csv(synchronyMatrix1DetrendedEverglades, "data/csvFiles/AVHRR_Synchrony1Everglades.csv", row.names = FALSE)
-  # }
-  # else
-  # {
-  #   synchronyMatrix1DetrendedEverglades <- read.matrix("data/csvFiles/AVHRR_Synchrony1Everglades.csv", sep=",", skip=1)
-  # }
-  # if(!file.exists("data/csvFiles/AVHRR_Synchrony2Everglades.csv"))
-  # {
-  #   synchronyMatrix2DetrendedEverglades <- SynchronyMatrixCalculator(NDVIdetrendedDataArray, c(3800,4100), c(2600,2800), c(16,30), 5)
-  #   write.csv(synchronyMatrix2DetrendedEverglades, "data/csvFiles/AVHRR_Synchrony2Everglades.csv", row.names = FALSE)
-  # }
-  # else
-  # {
-  #   synchronyMatrix2DetrendedEverglades <- read.matrix("data/csvFiles/AVHRR_Synchrony2Everglades.csv", sep=",", skip=1)
-  # }
-  # if(!file.exists("data/csvFiles/AVHRR_SynchronyLongEverglades.csv"))
-  # {
-  #   synchronyMatrixLongDetrendedEverglades <- SynchronyMatrixCalculator(NDVIdetrendedDataArrayLong, c(3800,4100), c(2600,2800), c(1,30), 5)
-  #   write.csv(synchronyMatrixLongDetrendedEverglades, "data/csvFiles/AVHRR_SynchronyLongEverglades.csv", row.names = FALSE)
-  # }
-  # else
-  # {
-  #   synchronyMatrixLongDetrendedEverglades <- read.matrix("data/csvFiles/AVHRR_SynchronyLongEverglades.csv", sep=",", skip=1)
-  # }
-  # 
-  # #Central Valley
-  # print("Creating Synchrony Matrices for the Central Valley.....")
-  # if(!file.exists("data/csvFiles/AVHRR_Synchrony1CV.csv"))
-  # {
-  #   synchronyMatrix1DetrendedCV <- SynchronyMatrixCalculator(NDVIdetrendedDataArray, c(50, 450), c(1000,1700), c(1,15), 5, "AVHRR_Synchrony1CV.csv")
-  #   write.csv(synchronyMatrix1DetrendedCV, "data/csvFiles/AVHRR_Synchrony1CV.csv", row.names = FALSE)
-  # }
-  # else
-  # {
-  #   synchronyMatrix1DetrendedCV <- read.matrix("data/csvFiles/AVHRR_Synchrony1CV.csv", sep=",", skip=1)
-  # }
-  # if(!file.exists("data/csvFiles/AVHRR_Synchrony2CV.csv"))
-  # {
-  #   synchronyMatrix2DetrendedCV <- SynchronyMatrixCalculator(NDVIdetrendedDataArray, c(50,450), c(1000,1700), c(16,30), 5, "AVHRR_Synchrony2CV.csv")
-  #   write.csv(synchronyMatrix2DetrendedCV, "data/csvFiles/AVHRR_Synchrony2CV.csv", row.names = FALSE)
-  # }
-  # else
-  # {
-  #   synchronyMatrix2DetrendedCV <- read.matrix("data/csvFiles/AVHRR_Synchrony2CV.csv", sep=",", skip=1)
-  # }
-  # if(!file.exists("data/csvFiles/AVHRR_SynchronyLongCV.csv"))
-  # {
-  #   synchronyMatrixLongDetrendedCV <- SynchronyMatrixCalculator(NDVIdetrendedDataArrayLong, c(50,450), c(1000,1700), c(1,30), 5, "AVHRR_SynchronyLongCV.csv")
-  #   write.csv(synchronyMatrixLongDetrendedCV, "data/csvFiles/AVHRR_SynchronyLongCV.csv", row.names = FALSE)
-  # }
-  # else
-  # {
-  #   synchronyMatrixLongDetrendedCV <- read.matrix("data/csvFiles/AVHRR_SynchronyLongCV.csv", sep=",", skip=1)
-  # }
   print("Creating Synchrony Matrices for the United States of America.....")
   print("Creating Synchrony Matrices for the United States of America, Years 1989 to 2003.....")
   if(force || !file.exists("data/csvFiles/AVHRR_Synchrony1USA.csv"))
@@ -175,67 +121,24 @@ AVHRRDataGenerator <- function(force = FALSE)
   print("Creating Synchrony Matrices for the United States of America, Years 1989 to 2018.....")
   if(force || !file.exists("data/csvFiles/AVHRR_SynchronyLongUSA.csv"))
   {
-    synchronyMatrixLongDetrendedUS <- SynchronyMatrixCalculator(NDVIdetrendedDataArray, 1:30, 5)
+    synchronyMatrixLongDetrendedUS <- SynchronyMatrixCalculator(NDVIdetrendedDataArrayLong, 1:30, 5)
     write.csv(synchronyMatrixLongDetrendedUS, "data/csvFiles/AVHRR_SynchronyLongUSA.csv", row.names = FALSE)
   }
   else
   {
     synchronyMatrixLongDetrendedUS <- read.matrix("data/csvFiles/AVHRR_SynchronyLongUSA.csv", sep=",", skip=1)
   }  
-  ##Transformed Matrices
-  #NOLA
-  # print("Creating Transformed Matrices for NOLA.....")
-  # if(!file.exists("data/csvFiles/AVHRR_Transformed1NOLA.csv"))
-  # {
-  #   transformedMatrix1NOLA <- logitTransform(synchronyMatrix1DetrendedNOLA, 400, 200)
-  #   write.csv(transformedMatrix1NOLA, "data/csvFiles/AVHRR_Transformed1NOLA.csv", row.names = FALSE)
-  # }
-  # if(!file.exists("data/csvFiles/AVHRR_Transformed2NOLA.csv"))
-  # {
-  #   transformedMatrix2NOLA <- logitTransform(synchronyMatrix2DetrendedNOLA, 400, 200)
-  #   write.csv(transformedMatrix2NOLA, "data/csvFiles/AVHRR_Transformed1NOLA.csv", row.names = FALSE)
-  # }
-  # if(!file.exists("data/csvFiles/AVHRR_TransformedLongNOLA.csv"))
-  # {
-  #   transformedMatrixLongNOLA <- logitTransform(synchronyMatrixLongDetrendedNOLA, 400, 200)
-  #   write.csv(transformedMatrixLongNOLA, "data/csvFiles/AVHRR_TransformedLongNOLA.csv", row.names = FALSE)
-  # }
-  # 
-  # #Everglades
-  # print("Creating Transformed Matrices for Everglades.....")
-  # if(!file.exists("data/csvFiles/AVHRR_Transformed1Everglades.csv"))
-  # {
-  #   transformedMatrix1Everglades <- logitTransform(synchronyMatrix1DetrendedEverglades, 300, 200)
-  #   write.csv(transformedMatrix1Everglades, "data/csvFiles/AVHRR_Transformed1Everglades.csv", row.names = FALSE)
-  # }
-  # if(!file.exists("data/csvFiles/AVHRR_Transformed2Everglades.csv"))
-  # {
-  #   transformedMatrix2Everglades <- logitTransform(synchronyMatrix2DetrendedEverglades, 300, 200)
-  #   write.csv(transformedMatrix2Everglades, "data/csvFiles/AVHRR_Transformed2Everglades.csv", row.names = FALSE)
-  # }
-  # if(!file.exists("data/csvFiles/AVHRR_TransformedLongEverglades.csv"))
-  # {
-  #   transformedMatrixLongEverglades <- logitTransform(synchronyMatrixLongDetrendedEverglades, 300, 200)
-  #   write.csv(transformedMatrixLongEverglades, "data/csvFiles/AVHRR_TransformedLongEverglades.csv", row.names = FALSE)
-  # }
-  # 
-  # #Central Valley
-  # print("Creating Transformed Matrices for the Central Valley.....")
-  # if(!file.exists("data/csvFiles/AVHRR_Transformed1CV.csv"))
-  # {
-  #   transformedMatrix1CV <- logitTransform(synchronyMatrix1DetrendedCV, 400, 700)
-  #   write.csv(transformedMatrix1CV, "data/csvFiles/AVHRR_Transformed1CV.csv", row.names = FALSE)
-  # }
-  # if(!file.exists("data/csvFiles/AVHRR_Transformed2CV.csv"))
-  # {
-  #   transformedMatrix2CV <- logitTransform(synchronyMatrix2DetrendedCV, 400, 700)
-  #   write.csv(transformedMatrix2CV, "data/csvFiles/AVHRR_Transformed2CV.csv", row.names = FALSE)
-  # }
-  # if(!file.exists("data/csvFiles/AVHRR_TransformedLongCV.csv"))
-  # {
-  #   transformedMatrixLongCV <- logitTransform(synchronyMatrixLongDetrendedCV, 400, 700)
-  #   write.csv(transformedMatrixLongCV, "data/csvFiles/AVHRR_TransformedLongCV.csv", row.names = FALSE)
-  # }
+  print("Creating Synchrony Matrices for the United States of America, Years 1990 to 2018.....")
+  if(force || !file.exists("data/csvFiles/AVHRR_Synchrony1990to2018USA.csv"))
+  {
+    synchronyMatrix1990to2018DetrendedUS <- SynchronyMatrixCalculator(NDVIdetrendedDataArray1990, 1:29, 5)
+    write.csv(synchronyMatrix1990to2018DetrendedUS, "data/csvFiles/AVHRR_Synchrony1990to2018USA.csv", row.names = FALSE)
+  }
+  else
+  {
+    synchronyMatrix1990to2018DetrendedUS <- read.matrix("data/csvFiles/AVHRR_Synchrony1990to2018USA.csv", sep=",", skip=1)
+  }  
+  
   print("Creating Transformed Matrices for the United States of America....")
   print("Creating Transformed Matrix for the United States of America, Years 1989 to 2003.....")
   if(force || !file.exists("data/csvFiles/AVHRR_Transformed1USA.csv"))
@@ -254,6 +157,11 @@ AVHRRDataGenerator <- function(force = FALSE)
   {
     transformedMatrixLongDetrendedUS <- LogitSynchronyTransform(SynchronyPreTransform(synchronyMatrixLongDetrendedUS))
     write.csv(transformedMatrixLongDetrendedUS, "data/csvFiles/AVHRR_TransformedLongUSA.csv", row.names = FALSE)
+  }
+  if(force || !file.exists("data/csvFiles/AVHRR_TransformedLongUSA1990to2018.csv"))
+  {
+    transformedMatrixLongDetrendedUS1990to2018 <- LogitSynchronyTransform(SynchronyPreTransform(synchronyMatrix1990to2018DetrendedUS))
+    write.csv(transformedMatrixLongDetrendedUS1990to2018, "data/csvFiles/AVHRR_TransformedLongUSA1990to2018.csv")
   }
 
   ##Temporal Averaging NDVI
@@ -276,5 +184,71 @@ AVHRRDataGenerator <- function(force = FALSE)
     NDVItempAveMatrixLong <- NDVITemporalAverage(NDVIdataArray[,,1:30])
     write.csv(NDVItempAveMatrixLong, "data/csvFiles/AVHRR_NDVItempAveMatrixLong.csv", row.names = FALSE)
   }
+  print("Temporally Averaging NDVI, Years 1990 to 2018.....")
+  if(force || !file.exists("data/csvFiles/AVHRR_NDVItempAeMatrix1990to2018.csv"))
+  {
+    NDVItempAveMatrix1990 <- NDVITemporalAverage(NDVIdataArray[,,2:30])
+    write.csv(NDVItempAveMatrix1990, "data/csvFiles/AVHRR_NDVItempAveMatrix1990to2018.csv", row.names = FALSE)
+  }
+  
+  ## Development Index
+  print("Development Index.....")
+  if(force || !file.exists("data/csvFiles/AVHRR_NLCD_Development_Average_2001and2006.csv"))
+  {
+    NLCDDev2001 <- t(read.matrix("data/csvFiles/AVHRR_NLCDDevelopment_WaterRemoved_2001.csv", sep = ",", skip = 0))
+    NLCDDev2006 <- t(read.matrix("data/csvFiles/AVHRR_NLCDDevelopment_WaterRemoved_2006.csv", sep = ",", skip = 0))
+    NLCDDev2001[is.nan(NLCDDev2001)] <- NA
+    NLCDDev2006[is.nan(NLCDDev2006)] <- NA
+    
+    NLCD2001and2006AverageDev <- apply(simplify2array(list(NLCDDev2001, NLCDDev2006)), 1:2, mean)
+    write.csv(NLCD2001and2006AverageDev, "data/csvFiles/AVHRR_NLCD_Development_Average_2001and2006.csv", row.names = FALSE)
+  }
+  
+  ## USGS Elevation Data
+  print("Elevation Data.....")
+  if(force || !file.exists("data/csvFiles/AVHRR_USGS_MeanElevationPrepared.csv") || !file.exists("data/csvFiles/AVHRR_USGS_StandardDeviationPrepared.csv") 
+     || !file.exists("data/csvFiles/AVHRR_USGS_NumElevationPrepared.csv"))
+  {
+    numPoints <- t(read.matrix("data/csvFiles/AVHRR_USGSNumPoints_WaterRemoved.csv", sep = ",", skip = 0))
+    meanElevation <- t(read.matrix("data/csvFiles/AVHRR_USGSMeanElevation_WaterRemoved.csv", sep = ",", skip = 0))
+    sdElevation <- t(read.matrix("data/csvFiles/AVHRR_USGSStandardDeviationElevation_WaterRemoved.csv", sep = ",", skip = 0))
+    numPoints[is.nan(numPoints)] <- NA
+    meanElevation[is.nan(meanElevation)] <- NA
+    sdElevation[is.nan(sdElevation)] <- NA
+    
+    write.csv(numPoints, "data/csvFiles/AVHRR_USGS_NumElevationPrepared.csv", row.names = FALSE)
+    write.csv(meanElevation, "data/csvFiles/AVHRR_USGS_MeanElevationPrepared.csv", row.names = FALSE)
+    write.csv(sdElevation, "data/csvFiles/AVHRR_USGS_StandardDeviationPrepared.csv", row.names = FALSE)
+  }
+  
+  ##AVHRR Matrices
+  print("AVHRR Coordinate Matrices.....")
+  print("AVHRR X Coordinate Matrix.....")
+  if(force || !file.exists("data/csvFiles/AVHRR_X_CoordinateMatrix.csv"))
+  {
+    xMat <- matrix(data = NA, nrow = 2889, ncol = 4587)
+    for(i in 1:2889)
+    {
+      for(j in 1:4587)
+      {
+        xMat[i,j] <- j
+      }
+    }
+    write.csv(xMat, "data/csvFiles/AVHRR_X_CoordinateMatrix.csv", row.names = FALSE)
+  }
+  print("AVHRR Y Coordinate Matrix.....")
+  if(force || !file.exists("data/csvFiles/AVHRR_Y_CoordinateMatrix.csv"))
+  {
+    yMat <- matrix(data = NA, nrow = 2889, ncol = 4587)
+    for(i in 1:2889)
+    {
+      for(j in 1:4587)
+      {
+        yMat[i,j] <- i
+      }
+    }
+    write.csv(yMat, "data/csvFiles/AVHRR_Y_CoordinateMatrix.csv", row.names = FALSE)
+  }
+
   print("Data Processing Complete!")
 }

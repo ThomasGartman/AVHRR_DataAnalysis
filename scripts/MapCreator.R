@@ -6,6 +6,8 @@
 #' @param fileName The name given to the .png file the image is saved on.
 #' @param title The title of the image.
 #' @param numColors The number of colors to have
+#' @param xOffset Where the x coordinates should start counting from
+#' @param yOffset Where the y coordinates should start counting from
 #' 
 #' @return A .png image of the synchronyMatrix in the current working directory.
 #' 
@@ -18,15 +20,17 @@ require("fields")
 require("ggplot2")
 
 source("scripts/MatrixToDataFrame.R")
-MapCreator <- function(data, fileName, title, legendLabel, numColors, brk = NULL)
+MapCreator <- function(data, fileName, title, legendLabel, xOffset, yOffset, numColors, brk = NULL)
 {
   if(is.null(brk))
   {
     brk = seq(from = min(data, na.rm = TRUE), to = max(data, na.rm = TRUE), length.out = numColors + 1)
   }
   
-  dataFrame <- MatrixtoDataFrame(data)
-  ggplot(dataFrame, aes(x = dataFrame$x, y = dataFrame$y, fill = dataFrame$data))  +
+  tempdata <- data
+  tempdata[which(tempdata < brk[[1]])] <- brk[[1]]
+  dataFrame <- MatrixtoDataFrame(tempdata)
+  ggplot(dataFrame, aes(x = dataFrame$x + xOffset, y = dataFrame$y + yOffset, fill = dataFrame$data))  +
     geom_raster() + 
     scale_y_reverse() +
     coord_fixed(ratio = 1, expand = F) + 
@@ -34,7 +38,7 @@ MapCreator <- function(data, fileName, title, legendLabel, numColors, brk = NULL
       colors = colorRampPalette(c("Black", "Blue", "Green", "Yellow", "Red"))(numColors), 
       breaks = brk, 
       limits = c(0, brk[[length(brk)]]), 
-      labels = round(brk, 3),
+      labels = c(expression(""<=0), round(brk[2:length(brk)], 3)),
       na.value = "white",
       guide = guide_colorbar(
         direction = "vertical", 
