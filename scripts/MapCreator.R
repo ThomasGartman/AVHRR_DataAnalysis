@@ -37,9 +37,11 @@ MapCreator <- function(data, fileName, title, legendLabel, xOffset, yOffset, num
     scale_fill_gradientn(
       colors = colorRampPalette(c("Black", "Blue", "Green", "Yellow", "Red"))(numColors), 
       breaks = brk, 
-      limits = c(0, brk[[length(brk)]]), 
-      labels = c(expression(""<=0), round(brk[2:length(brk)], 3)),
-      na.value = "white",
+      #limits = c(0, brk[[length(brk)]]), 
+      #labels = c(expression(""<=0), round(brk[2:length(brk)], 3)),
+      limits = c(brk[[1]], brk[[length(brk)]]), 
+      labels = c(round(brk[1:length(brk)], 3)),
+      na.value = "gray",
       guide = guide_colorbar(
         direction = "vertical", 
         label.position = "right", 

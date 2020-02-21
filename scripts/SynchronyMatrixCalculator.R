@@ -20,6 +20,7 @@
 #'   
 #' Returns:
 #'   A matrix of the synchrony values of the map at the specified region.
+source("scripts/ta_pscor.R")
 SynchronyMatrixCalculator <- function(dataArray, years, radius, coorTest = "pearson")
 {
   #Error Checking - is the dataArray an array of dimension 3?
@@ -52,15 +53,17 @@ SynchronyMatrixCalculator <- function(dataArray, years, radius, coorTest = "pear
     stop("Error in SynchronyMatrixCalculator: radius must be a positive number.")
   }
   #Error checking - coorelation test is pearson, kendall, or spearman
-  if(!is.character(coorTest) || (coorTest != "pearson" && coorTest != "kendall" && coorTest != "spearman"))
+  if(!is.character(coorTest) || (coorTest != "pearson" && coorTest != "kendall" && coorTest != "spearman" && coorTest != "copula"))
   {
-    stop("Error in SynchronyMatrixCalculator: coorelation test must be exactly 'pearson', 'kendall', or 'spearman'.")
+    stop("Error in SynchronyMatrixCalculator: coorelation test must be exactly 'pearson', 'kendall', 'spearman', or 'copula'.")
   }
   
   
   
   #First, preallocate a matrix of dataArray dimensions
   synchronyMatrix <- matrix(data=NA, nrow=dim(dataArray)[[1]], ncol=dim(dataArray)[[2]])
+  lowerMatrix <- matrix(data=NA, nrow=dim(dataArray)[[1]], ncol=dim(dataArray)[[2]])
+  upperMatrix <- matrix(data=NA, nrow=dim(dataArray)[[1]], ncol=dim(dataArray)[[2]])
   
   #Calcuate the coorelation matrix for a specific set of pixels
   for(i in 1:dim(dataArray)[[1]])
@@ -68,7 +71,12 @@ SynchronyMatrixCalculator <- function(dataArray, years, radius, coorTest = "pear
     for(j in 1:dim(dataArray)[[2]])
     {
       count <- 0;
+      lowerCopulaCount <- 0;
+      upperCopulaCount <- 0;
+      
       corNum <- 0;
+      lowerCopulaValue <- 0;
+      upperCopulaValue <- 0;
       #For each pixel, calculate the synchrony of each point around the radius
       for(k in (i-radius):(i+radius))#only consider points in a square around the specific synchrony point
       {
@@ -82,11 +90,28 @@ SynchronyMatrixCalculator <- function(dataArray, years, radius, coorTest = "pear
             }
             if(radius*radius >= (i - k)^2 + (j - m)^2) #check to see if it is within the circle of radius R.
             {
-              correlationVal <- cor(dataArray[i, j,years], dataArray[k, m, years])
-              if(!is.na(correlationVal))
+              if(coorTest != 'copula')
               {
-                corNum <- corNum + correlationVal
-                count <- count + 1
+                correlationVal <- cor(dataArray[i, j,years], dataArray[k, m, years], method = coorTest)
+                if(!is.na(correlationVal))
+                {
+                  corNum <- corNum + correlationVal
+                  count <- count + 1
+                }
+              }
+              else
+              {
+                tails <- ta_pscor(dataArray[i, j,years], dataArray[k, m, years])
+                if(!is.na(tails[[1]]))
+                {
+                  lowerCopulaValue <- tails[[1]]
+                  lowerCopulaCount <- lowerCopulaCount + 1
+                }
+                if(!is.na(tails[[2]]))
+                {
+                  upperCopulaValue <- tails[[2]]
+                  upperCopulaCount <- upperCopulaCount + 1
+                }
               }
             }#end if
           }#end if
@@ -95,18 +120,46 @@ SynchronyMatrixCalculator <- function(dataArray, years, radius, coorTest = "pear
       
       #Now calcuate the average of all of the numbers and store that value in the matrix
       #if count == 0, this means that the pixel is a water pixel
-      if(count == 0)
+      if(coorTest == 'copula')
       {
-        synchronyMatrix[i, j] <- NA
+        if(lowerCopulaCount == 0)
+        {
+          lowerMatrix[i, j] <- NA;
+        }
+        else
+        {
+          lowerMatrix[i, j] <- lowerCopulaValue/(lowerCopulaCount)
+        }
+        if(upperCopulaCount == 0)
+        {
+          upperMatrix[i, j] <- NA;
+        }
+        else
+        {
+          upperMatrix[i, j] <- lowerCopulaValue/(lowerCopulaCount)
+        }
       }
       else
-      {
-        synchronyMatrix[i, j] <- corNum/(count)
+      {      
+        if(count == 0)
+        {
+          synchronyMatrix[i, j] <- NA
+        }
+        else
+        {
+          synchronyMatrix[i, j] <- corNum/(count)
+        }
       }
-      
     }#end for
     print(i)
   }#end for
 
-  return(synchronyMatrix)
+  if(coorTest == 'copula')
+  {
+    return(list(lowerMatrix, upperMatrix)) 
+  }
+  else
+  {
+    return(synchronyMatrix)
+  }
 }
