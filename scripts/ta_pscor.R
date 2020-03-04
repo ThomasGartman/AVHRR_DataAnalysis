@@ -23,6 +23,7 @@ ta_pscor<-function(x,y,perc_tail=0.5){
   corVal <- cor(x, y, method = 'spearman')
   if(is.na(corVal) || corVal < 0)
   {
+    warning("No data points left after pairwise omitting NA's from x and y", call.=T, immediate. = T)
     return(c(NA, NA))
   }
   
