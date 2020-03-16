@@ -18,6 +18,7 @@ require("sjmisc")
 Sourcing scripts:
 ```{r, echo = FALSE}
 source("scripts/AVHRRDataGenerator.R")
+source("scripts/AVHRRStatistics.R")
 ```
 
 \section{Data Generation}
@@ -31,7 +32,9 @@ AVHRRDataGenerator(force = FALSE)
 You can control the variable force to control whether or not you wish to recreate all csv files (TRUE) or just csv files you do not have (FALSE).
 
 \section{Statistics}
-
+```{r}
+AVHRRStatistics()
+```
 \section{Exploratory Map Analysis}
 
 \section{BIL File generation}
