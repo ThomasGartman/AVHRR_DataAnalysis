@@ -1,0 +1,42 @@
+---
+title: "Spatial Synchrony at High Resolutions"
+output:
+  html_document:
+    df_print: paged
+---
+
+\section{Prereqs - R Libraries}
+Ensure you have all libraries listed below:
+```{r, echo = FALSE}
+require("matlabr")
+require("tseries")
+require("stargazer")
+require("fmsb")
+require("sjmisc")
+```
+
+Sourcing scripts:
+```{r, echo = FALSE}
+source("scripts/AVHRRDataGenerator.R")
+```
+
+\section{Data Generation}
+We first need to generate the data for the analysis. Ensure that you have the following files in the data/MATLABfiles folder: "avhrr_1km_pixel_latlon.mat", "avhrr_cover_frac_nlcd2001.mat", "avhrr_cover_frac_nlcd2006.mat", "avhrr_vpm_1989_2018_mxvi.mat", and "landscan_avhrr_grud_2000_2017.mat".
+```{r}
+add_path("~/data")
+add_path("~/scripts")
+run_matlab_script("scripts/MatToCSV.m", display = TRUE)
+AVHRRDataGenerator(force = FALSE)
+```
+You can control the variable force to control whether or not you wish to recreate all csv files (TRUE) or just csv files you do not have (FALSE).
+
+\section{Statistics}
+
+\section{Exploratory Map Analysis}
+
+\section{BIL File generation}
+This MATLAB file will convert all csv files into bil files with an associated hdr file for mapping with ArcMap. Ensure you have template.hdr in your data/bilFiles folder.
+```{r}
+run_matlab_script("scripts/CSVtoBIL.m")
+```
+The geographically accurate maps located in the maps folder were created by hand by loading in the bil file with its hdr file. 
