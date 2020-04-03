@@ -1,5 +1,5 @@
 source("scripts/MapCreator.R")
-source("scripts/SatelliteMap.R")
+
 ########################################
 #Read in Data
 ########################################
@@ -33,8 +33,7 @@ slopeMatrix <- as.matrix(read.csv("data/csvFiles/AVHRR_USGS_StandardDeviationPre
 slopebreaks <- seq(from = min(slopeMatrix, na.rm = TRUE), to = max(slopeMatrix, na.rm = TRUE), length.out = 32 + 1)
 
 #Our transformed synchrony variable as the observed variable
-synchronyMatrix <- as.matrix(read.csv("data/csvFiles/AVHRR_SynchronyLongUSA.csv"), header = FALSE)
-synchronyMatrix1990 <-as.matrix(read.csv("data/csvFiles/AVHRR_Synchrony1990to2018USA.csv"), header = FALSE)
+synchronyMatrix <- as.matrix(read.csv("data/csvFiles/AVHRR_Synchrony1990to2018USA.csv"), header = FALSE)
 
 synchronybreaks <- seq(from = min(0, na.rm = TRUE), to = max(synchronyMatrix, na.rm = TRUE), length.out = 32 + 1)
 
@@ -57,7 +56,6 @@ MapCreator(synchronyMatrixGC, "images/GC_Synchrony1989to2018.png", "GC Synchrony
 MapCreator(developmentMatrixGC, "images/GC_NLCD_DevelopmentIndex_Average_2001and2006.png", "GC NLCD Development Index Average 2001 and 2006", "Index", 2975, 2350, 32)
 MapCreator(elevationMatrixGC, "images/GC_Elevation.png", "GC Elevation Map", "Meters", 2975, 2350, 32, elevationbreaks)
 MapCreator(slopeMatrixGC, "images/GC_Slope.png", "GC Standard Deviation Elevation Map", "Meters", 2975, 2350, 32, slopebreaks)
-SatelliteMap(2976, 2351, 3035, 2380, "Garden City, KS",-.05, 0, "images/GC_Satellite.png", 10)
 
 ########################################
 # New Orleans
@@ -78,7 +76,6 @@ MapCreator(synchronyMatrixNOLA, "images/NOLA_Synchrony1989to2018.png", "NOLA Syn
 MapCreator(developmentMatrixNOLA, "images/NOLA_NLCD_DevelopmentIndex_Average_2001and2006.png", "NOLA NLCD Development Index Average 2001 and 2006", "Index", 2975, 2350, 32)
 MapCreator(elevationMatrixNOLA, "images/NOLA_Elevation.png", "NOLA Elevation Map", "Meters", 2975, 2350, 32, elevationbreaks)
 MapCreator(slopeMatrixNOLA, "images/NOLA_Slope.png", "NOLA Standard Deviation Elevation Map", "Meters", 2975, 2350, 32, slopebreaks)
-SatelliteMap(2976, 2351, 3035, 2380, "New Orleans, LA",-.05, 0, "images/NOLA_Satellite.png", 10)
 
 ########################################
 # San Francisco Bay Area
@@ -93,7 +90,6 @@ MapCreator(landscanMatrixSF, "images/SF_Landscan_Population_2003and2004.png", "S
 MapCreator(temporalAverageNDVIMatrixSF, "images/SF_NDVI_TemporalAverage_1989to2018.png", "SF NDVI Temporal Average 1989 to 2018", "Average NDVI", 90, 1260, 32, NDVIbreaks)
 MapCreator(agricultureNLCDMatrixSF, "images/SF_NLCD_Agriculture_Average_2001and2006.png", "SF NLCD Agricultural Average 2001 and 2006", "Percent Ag", 90, 1260, 32, agbreaks)
 MapCreator(synchronyMatrixSF, "images/SF_Synchrony1989to2018.png", "SF Synchrony 1989 to 2018, Pearson, r = 5", "Synchrony", 90, 1260, 32, synchronybreaks)
-SatelliteMap(91, 1261, 160, 1380, "San Francisco Bay", 0, 0, "images/SF_Satellite.png", 9)
 
 ########################################
 # Central Valley
@@ -107,7 +103,6 @@ MapCreator(landscanMatrixCV, "images/CV_Landscan_Population_2003and2004.png", "C
 MapCreator(temporalAverageNDVIMatrixCV, "images/CV_NDVI_TemporalAverage_1989to2018.png", "CV NDVI Temporal Average 1989 to 2018", "Average NDVI", 150, 1000, 32, NDVIbreaks)
 MapCreator(agricultureNLCDMatrixCV, "images/CV_NLCD_Agriculture_Average_2001and2006.png", "CV NLCD Agricultural Average 2001 and 2006", "Percent Ag", 150, 1000, 32, agbreaks)
 MapCreator(synchronyMatrixCV, "images/CV_Synchrony1989to2018.png", "CV Synchrony 1989 to 2018, Pearson, r = 5", "Synchrony", 150, 1000, 32, synchronybreaks)
-SatelliteMap(151, 1001, 400, 1700, "Sonora, CA", 0, -.2, "images/CV_Satellite.png", 7)
 
 ########################################
 # Salt Lake City
@@ -121,7 +116,6 @@ MapCreator(landscanMatrixSLC, "images/SLC_Landscan_Population_2003and2004.png", 
 MapCreator(temporalAverageNDVIMatrixSLC, "images/SLC_NDVI_TemporalAverage_1989to2018.png", "SLC NDVI Temporal Average 1989 to 2018", "Average NDVI", 1030, 1145, 32, NDVIbreaks)
 MapCreator(agricultureNLCDMatrixSLC, "images/SLC_NLCD_Agriculture_Average_2001and2006.png", "SLC NLCD Agricultural Average 2001 and 2006", "Percent Ag", 1030, 1145, 32, agbreaks)
 MapCreator(synchronyMatrixSLC, "images/SLC_Synchrony1989to2018.png", "SLC Synchrony 1989 to 2018, Pearson, r = 5", "Synchrony", 1030, 1145, 32, synchronybreaks)
-SatelliteMap(1031, 1146, 1075, 1180, "Salt Lake City, UT", 0, 0, "images/SLC_Satellite.png", 10)
 
 ########################################
 # St. Louis, MO
@@ -135,7 +129,6 @@ MapCreator(landscanMatrixSTL, "images/STL_Landscan_Population_2003and2004.png", 
 MapCreator(temporalAverageNDVIMatrixSTL, "images/STL_NDVI_TemporalAverage_1989to2018.png", "STL NDVI Temporal Average 1989 to 2018", "Average NDVI", 2850, 1385, 32, NDVIbreaks)
 MapCreator(agricultureNLCDMatrixSTL, "images/STL_NLCD_Agriculture_Average_2001and2006.png", "STL NLCD Agricultural Average 2001 and 2006", "Percent Ag", 2850, 1385, 32, agbreaks)
 MapCreator(synchronyMatrixSTL, "images/STL_Synchrony1989to2018.png", "STL Synchrony 1989 to 2018, Pearson, r = 5", "Synchrony", 2850, 1385, 32, synchronybreaks)
-SatelliteMap(2851, 1386, 2931, 1435, "St. Louis, MO", 0, 0, "images/STL_Satellite.png", 9)
 
 ########################################
 # Las Vegas
@@ -143,13 +136,12 @@ SatelliteMap(2851, 1386, 2931, 1435, "St. Louis, MO", 0, 0, "images/STL_Satellit
 landscanMatrixLV <- landscanMatrix[676:720, 1591:1650]
 temporalAverageNDVIMatrixLV <- temporalAverageNDVIMatrix1990[676:720, 1591:1650]
 agricultureNLCDMatrixLV <-agricultureNLCDMatrix[676:720, 1591:1650]
-synchronyMatrixLV <- synchronyMatrix1990[676:720, 1591:1650]
+synchronyMatrixLV <- synchronyMatrix[676:720, 1591:1650]
 
 MapCreator(landscanMatrixLV, "images/LV_Landscan_Population_2003and2004.png", "LV Landscan Population Average 2003 and 2004", "Population", 675, 1590, 32)
 MapCreator(temporalAverageNDVIMatrixLV, "images/LV_NDVI_TemporalAverage_1990to2018.png", "LV NDVI Temporal Average 1990 to 2018", "Average NDVI", 675, 1590, 32, NDVIbreaks)
 MapCreator(agricultureNLCDMatrixLV, "images/LV_NLCD_Agriculture_Average_2001and2006.png", "LV NLCD Agricultural Average 2001 and 2006", "Percent Ag", 675, 1590, 32, agbreaks)
 MapCreator(synchronyMatrixLV, "images/LV_Synchrony1990to2018.png", "LV Synchrony 1990 to 2018, Pearson, r = 5", "Synchrony", 675, 1950, 32, synchronybreaks)
-SatelliteMap(676, 1591, 720, 1650, "Las Vegas, NV", 0, 0, "images/LV_Satellite.png", 10)
 
 ########################################
 # Reno
@@ -157,13 +149,12 @@ SatelliteMap(676, 1591, 720, 1650, "Las Vegas, NV", 0, 0, "images/LV_Satellite.p
 landscanMatrixReno <- landscanMatrix[361:381, 1141:1180]
 temporalAverageNDVIMatrixReno <- temporalAverageNDVIMatrix1990[361:381, 1141:1180]
 agricultureNLCDMatrixReno <-agricultureNLCDMatrix[361:381, 1141:1180]
-synchronyMatrixReno <- synchronyMatrix1990[361:381, 1141:1180]
+synchronyMatrixReno <- synchronyMatrix[361:381, 1141:1180]
 
 MapCreator(landscanMatrixReno, "images/Reno_Landscan_Population_2003and2004.png", "Reno Landscan Population Average 2003 and 2004", "Population", 360, 1140, 32)
 MapCreator(temporalAverageNDVIMatrixReno, "images/Reno_NDVI_TemporalAverage_1990to2018.png", "Reno NDVI Temporal Average 1990 to 2018", "Average NDVI", 360, 1140, 32, NDVIbreaks)
 MapCreator(agricultureNLCDMatrixReno, "images/Reno_NLCD_Agriculture_Average_2001and2006.png", "Reno NLCD Agricultural Average 2001 and 2006", "Percent Ag", 360, 1140, 32, agbreaks)
 MapCreator(synchronyMatrixReno, "images/Reno_Synchrony1990to2018.png", "Reno Synchrony 1990 to 2018, Pearson, r = 5", "Synchrony", 360, 1140, 32, synchronybreaks)
-SatelliteMap(361, 1141, 381, 1180, "Reno, NV", 0, 0, "images/Reno_Satellite.png", 10)
 
 ########################################
 # Page
@@ -171,13 +162,12 @@ SatelliteMap(361, 1141, 381, 1180, "Reno, NV", 0, 0, "images/Reno_Satellite.png"
 landscanMatrixPage <- landscanMatrix[1026:1038, 1578:1585]
 temporalAverageNDVIMatrixPage <- temporalAverageNDVIMatrix1990[1026:1038, 1578:1585]
 agricultureNLCDMatrixPage <-agricultureNLCDMatrix[1026:1038, 1578:1585]
-synchronyMatrixPage <- synchronyMatrix1990[1028:1035, 1578:1585]
+synchronyMatrixPage <- synchronyMatrix[1028:1035, 1578:1585]
 
 MapCreator(landscanMatrixPage, "images/Page_Landscan_Population_2003and2004.png", "Page Landscan Population Average 2003 and 2004", "Population", 1025, 1577, 32)
 MapCreator(temporalAverageNDVIMatrixPage, "images/Page_NDVI_TemporalAverage_1990to2018.png", "Page NDVI Temporal Average 1990 to 2018", "Average NDVI", 1025, 1577, 32, NDVIbreaks)
 MapCreator(agricultureNLCDMatrixPage, "images/Page_NLCD_Agriculture_Average_2001and2006.png", "Page NLCD Agricultural Average 2001 and 2006", "Percent Ag", 1025, 1577, 32, agbreaks)
 MapCreator(synchronyMatrixPage, "images/Page_Synchrony1990to2018.png", "Page Synchrony 1990 to 2018, Pearson, r = 5", "Synchrony", 1025, 1577, 32, synchronybreaks)
-SatelliteMap(1026, 1578, 1038, 1585, "Page, AZ", 0, 0, "images/Page_Satellite.png", 12)
 
 ########################################
 # Pheonix
@@ -185,13 +175,12 @@ SatelliteMap(1026, 1578, 1038, 1585, "Page, AZ", 0, 0, "images/Page_Satellite.pn
 landscanMatrixPX <- landscanMatrix[891:990, 1911:1990]
 temporalAverageNDVIMatrixPX <- temporalAverageNDVIMatrix1990[891:990, 1911:1990]
 agricultureNLCDMatrixPX <-agricultureNLCDMatrix[891:990, 1911:1990]
-synchronyMatrixPX <- synchronyMatrix1990[891:990, 1911:1990]
+synchronyMatrixPX <- synchronyMatrix[891:990, 1911:1990]
 
 MapCreator(landscanMatrixPX, "images/PX_Landscan_Population_2003and2004.png", "PX Landscan Population Average 2003 and 2004", "Population", 890, 1910, 32)
 MapCreator(temporalAverageNDVIMatrixPX, "images/PX_NDVI_TemporalAverage_1990to2018.png", "PX NDVI Temporal Average 1990 to 2018", "Average NDVI", 890, 1910, 32, NDVIbreaks)
 MapCreator(agricultureNLCDMatrixPX, "images/PX_NLCD_Agriculture_Average_2001and2006.png", "PX NLCD Agricultural Average 2001 and 2006", "Percent Ag", 890, 1910, 32, agbreaks)
 MapCreator(synchronyMatrixPX, "images/PX_Synchrony1990to2018.png", "PX Synchrony 1990 to 2018, Pearson, r = 5", "Synchrony", 890, 1910, 32, synchronybreaks)
-SatelliteMap(891, 1911, 990, 1990, "Phoenix, AZ", 0, 0, "images/PX_Satellite.png", 9)
 
 ########################################
 # New York City
@@ -205,7 +194,6 @@ MapCreator(landscanMatrixNYC, "images/NYC_Landscan_Population_2003and2004.png", 
 MapCreator(temporalAverageNDVIMatrixNYC, "images/NYC_NDVI_TemporalAverage_1989to2018.png", "NYC NDVI Temporal Average 1989 to 2018", "Average NDVI", 4170, 850, 32, NDVIbreaks)
 MapCreator(agricultureNLCDMatrixNYC, "images/NYC_NLCD_Agriculture_Average_2001and2006.png", "NYC NLCD Agricultural Average 2001 and 2006", "Percent Ag", 4170, 850, 32, agbreaks)
 MapCreator(synchronyMatrixNYC, "images/NYC_Synchrony1989to2018.png", "NYC Synchrony 1989 to 2018, Pearson, r = 5", "Synchrony", 4170, 850, 32, synchronybreaks)
-SatelliteMap(4171, 851, 4250, 910, "New York City, NY", 0, 0, "images/NYC_Satellite.png", 9)
 
 ########################################
 # Chicago
@@ -225,7 +213,6 @@ MapCreator(synchronyMatrixCH, "images/CH_Synchrony1989to2018.png", "CH Synchrony
 MapCreator(developmentNLCDMatrixCH, "images/CH_NLCD_DevelopmentIndex_Average_2001and2006.png", "CH NLCD Development Index Average 2001 and 2006", "Index", 2975, 2350, 32, devbreaks)
 MapCreator(elevationMatrixCH, "images/CH_Elevation.png", "CH Elevation Map", "Meters", 2975, 2350, 32, elevationbreaks)
 MapCreator(slopeMatrixCH, "images/CH_Slope.png", "CH Standard Deviation Elevation Map", "Meters", 2975, 2350, 32, slopebreaks)
-SatelliteMap(3051, 1001, 3095, 1045, "Chicago, IL", 0, 0, "images/CH_Satellite.png", 10)
 
 ########################################
 # Charleston
@@ -239,7 +226,6 @@ MapCreator(landscanMatrixCL, "images/CL_Landscan_Population_2003and2004.png", "C
 MapCreator(temporalAverageNDVIMatrixCL, "images/CL_NDVI_TemporalAverage_1989to2018.png", "CL NDVI Temporal Average 1989 to 2018", "Average NDVI", 3600, 1300, 32, NDVIbreaks)
 MapCreator(agricultureNLCDMatrixCL, "images/CL_NLCD_Agriculture_Average_2001and2006.png", "CL NLCD Agricultural Average 2001 and 2006", "Percent Ag", 3600, 1300, 32, agbreaks)
 MapCreator(synchronyMatrixCL, "images/CL_Synchrony1989to2018.png", "CL Synchrony 1989 to 2018, Pearson, r = 5", "Synchrony", 3600, 1300, 32, synchronybreaks)
-SatelliteMap(3601, 1301, 3650, 1330, "Charleston, WV", 0, 0, "images/CL_Satellite.png", 10)
 
 ########################################
 # Minneapolis
@@ -253,7 +239,6 @@ MapCreator(landscanMatrixMN, "images/MN_Landscan_Population_2003and2004.png", "M
 MapCreator(temporalAverageNDVIMatrixMN, "images/MN_NDVI_TemporalAverage_1989to2018.png", "MN NDVI Temporal Average 1989 to 2018", "Average NDVI", 2550, 700, 32, NDVIbreaks)
 MapCreator(agricultureNLCDMatrixMN, "images/MN_NLCD_Agriculture_Average_2001and2006.png", "MN NLCD Agricultural Average 2001 and 2006", "Percent Ag", 2550, 700, 32, agbreaks)
 MapCreator(synchronyMatrixMN, "images/MN_Synchrony1989to2018.png", "MN Synchrony 1989 to 2018, Pearson, r = 5", "Synchrony", 2550, 700, 32, synchronybreaks)
-SatelliteMap(2551, 701, 2610, 770, "Minneapolis, MN", 0, 0, "images/MN_Satellite.png", 9)
 
 ########################################
 # United States of America
@@ -265,4 +250,3 @@ MapCreator(synchronyMatrix, "images/USA_Synchrony1989to2018.png", "USA Synchrony
 MapCreator(developmentNLCDMatrix, "images/USA_NLCD_DevelopmentIndex_Average_2001and2006.png", "USA NLCD Development Index Average 2001 and 2006", "Index", 0, 0, 32)
 MapCreator(elevationMatrix, "images/USA_Elevation.png", "USA Elevation Map", "Meters", 0, 0, 32)
 MapCreator(slopeMatrix, "images/USA_Slope.png", "USA Standard Deviation Elevation Map", "Meters", 0, 0, 32)
-SatelliteMap(1, 1, 4587, 2889, "United States of America", 0, 0, "images/USA_Satellite.png", 5)

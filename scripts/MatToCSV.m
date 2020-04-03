@@ -62,6 +62,7 @@ waterLocations = pct(:,1);
 waterLocations = reshape(waterLocations, [4587, 2889]);
 waterLocations = transpose(waterLocations);
 disp("Starting data conversion....");
+
 %for the NDVI values
 for k = 1:30
     ndvi = mxvi(:,k);
@@ -76,13 +77,14 @@ for k = 1:30
             end
         end
     end
-    
+
     %make CSV Files
     fileName = char(strcat("AVHRR_NDVI_WaterRemoved_", int2str(k + 1988), ".csv"));
     csvwrite(fileName,ndvi);
     disp(strcat("NDVI: ", int2str(k)));
 end
 
+%For Landscan
 for k = 1:18
     population = double(pop(:,k));
     population = reshape(population, [4587,2889]);

@@ -22,11 +22,9 @@ source("scripts/AVHRRStatistics.R")
 ```
 
 \section{Data Generation}
-We first need to generate the data for the analysis. Ensure that you have the following files in the data/MATLABfiles folder: "avhrr_1km_pixel_latlon.mat", "avhrr_cover_frac_nlcd2001.mat", "avhrr_cover_frac_nlcd2006.mat", "avhrr_vpm_1989_2018_mxvi.mat", and "landscan_avhrr_grud_2000_2017.mat".
+We first need to generate the data for the analysis. 
+
 ```{r}
-add_path("~/data")
-add_path("~/scripts")
-run_matlab_script("scripts/MatToCSV.m", display = TRUE)
 AVHRRDataGenerator(force = FALSE)
 ```
 You can control the variable force to control whether or not you wish to recreate all csv files (TRUE) or just csv files you do not have (FALSE).
@@ -35,11 +33,19 @@ You can control the variable force to control whether or not you wish to recreat
 ```{r}
 AVHRRStatistics()
 ```
-\section{Exploratory Map Analysis}
 
-\section{BIL File generation}
-This MATLAB file will convert all csv files into bil files with an associated hdr file for mapping with ArcMap. Ensure you have template.hdr in your data/bilFiles folder.
+\section{Exploratory Mapping}
 ```{r}
-run_matlab_script("scripts/CSVtoBIL.m")
+source("scripts/GenerateMaps.R")
 ```
-The geographically accurate maps located in the maps folder were created by hand by loading in the bil file with its hdr file. 
+This section generates ggplot2 maps of the data, including synchrony. Notice that these maps are not in Lat/Lon coordinates, but are in fact in AVHRR coordinates. This function is mainly used to generate exploratory maps before putting in the effort to create polished GIS type maps.
+
+\section{Next Steps}
+At this point, you now have all the data and statistics for this project. There are some things you can now do with this information:
+
+\begin{enumerate}
+  \item Alter AVHRRStatistics/GenerateMaps with new scenes.
+  \item Alter AVHRRDataGenerator to include more kinds of data.
+  \item Create Geographically accurate maps using NaToNaN.R then CSVtoBIL.m. This will create Bil files for ArcMap. There will be a 
+  template.hdr that will ensure the correct projections for the data.
+\end{enumerate}

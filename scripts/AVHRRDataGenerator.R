@@ -63,7 +63,7 @@ AVHRRDataGenerator <- function(force = FALSE)
   }
   print("Detrending NDVI data for Chicago.....")
   NDVIdetrendedDataArrayChicago <- array(data = NA, dim = c(4587, 2889, 28))
-  if(force || !file.exists("data/csvFiles/AVHRR_DetrendedNDVILong_Chicago.csv"))
+  if(force || !file.exists("data/csvFiles/AVHRR_DetrendedNDVILong_Chicago_1.csv"))
   {
     NDVIdetrendedDataArrayChicago[,,1:28] <- NDVIDetrender(NDVIdataArray, c(2:21, 23:30));
     for(i in 1:28)
@@ -173,6 +173,12 @@ AVHRRDataGenerator <- function(force = FALSE)
   {
     NDVItempAveMatrix1990 <- NDVITemporalAverage(NDVIdataArray[,,2:30])
     write.csv(NDVItempAveMatrix1990, "data/csvFiles/AVHRR_NDVItempAveMatrix1990to2018.csv", row.names = FALSE)
+  }
+  print("Temporally Averaging NDVI, Years 1990 to 2018, Without 2010.....")
+  if(force || !file.exists("data/csvFiles/AVHRR_NDVItempAeMatrix1990to2018No2010.csv"))
+  {
+    NDVItempAveMatrixNo2010 <- NDVITemporalAverage(NDVIdataArray[,,c(2:21, 23:30)])
+    write.csv(NDVItempAveMatrixNo2010, "data/csvFiles/AVHRR_NDVItempAveMatrix1990to2018No2010.csv", row.names = FALSE)
   }
   
   print("Development Index.....")

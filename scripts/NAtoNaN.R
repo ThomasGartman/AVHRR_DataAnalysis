@@ -1,7 +1,7 @@
 NAtoNaN <- function()
 {
   #Convert all files Na into NaN
-  fileNames <- Sys.glob("data/csvFiles/*.csv")
+  fileNames <- Sys.glob("E:/Gartman/avhrr/AVHRR_DataAnalysis/data/csvFiles/*.csv")
   
   for(fileName in fileNames)
   {

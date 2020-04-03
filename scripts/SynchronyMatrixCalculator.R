@@ -20,7 +20,7 @@
 #'   
 #' Returns:
 #'   A matrix of the synchrony values of the map at the specified region.
-source("scripts/ta_pscor.R")
+source("E:/Gartman/avhrr/AVHRR_DataAnalysis/scripts/ta_pscor.R")
 SynchronyMatrixCalculator <- function(dataArray, years, radius, coorTest = "pearson")
 {
   #Error Checking - is the dataArray an array of dimension 3?
