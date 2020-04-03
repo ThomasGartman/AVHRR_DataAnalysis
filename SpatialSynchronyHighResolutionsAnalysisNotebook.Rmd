@@ -23,21 +23,30 @@ source("scripts/AVHRRStatistics.R")
 ```
 
 \section{Data Generation}
-We first need to generate the data for the analysis. Ensure that you have the following files in the data/MATLABfiles folder: "avhrr_1km_pixel_latlon.mat", "avhrr_cover_frac_nlcd2001.mat", "avhrr_cover_frac_nlcd2006.mat", "avhrr_vpm_1989_2018_mxvi.mat", and "landscan_avhrr_grud_2000_2017.mat".
+We first need to generate the data for the analysis.
 ```{r}
 AVHRRDataGenerator(force = FALSE)
 ```
 You can control the variable force to control whether or not you wish to recreate all csv files (TRUE) or just csv files you do not have (FALSE).
 
 \section{Statistics}
+Creates linear models and more accurate spatial stats for all the drivers.
 ```{r}
 AVHRRStatistics()
 ```
-\section{Exploratory Map Analysis}
 
-\section{BIL File generation}
-This MATLAB file will convert all csv files into bil files with an associated hdr file for mapping with ArcMap. Ensure you have template.hdr in your data/bilFiles folder.
+\section{Exploratory Map Analysis}
 ```{r}
-run_matlab_script("scripts/CSVtoBIL.m")
+source("scripts/GenerateMaps.R")
 ```
-The geographically accurate maps located in the maps folder were created by hand by loading in the bil file with its hdr file. 
+This code should create ggplot2 maps of some of the data in R. Good to visualize results in AVHRR coordinates before spending time converting to Arc.
+
+\section{Next Steps}
+You now have all the data, the statistics, and some R maps for the scenes. You can now do several things:
+
+\begin{enumerate}
+	\item Create Lat/Lon Maps. You need to run NaToNaN.R then CSVToBIL.m to get the correct files. Then you can load in the data into a GIS system. Note that template.hdr will
+	ensure that the data is projected correctly.
+	\item Add new scenes in AVHRRStatistics.R
+	\item Add new data in AVHRRDataGenerator.R
+\end{enumerate} 
