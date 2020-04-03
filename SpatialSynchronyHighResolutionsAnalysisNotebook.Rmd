@@ -8,7 +8,6 @@ output:
 \section{Prereqs - R Libraries}
 Ensure you have all libraries listed below:
 ```{r, echo = FALSE}
-require("matlabr")
 require("tseries")
 require("stargazer")
 require("fmsb")
