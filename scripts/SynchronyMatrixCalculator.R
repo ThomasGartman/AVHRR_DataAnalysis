@@ -102,14 +102,14 @@ SynchronyMatrixCalculator <- function(dataArray, years, radius, coorTest = "pear
               else
               {
                 tails <- ta_pscor(dataArray[i, j,years], dataArray[k, m, years])
-                if(!is.na(tails[[1]]))
+                if(!is.na(tails[1]))
                 {
-                  lowerCopulaValue <- tails[[1]]
+                  lowerCopulaValue <- lowerCopulaValue + tails[1]
                   lowerCopulaCount <- lowerCopulaCount + 1
                 }
-                if(!is.na(tails[[2]]))
+                if(!is.na(tails[2]))
                 {
-                  upperCopulaValue <- tails[[2]]
+                  upperCopulaValue <- upperCopulaValue + tails[2]
                   upperCopulaCount <- upperCopulaCount + 1
                 }
               }
@@ -136,7 +136,7 @@ SynchronyMatrixCalculator <- function(dataArray, years, radius, coorTest = "pear
         }
         else
         {
-          upperMatrix[i, j] <- lowerCopulaValue/(lowerCopulaCount)
+          upperMatrix[i, j] <- upperCopulaValue/(upperCopulaCount)
         }
       }
       else

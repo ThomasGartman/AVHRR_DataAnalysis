@@ -73,7 +73,7 @@ AVHRRDataGenerator <- function(force = FALSE)
   }
   else
   {
-    NDVIdetrendedDataArray1990 <- CSVInput("AVHRR_DetrendedNDVIChicago_", 28, 1, 0)
+    NDVIdetrendedDataArrayChicago <- CSVInput("AVHRR_DetrendedNDVIChicago_", 28, 1, 0)
   }
 
   ##############################################################
@@ -103,7 +103,7 @@ AVHRRDataGenerator <- function(force = FALSE)
   print("Creating Synchrony Matrix for the United States of America, Pearson, No 2010.....")
   if(force || !file.exists("data/csvFiles/AVHRR_SynchronyNo2010USA.csv"))
   {
-    synchronyMatrixNo2010DetrendedUS <- SynchronyMatrixCalculator(NDVIdetrendedDataArray1990, 1:28, 5)
+    synchronyMatrixNo2010DetrendedUS <- SynchronyMatrixCalculator(NDVIdetrendedDataArrayChicago, 1:28, 5)
     write.csv(synchronyMatrixNo2010DetrendedUS, "data/csvFiles/AVHRR_SynchronyNo2010USA.csv", row.names = FALSE)
   }
   else
@@ -113,7 +113,7 @@ AVHRRDataGenerator <- function(force = FALSE)
   print("Creating Synchrony Matrix for the United States of America, Spearman, No 2010.....")
   if(force || !file.exists("data/csvFiles/AVHRR_SynchronySpearmanNo2010USA.csv"))
   {
-    synchronyMatrixNo2010DetrendedUS_Spearman <- SynchronyMatrixCalculator(NDVIdetrendedDataArray1990, 1:28, 5, "spearman")
+    synchronyMatrixNo2010DetrendedUS_Spearman <- SynchronyMatrixCalculator(NDVIdetrendedDataArrayChicago, 1:28, 5, "spearman")
     write.csv(synchronyMatrixNo2010DetrendedUS_Spearman, "data/csvFiles/AVHRR_SynchronySpearmanNo2010USA.csv", row.names = FALSE)
   }
   else
@@ -124,8 +124,8 @@ AVHRRDataGenerator <- function(force = FALSE)
   if(force || !file.exists("data/csvFiles/AVHRR_LowerTailDependence1990to2018USA.csv") || !file.exists("data/csvFiles/AVHRR_UpperTailDependence1990to2018USA.csv"))
   {
     tailedSynchronyMatrices <- SynchronyMatrixCalculator(NDVIdetrendedDataArray1990, 1:29, 5, "copula")
-    lowerTailedSynchronyMatrix <- tailedSynchronyMatrices[1]
-    upperTailedSynchronyMatrix <- tailedSynchronyMatrices[2]
+    lowerTailedSynchronyMatrix <- tailedSynchronyMatrices[[1]]
+    upperTailedSynchronyMatrix <- tailedSynchronyMatrices[[2]]
     
     write.csv(lowerTailedSynchronyMatrix, "data/csvFiles/AVHRR_LowerTailDependence1990to2018USA.csv", row.names = FALSE)
     write.csv(upperTailedSynchronyMatrix, "data/csvFiles/AVHRR_UpperTailDependence1990to2018USA.csv", row.names = FALSE)
