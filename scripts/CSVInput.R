@@ -5,23 +5,30 @@
 #'     1. The data is structured in CSV files, 1 Matrix per CSV file
 #'     2. Each Matrix is in the AVHRR coordinate system
 #'     3. One year represents one matrix.
+#'     
+#'     
+#' Args: 
+#'   pat: common prefix for filenames : each file is a matrix
+#'   numFiles: total number of files to read - an integer
+#'   skipNum: if you want to skip files specify that integer you want to skip
+#'   startYear: starting year for the filenames less by one
+#'   transpose: logical, if True then will transpose the matrix csv file
+#'
+#' Output: 
+#' An array combining all matrices from each year
+
 require("tseries")
-CSVInput <- function(pat, numFiles, skipNum, startYear, transpose=FALSE)
-{
+CSVInput <- function(pat, numFiles, skipNum, startYear, transpose=FALSE){
   #***DAN: use saveRDS or save (probably saveRDS is better) to save the whole 3d array once constructed
   #then you never have to load the csvs again
   
-  dataArray <- array(NA, dim=c(4587, 2889, numFiles))
+  dataArray <- array(NA, dim=c(4587, 2889, numFiles)) # array initiated to store data
   
-  for(i in 1:numFiles)
-  {
+  for(i in 1:numFiles){
     dataFile <- paste("data/csvFiles/", pat, i + startYear, ".csv", sep="")
-    if(transpose)
-    {
+    if(transpose){
       dataArray[,,i] <- t(read.matrix(file=dataFile, sep=",", skip=skipNum))
-    }
-    else
-    {
+    }else{
       dataArray[,,i] <- read.matrix(file=dataFile, sep=",", skip=skipNum)
     }
   }

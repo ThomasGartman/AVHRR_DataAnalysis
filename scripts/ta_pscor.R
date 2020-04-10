@@ -4,7 +4,7 @@
 # negatively associated variables those notions are not applicable.
 
 # Arguments
-# x, y: two numeric vectors (may contain NA's)
+# x, y: two numeric vectors (may contain NA's), but already ranked (using normalize ranking)
 # perc_tail: a number in between (0,0.5] describing the percentage of 
 #            extreme tail used to estimate association (default value= 0.5)
 
@@ -35,7 +35,15 @@ ta_pscor<-function(x,y,perc_tail=0.5){
     
     corVal <- cor(mat[,1], mat[,2], method = 'spearman')
     
-    if(corVal<0){ # for negatively correlated timeseries
+    if(is.na(corVal)==T){
+      
+      # this corVal can be NA if any of mat[,1] or mat[,2] has same value throughout years for a pixel
+      # for example, corVal is NA for NDVIdetrendedDataArray1990[397,1055,] and NDVIdetrendedDataArray1990[402,1055,]
+      lta_pscor<-NA
+      uta_pscor<-NA
+      return(c(lta_pscor,uta_pscor))
+      
+    }else if(corVal<0){ # for negatively correlated timeseries
       
       #warning("Negatively correlated", call.=T, immediate. = T)
       lta_pscor<-NA
@@ -44,8 +52,8 @@ ta_pscor<-function(x,y,perc_tail=0.5){
       
     }else{ # for positively correlated timeseries
       
-      vi<-rank(mat[,1])/(nrow(mat)+1)
-      vj<-rank(mat[,2])/(nrow(mat)+1)
+      vi<-mat[,1]
+      vj<-mat[,2]
       
       #get mean and variance
       vi_mean<-mean(vi)
