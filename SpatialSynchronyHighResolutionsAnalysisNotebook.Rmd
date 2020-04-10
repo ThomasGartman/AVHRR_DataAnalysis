@@ -32,12 +32,12 @@ You can control the variable force to control whether or not you wish to recreat
 \section{Statistics}
 Creates linear models and more accurate spatial stats for all the drivers.
 ```{r}
-AVHRRStatistics()
+#AVHRRStatistics()
 ```
 
 \section{Exploratory Map Analysis}
 ```{r}
-source("scripts/GenerateMaps.R")
+#source("scripts/GenerateMaps.R")
 ```
 This code should create ggplot2 maps of some of the data in R. Good to visualize results in AVHRR coordinates before spending time converting to Arc.
 
