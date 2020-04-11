@@ -57,8 +57,8 @@ AVHRRDataGenerator <- function(force = FALSE){
     NDVIdetrendedDataArray1990[,,1:29] <- NDVIDetrender(NDVIdataArray, 2:30)
     for(i in 1:29){
       write.csv(NDVIdetrendedDataArray1990[,,i], paste("data/csvFiles/AVHRR_DetrendedNDVI1990to2018_", 1989+i, ".csv", sep=""), row.names = FALSE)
-      saveRDS(NDVIdetrendedDataArray1990,"data/csvFiles/NDVIdetrendedDataArray1990to2018.RDS")
     }
+    saveRDS(NDVIdetrendedDataArray1990,"data/csvFiles/NDVIdetrendedDataArray1990to2018.RDS")
   }else{
     NDVIdetrendedDataArray1990 <- readRDS("data/csvFiles/NDVIdetrendedDataArray1990to2018.RDS") #time saving than next line
     #NDVIdetrendedDataArray1990 <- CSVInput(pat="AVHRR_DetrendedNDVI1990to2018_", numFiles=29, skipNum=1, startYear=1989)
@@ -70,9 +70,9 @@ AVHRRDataGenerator <- function(force = FALSE){
     NDVIdetrendedDataArrayChicago[,,1:28] <- NDVIDetrender(NDVIdataArray, c(2:21, 23:30))
     for(i in 1:28){
       write.csv(NDVIdetrendedDataArrayChicago[,,i], paste("data/csvFiles/AVHRR_DetrendedNDVIChicago_", i, ".csv", sep=""), row.names = FALSE)
-      saveRDS(NDVIdetrendedDataArrayChicago,"data/csvFiles/NDVIdetrendedDataArrayChicago1990to2018_except2010.RDS") # actually it is for whole US but we are 
-      # focusing on Chicago
     }
+    saveRDS(NDVIdetrendedDataArrayChicago,"data/csvFiles/NDVIdetrendedDataArrayChicago1990to2018_except2010.RDS") # actually it is for whole US but we are 
+    # focusing on Chicago
   }else{
     NDVIdetrendedDataArrayChicago <- readRDS("data/csvFiles/NDVIdetrendedDataArrayChicago1990to2018_except2010.RDS") #time saving than next line
     #NDVIdetrendedDataArrayChicago <- CSVInput("AVHRR_DetrendedNDVIChicago_", 28, 1, 0)
