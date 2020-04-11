@@ -1,0 +1,287 @@
+---
+title: "Suppmat: running all codes for NDVI project"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,cache.lazy = FALSE) # attention: see documentation for cache.lazy option to cache big matrix
+seed<-101
+source("./scripts/mtime.R")
+```
+
+```{r read_raw_data, echo=F, results="hide", cache=T, cache.extra=list(seed,mtime("scripts/CSVInput.R"))}
+set.seed(seed)
+source("./scripts/CSVInput.R")
+
+#------------- First, prepare AVHRR Coordinate Matrices --------------------------------------------
+
+#------------------ AVHRR X Coordinate Matrix -------------------------------------
+xMat <- matrix(data = NA, nrow = 2889, ncol = 4587)
+for(i in 1:2889){
+  for(j in 1:4587){
+    xMat[i,j] <- j
+  }
+}
+write.csv(xMat, "data/csvFiles/AVHRR_X_CoordinateMatrix.csv", row.names = FALSE)
+saveRDS(xMat, "data/csvFiles/AVHRR_X_CoordinateMatrix.RDS")
+
+#------------------ AVHRR Y Coordinate Matrix -------------------------------------
+yMat <- matrix(data = NA, nrow = 2889, ncol = 4587)
+for(i in 1:2889){
+  for(j in 1:4587){
+    yMat[i,j] <- i
+  }
+}
+write.csv(yMat, "data/csvFiles/AVHRR_Y_CoordinateMatrix.csv", row.names = FALSE)
+saveRDS(yMat, "data/csvFiles/AVHRR_Y_CoordinateMatrix.RDS")
+
+#---------- NOTE: all initially given data in .csv format either have dimension (4587 x 2889) or (2889 x 4587) ------
+
+#------------- Loading in Raw NDVI Data from 1989 to 2018 --------------------------------
+
+NDVIdataArray <- CSVInput(pat = "AVHRR_NDVI_WaterRemoved_", numFiles = 30, skipNum = 0, startYear = 1988, transpose=TRUE)
+saveRDS(NDVIdataArray,"data/csvFiles/NDVIdataArray.RDS")
+
+#------------ Loading Landscan Data from 2000 to 2017 --------------------
+landscanArray <- CSVInput(pat = "AVHRR_Landscan_Population_WaterRemoved_", numFiles = 18, skipNum = 0, startYear = 1999, transpose=TRUE)
+saveRDS(landscanArray,"data/csvFiles/landscanArray.RDS")
+
+#------------ Averaging Landscan Data for year 2003, 2004 ---------------------------------------------
+landscan2003to2004Average <- apply(simplify2array(list(landscanArray[,,4], landscanArray[,,5])), 1:2, mean)
+write.csv(landscan2003to2004Average, "data/csvFiles/AVHRR_Landscan_Population_Average_2003to2004.csv", row.names = FALSE)
+saveRDS(landscan2003to2004Average,"data/csvFiles/AVHRR_Landscan_Population_Average_2003to2004.RDS")
+ 
+#----------------- Loading NLCD Data: year = 2001, 2006 ---------------------
+
+NLCDAg2001 <- t(read.matrix("data/csvFiles/AVHRR_NLCDAgriculture_WaterRemoved_2001.csv", sep = ",", skip = 0))
+NLCDAg2006 <- t(read.matrix("data/csvFiles/AVHRR_NLCDAgriculture_WaterRemoved_2006.csv", sep = ",", skip = 0))
+NLCDAg2001[is.nan(NLCDAg2001)] <- NA
+NLCDAg2006[is.nan(NLCDAg2006)] <- NA
+
+#------------ Averaging NLCD Ag Data : for year 2001, 2006------------------------------    
+NLCD2001and2006Average <- apply(simplify2array(list(NLCDAg2001, NLCDAg2006)), 1:2, mean)
+write.csv(NLCD2001and2006Average, "data/csvFiles/AVHRR_NLCD_Agriculture_Average_2001and2006.csv", row.names = FALSE)
+saveRDS(NLCD2001and2006Average, "data/csvFiles/AVHRR_NLCD_Agriculture_Average_2001and2006.RDS")
+```
+
+```{r detrending_data, echo=F, results="hide", cache=T, cache.extra=list(seed,NDVIdataArray,mtime("scripts/NDVIDetrender.R"))}
+set.seed(seed)
+source("./scripts/NDVIDetrender.R")
+
+# Detrended NDVI Data
+ 
+#------------------------ Detrending NDVI data --------------------
+
+NDVIdetrendedDataArray1990 <- array(data = NA, dim = c(4587, 2889, 29))
+
+NDVIdetrendedDataArray1990[,,1:29] <- NDVIDetrender(NDVIdataArray, 2:30)
+ for(i in 1:29){
+   write.csv(NDVIdetrendedDataArray1990[,,i], 
+               paste("data/csvFiles/AVHRR_DetrendedNDVI1990to2018_", 1989+i, ".csv", sep=""),
+                row.names = FALSE)
+ }
+
+saveRDS(NDVIdetrendedDataArray1990,"data/csvFiles/NDVIdetrendedDataArray1990to2018.RDS")
+  
+#----------- Detrending NDVI data for Chicago: without Year = 2010 -----------------------------
+NDVIdetrendedDataArrayChicago <- array(data = NA, dim = c(4587, 2889, 28))
+ 
+NDVIdetrendedDataArrayChicago[,,1:28] <- NDVIDetrender(NDVIdataArray, c(2:21, 23:30))
+for(i in 1:28){
+      write.csv(NDVIdetrendedDataArrayChicago[,,i], 
+                paste("data/csvFiles/AVHRR_DetrendedNDVIChicago_", i, ".csv", sep=""), 
+                row.names = FALSE)
+}
+saveRDS(NDVIdetrendedDataArrayChicago,
+        "data/csvFiles/NDVIdetrendedDataArrayChicago1990to2018_except2010.RDS") # actually it is 
+                                                                #for whole US but we are focusing on Chicago
+```
+
+```{r norm_ranking_for_detrended_data, echo=F, results="hide", cache=T, cache.extra=list(seed,NDVIdetrendedDataArray1990,mtime("scripts/NormalizedRanking.R"))}
+
+set.seed(seed)
+source("./scripts/NormalizedRanking.R")
+#------------- Applying normalized ranking on detrended data for the USA (1990 to 2018) ----------------
+NDVIdetrendedDataArray1990_NormRanked <- NormalizedRanking(NDVIdetrendedDataArray1990)
+saveRDS(NDVIdetrendedDataArray1990_NormRanked,"data/csvFiles/NDVIdetrendedDataArray1990to2018_NormRanked.RDS")
+```
+
+```{r make_synmat_pearson_1990to2018, echo=F, results="hide", cache=T, cache.extra=list(seed,NDVIdetrendedDataArray1990,mtime("scripts/SynchronyMatrixCalculator.R"),mtime("scripts/ta_pscor.R"))}
+
+set.seed(seed)
+source("./scripts/SynchronyMatrixCalculator.R")
+
+#---------- Generating Synchrony Matrices: Pearson, for detrended NDVI array: 1990 to 2018 ---------------
+
+synchronyMatrix1990to2018DetrendedUS <- SynchronyMatrixCalculator(dataArray=NDVIdetrendedDataArray1990,
+                                                                  dataArrayRanked = NA,
+                                                                  years=1:29, radius=5,
+                                                                  coorTest = "pearson")
+
+write.csv(synchronyMatrix1990to2018DetrendedUS, "data/csvFiles/AVHRR_Synchrony1990to2018USA.csv", row.names = FALSE)
+saveRDS(synchronyMatrix1990to2018DetrendedUS,"data/csvFiles/AVHRR_Synchrony1990to2018USA.RDS")
+```
+
+```{r make_synmat_spearman_1990to2018, echo=F, results="hide", cache=T, cache.extra=list(seed,NDVIdetrendedDataArray1990,mtime("scripts/SynchronyMatrixCalculator.R"),mtime("scripts/ta_pscor.R"))}
+
+set.seed(seed)
+source("./scripts/SynchronyMatrixCalculator.R")
+
+#---------- Generating Synchrony Matrices: Spearman, for detrended NDVI array: 1990 to 2018 ---------------
+
+synchronyMatrix1990to2018DetrendedUS_Spearman <- SynchronyMatrixCalculator(dataArray=NDVIdetrendedDataArray1990,
+                                                                           dataArrayRanked = NA,
+                                                                           years=1:29,radius=5,
+                                                                           coorTest = "spearman")
+
+write.csv(synchronyMatrix1990to2018DetrendedUS_Spearman, 
+          "data/csvFiles/AVHRR_SynchronySpearman1990to2018USA.csv", row.names = FALSE)
+saveRDS(synchronyMatrix1990to2018DetrendedUS_Spearman,"data/csvFiles/AVHRR_SynchronySpearman1990to2018USA.RDS")
+```
+
+```{r make_synmat_pearson_except2010, echo=F, results="hide", cache=T, cache.extra=list(seed,NDVIdetrendedDataArrayChicago,mtime("scripts/SynchronyMatrixCalculator.R"),mtime("scripts/ta_pscor.R"))}
+
+set.seed(seed)
+source("./scripts/SynchronyMatrixCalculator.R")
+
+#---------- Generating Synchrony Matrices: Pearson, for detrended NDVI array: (1990-2018) except 2010 ---------------
+
+synchronyMatrixNo2010DetrendedUS <- SynchronyMatrixCalculator(dataArray=NDVIdetrendedDataArrayChicago,
+                                                                 dataArrayRanked = NA,
+                                                                 years=1:28, radius=5, 
+                                                                 coorTest = "pearson")
+write.csv(synchronyMatrixNo2010DetrendedUS, "data/csvFiles/AVHRR_SynchronyNo2010USA.csv", row.names = FALSE)
+saveRDS(synchronyMatrixNo2010DetrendedUS,"data/csvFiles/AVHRR_SynchronyNo2010USA.RDS")
+```
+
+```{r make_synmat_spearman_except2010, echo=F, results="hide", cache=T, cache.extra=list(seed,NDVIdetrendedDataArrayChicago,mtime("scripts/SynchronyMatrixCalculator.R"),mtime("scripts/ta_pscor.R"))}
+
+set.seed(seed)
+source("./scripts/SynchronyMatrixCalculator.R")
+
+#---------- Generating Synchrony Matrices: Spearman, for detrended NDVI array: (1990-2018) except 2010 ---------------
+
+synchronyMatrixNo2010DetrendedUS_Spearman <- SynchronyMatrixCalculator(dataArray=NDVIdetrendedDataArrayChicago,
+                                                                       dataArrayRanked = NA,
+                                                                       years=1:28, radius=5,
+                                                                       coorTest = "spearman")
+write.csv(synchronyMatrixNo2010DetrendedUS_Spearman, 
+          "data/csvFiles/AVHRR_SynchronySpearmanNo2010USA.csv", row.names = FALSE)
+saveRDS(synchronyMatrixNo2010DetrendedUS_Spearman,"data/csvFiles/AVHRR_SynchronySpearmanNo2010USA.RDS")
+```
+
+```{r make_synmat_copula_1990to2018, echo=F, results="hide", cache=T, cache.extra=list(seed,NDVIdetrendedDataArray1990,NDVIdetrendedDataArray1990_NormRanked,mtime("scripts/SynchronyMatrixCalculator.R"),mtime("scripts/ta_pscor.R"))}
+
+set.seed(seed)
+source("./scripts/SynchronyMatrixCalculator.R")
+
+#---------- Generating Synchrony Matrices: copula based tail asso., for detrended NDVI array: (1990-2018) ---------------
+
+tailedSynchronyMatrices <- SynchronyMatrixCalculator(dataArray=NDVIdetrendedDataArray1990,
+                                                     dataArrayRanked = NDVIdetrendedDataArray1990_NormRanked,
+                                                     years=1:29, radius=5, 
+                                                     coorTest ="copula")
+
+lowerTailedSynchronyMatrix <- tailedSynchronyMatrices[[1]]
+upperTailedSynchronyMatrix <- tailedSynchronyMatrices[[2]]
+    
+saveRDS(tailedSynchronyMatrices,"data/csvFiles/AVHRR_Lower_and_UpperTailDependence1990to2018USA.RDS")
+    
+write.csv(lowerTailedSynchronyMatrix, "data/csvFiles/AVHRR_LowerTailDependence1990to2018USA.csv", row.names = FALSE)
+write.csv(upperTailedSynchronyMatrix, "data/csvFiles/AVHRR_UpperTailDependence1990to2018USA.csv", row.names = FALSE)
+```
+
+```{r transforming_synmat, echo=F, results="hide", cache=T, cache.extra=list(seed,synchronyMatrix1990to2018DetrendedUS,synchronyMatrix1990to2018DetrendedUS_Spearman,synchronyMatrixNo2010DetrendedUS,synchronyMatrixNo2010DetrendedUS_Spearman,lowerTailedSynchronyMatrix,upperTailedSynchronyMatrix,mtime("scripts/LogitSynchronyTransform.R"),mtime("scripts/SynchronyPreTransform.R"))}
+
+set.seed(seed)
+source("./scripts/SynchronyPreTransform.R")
+source("./scripts/LogitSynchronyTransform.R")
+
+# ------------ Transforming Syn mat (Pearson) for USA ---------------------------------------
+transformedMatrixLongDetrendedUS1990to2018 <- LogitSynchronyTransform(SynchronyPreTransform(synchronyMatrix1990to2018DetrendedUS))
+
+saveRDS(transformedMatrixLongDetrendedUS1990to2018,"data/csvFiles/AVHRR_TransformedLongUSA1990to2018.RDS")
+write.csv(transformedMatrixLongDetrendedUS1990to2018, 
+          "data/csvFiles/AVHRR_TransformedLongUSA1990to2018.csv", row.names = FALSE)
+
+# ------------ Transforming Syn mat (Spearman) for USA ---------------------------------------
+transformedMatrixLongDetrendedUS1990to2018_Spearman <- LogitSynchronyTransform(SynchronyPreTransform(synchronyMatrix1990to2018DetrendedUS_Spearman))
+
+saveRDS(transformedMatrixLongDetrendedUS1990to2018_Spearman,"data/csvFiles/AVHRR_TransformedLongUSA1990to2018Spearman.RDS")
+write.csv(transformedMatrixLongDetrendedUS1990to2018_Spearman, 
+          "data/csvFiles/AVHRR_TransformedLongUSA1990to2018Spearman.csv", row.names = FALSE)
+
+# ------------ Transforming Syn mat (Pearson, but excluding data from year = 2010) for USA ---------------------------------------
+transformedMatrixLongDetrendedUSNo2010 <- LogitSynchronyTransform(SynchronyPreTransform(synchronyMatrixNo2010DetrendedUS))
+
+saveRDS(transformedMatrixLongDetrendedUSNo2010,"data/csvFiles/AVHRR_TransformedLongUSANo2010.RDS")
+write.csv(transformedMatrixLongDetrendedUSNo2010, 
+          "data/csvFiles/AVHRR_TransformedLongUSANo2010.csv", row.names = FALSE)
+
+# ------------ Transforming Syn mat (Spearman, but excluding data from year = 2010) for USA ---------------------------------------
+transformedMatrixLongDetrendedUSNo2010_Spearman <- LogitSynchronyTransform(SynchronyPreTransform(synchronyMatrixNo2010DetrendedUS_Spearman))
+
+saveRDS(transformedMatrixLongDetrendedUSNo2010_Spearman, "data/csvFiles/AVHRR_TransformedLongUSANo2010Spearman.RDS")
+write.csv(transformedMatrixLongDetrendedUSNo2010_Spearman, 
+          "data/csvFiles/AVHRR_TransformedLongUSANo2010Spearman.csv", row.names = FALSE)
+
+# ------------ Transforming Syn mat (tail-association) for USA ---------------------------------------
+transformedMatrixLongDetrendedUS1990to2018_Lowertail <- LogitSynchronyTransform(SynchronyPreTransform(lowerTailedSynchronyMatrix))
+transformedMatrixLongDetrendedUS1990to2018_Uppertail <- LogitSynchronyTransform(SynchronyPreTransform(upperTailedSynchronyMatrix))
+
+transformed_tailedSynchronyMatrices<-list(transformed_Lowertail=transformedMatrixLongDetrendedUS1990to2018_Lowertail,
+                                          transformed_Uppertail=transformedMatrixLongDetrendedUS1990to2018_Uppertail)
+  
+saveRDS(transformed_tailedSynchronyMatrices,"data/csvFiles/AVHRR_TransformedLongUSA1990to2018_Lower_and_UpperTailDep.RDS")
+write.csv(transformedMatrixLongDetrendedUS1990to2018_Lowertail, 
+          "data/csvFiles/AVHRR_TransformedLongUSA1990to2018_LowerTailDep.csv", row.names = FALSE)
+write.csv(transformedMatrixLongDetrendedUS1990to2018_Uppertail, 
+          "data/csvFiles/AVHRR_TransformedLongUSA1990to2018_UpperTailDep.csv", row.names = FALSE)
+```
+
+```{r prepare_some_driver_data, echo=F, results="hide", cache=T, cache.extra=list(seed,NDVIdataArray,mtime("scripts/NDVITemporalAverage.R"))}
+
+set.seed(seed)
+source("./scripts/NDVITemporalAverage.R")
+
+#----------- Temporally Averaging NDVI, Years 1990 to 2018 -------------------------------------------
+NDVItempAveMatrix1990 <- NDVITemporalAverage(NDVIdataArray[,,2:30])
+saveRDS(NDVItempAveMatrix1990,"data/csvFiles/AVHRR_NDVItempAveMatrix1990to2018.RDS")
+write.csv(NDVItempAveMatrix1990, "data/csvFiles/AVHRR_NDVItempAveMatrix1990to2018.csv", row.names = FALSE)
+
+#---------------------- Temporally Averaging NDVI, Years 1990 to 2018, Without 2010 -------------------------------------
+NDVItempAveMatrixNo2010 <- NDVITemporalAverage(NDVIdataArray[,,c(2:21, 23:30)])
+saveRDS(NDVItempAveMatrixNo2010,"data/csvFiles/AVHRR_NDVItempAveMatrix1990to2018No2010.RDS")
+write.csv(NDVItempAveMatrixNo2010, "data/csvFiles/AVHRR_NDVItempAveMatrix1990to2018No2010.csv", row.names = FALSE)
+
+#------------------------ Development Index -------------------------------------------------------------------------------------
+NLCDDev2001 <- t(read.matrix("data/csvFiles/AVHRR_NLCDDevelopment_WaterRemoved_2001.csv", sep = ",", skip = 0))
+NLCDDev2006 <- t(read.matrix("data/csvFiles/AVHRR_NLCDDevelopment_WaterRemoved_2006.csv", sep = ",", skip = 0))
+NLCDDev2001[is.nan(NLCDDev2001)] <- NA
+NLCDDev2006[is.nan(NLCDDev2006)] <- NA
+    
+NLCD2001and2006AverageDev <- apply(simplify2array(list(NLCDDev2001, NLCDDev2006)), 1:2, mean)
+write.csv(NLCD2001and2006AverageDev, "data/csvFiles/AVHRR_NLCD_Development_Average_2001and2006.csv", row.names = FALSE)
+saveRDS(NLCD2001and2006AverageDev,"data/csvFiles/AVHRR_NLCD_Development_Average_2001and2006.RDS")
+
+#-------------------- Elevation Data ---------------------------------------------------------------------------------------------
+meanElevation <- t(read.matrix("data/csvFiles/AVHRR_USGSMeanElevation_WaterRemoved.csv", sep = ",", skip = 0))
+sdElevation <- t(read.matrix("data/csvFiles/AVHRR_USGSStandardDeviationElevation_WaterRemoved.csv", sep = ",", skip = 0))
+    
+meanElevation[is.nan(meanElevation)] <- NA
+sdElevation[is.nan(sdElevation)] <- NA
+    
+write.csv(meanElevation, "data/csvFiles/AVHRR_USGS_MeanElevationPrepared.csv", row.names = FALSE)
+write.csv(sdElevation, "data/csvFiles/AVHRR_USGS_StandardDeviationPrepared.csv", row.names = FALSE)
+    
+saveRDS(meanElevation, "data/csvFiles/AVHRR_USGS_MeanElevationPrepared.RDS")
+saveRDS(sdElevation, "data/csvFiles/AVHRR_USGS_StandardDeviationPrepared.RDS")
+```
+
+
+
+
+
+
+
+
