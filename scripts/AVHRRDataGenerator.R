@@ -14,6 +14,7 @@ source("scripts/LogitSynchronyTransform.R")
 source("scripts/CSVInput.R")
 source("scripts/NDVITemporalAverage.R")
 source("scripts/SynchronyPreTransform.R")
+source("scripts/NormalizedRanking.R")
 
 AVHRRDataGenerator <- function(force = FALSE){
   #Raw NDVI data
@@ -82,18 +83,12 @@ AVHRRDataGenerator <- function(force = FALSE){
   ###################################################################################
   print("Applying normalized ranking on detrended data for the USA (1990 to 2018).....")
   if(force || !file.exists("data/csvFiles/NDVIdetrendedDataArray1990to2018_NormRanked.RDS")){
-    NDVIdetrendedDataArray1990_NormRanked <- array(NA, dim=dim(NDVIdetrendedDataArray1990))
-    for(i in 1:dim(NDVIdetrendedDataArray1990)[1]){
-      for(j in 1:dim(NDVIdetrendedDataArray1990)[2]){
-        myvec<-NDVIdetrendedDataArray1990[i,j,]
-        NDVIdetrendedDataArray1990_NormRanked[i,j,]<-rank(myvec)/sum(is.finite(myvec))
-      }
-    }
+    NDVIdetrendedDataArray1990_NormRanked <- NormalizedRanking(NDVIdetrendedDataArray1990)
     saveRDS(NDVIdetrendedDataArray1990_NormRanked,"data/csvFiles/NDVIdetrendedDataArray1990to2018_NormRanked.RDS")
   }else{
     NDVIdetrendedDataArray1990_NormRanked <- readRDS("data/csvFiles/NDVIdetrendedDataArray1990to2018_NormRanked.RDS") 
   }
-  
+ 
   ##############################################################
   # Generating Synchrony Matrices
   ##############################################################
@@ -134,7 +129,7 @@ AVHRRDataGenerator <- function(force = FALSE){
   
   print("Creating Synchrony Matrix for the United States of America, Spearman, No 2010.....")
   if(force || !file.exists("data/csvFiles/AVHRR_SynchronySpearmanNo2010USA.RDS")){
-    synchronyMatrixNo2010DetrendedUS_Spearman <- SynchronyMatrixCalculator(dataArray=NDVIdetrendedDataArray1990, 
+    synchronyMatrixNo2010DetrendedUS_Spearman <- SynchronyMatrixCalculator(dataArray=NDVIdetrendedDataArrayChicago, 
                                                                            dataArrayRanked = NA, 
                                                                            years=1:28, radius=5, coorTest = "spearman")
     write.csv(synchronyMatrixNo2010DetrendedUS_Spearman, "data/csvFiles/AVHRR_SynchronySpearmanNo2010USA.csv", row.names = FALSE)
