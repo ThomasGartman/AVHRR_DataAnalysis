@@ -52,9 +52,9 @@ AVHRRDataGenerator <- function(force = FALSE){
   # Detrended NDVI Data
   ##############################################################
   print("Detrending NDVI data.....")
-  NDVIdetrendedDataArray1990 <- array(data = NA, dim = c(4587, 2889, 29))
+  
   if(force || !file.exists("data/csvFiles/NDVIdetrendedDataArray1990to2018.RDS")){
-    NDVIdetrendedDataArray1990[,,1:29] <- NDVIDetrender(NDVIdataArray, 2:30)
+    NDVIdetrendedDataArray1990 <- NDVIDetrender(NDVIdataArray, 2:30)
     for(i in 1:29){
       write.csv(NDVIdetrendedDataArray1990[,,i], paste("data/csvFiles/AVHRR_DetrendedNDVI1990to2018_", 1989+i, ".csv", sep=""), row.names = FALSE)
     }
@@ -65,9 +65,9 @@ AVHRRDataGenerator <- function(force = FALSE){
   }
   
   print("Detrending NDVI data for Chicago: without Year = 2010.....")
-  NDVIdetrendedDataArrayChicago <- array(data = NA, dim = c(4587, 2889, 28))
+ 
   if(force || !file.exists("data/csvFiles/NDVIdetrendedDataArrayChicago1990to2018_except2010.RDS")){
-    NDVIdetrendedDataArrayChicago[,,1:28] <- NDVIDetrender(NDVIdataArray, c(2:21, 23:30))
+    NDVIdetrendedDataArrayChicago <- NDVIDetrender(NDVIdataArray, c(2:21, 23:30))
     for(i in 1:28){
       write.csv(NDVIdetrendedDataArrayChicago[,,i], paste("data/csvFiles/AVHRR_DetrendedNDVIChicago_", i, ".csv", sep=""), row.names = FALSE)
     }
