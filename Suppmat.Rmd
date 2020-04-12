@@ -75,11 +75,13 @@ source("./scripts/NDVIDetrender.R")
 NDVIdetrendedDataArray1990 <- array(data = NA, dim = c(4587, 2889, 29))
 
 NDVIdetrendedDataArray1990[,,1:29] <- NDVIDetrender(NDVIdataArray, 2:30)
- for(i in 1:29){
-   write.csv(NDVIdetrendedDataArray1990[,,i], 
-               paste("data/csvFiles/AVHRR_DetrendedNDVI1990to2018_", 1989+i, ".csv", sep=""),
-                row.names = FALSE)
- }
+
+# commenting to reduce I/O operation
+# for(i in 1:29){
+#   write.csv(NDVIdetrendedDataArray1990[,,i], 
+#               paste("data/csvFiles/AVHRR_DetrendedNDVI1990to2018_", 1989+i, ".csv", sep=""),
+#                row.names = FALSE)
+# }
 
 saveRDS(NDVIdetrendedDataArray1990,"data/csvFiles/NDVIdetrendedDataArray1990to2018.RDS")
   
@@ -87,11 +89,13 @@ saveRDS(NDVIdetrendedDataArray1990,"data/csvFiles/NDVIdetrendedDataArray1990to20
 NDVIdetrendedDataArrayChicago <- array(data = NA, dim = c(4587, 2889, 28))
  
 NDVIdetrendedDataArrayChicago[,,1:28] <- NDVIDetrender(NDVIdataArray, c(2:21, 23:30))
-for(i in 1:28){
-      write.csv(NDVIdetrendedDataArrayChicago[,,i], 
-                paste("data/csvFiles/AVHRR_DetrendedNDVIChicago_", i, ".csv", sep=""), 
-                row.names = FALSE)
-}
+
+# commenting to reduce I/O operation
+#for(i in 1:28){
+#      write.csv(NDVIdetrendedDataArrayChicago[,,i], 
+#                paste("data/csvFiles/AVHRR_DetrendedNDVIChicago_", i, ".csv", sep=""), 
+#                row.names = FALSE)
+#}
 saveRDS(NDVIdetrendedDataArrayChicago,
         "data/csvFiles/NDVIdetrendedDataArrayChicago1990to2018_except2010.RDS") # actually it is 
                                                                 #for whole US but we are focusing on Chicago
