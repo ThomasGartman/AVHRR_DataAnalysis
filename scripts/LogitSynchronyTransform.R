@@ -14,6 +14,6 @@ LogitSynchronyTransform <- function(data)
     stop("Logit Synchrony Transform Error: Some values greater than 1.")
   }
 
-  return(log10(data/(1-data)))
+  return(log(data/(1-data)))
 }
 
