@@ -4,5 +4,6 @@ data/*
 
 #Except the location file
 !data/dataLocation.txt
+!data/csvFiles/DELETEME.txt
 *.asv
 .Rproj.user
