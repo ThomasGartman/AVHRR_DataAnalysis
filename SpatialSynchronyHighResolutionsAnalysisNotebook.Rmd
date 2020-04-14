@@ -1,8 +1,6 @@
 ---
 title: "Spatial Synchrony at High Resolutions"
-output:
-  html_document:
-    df_print: paged
+output: pdf_document
 ---
 
 \section{Prereqs - R Libraries}
@@ -17,17 +15,17 @@ require("SpatialPack")
 ```
 
 Sourcing scripts:
-```{r, echo = FALSE}
+```{r sourcing_files, echo = FALSE}
 source("scripts/AVHRRDataGenerator.R")
 source("scripts/AVHRRStatistics.R")
 ```
 
 \section{Data Generation}
 We first need to generate the data for the analysis.
-```{r}
-AVHRRDataGenerator(force = FALSE)
+```{r data_generator, echo=F}
+AVHRRDataGenerator(force = TRUE)
 ```
-You can control the variable force to control whether or not you wish to recreate all csv files (TRUE) or just csv files you do not have (FALSE).
+You can control the variable force to control whether or not you wish to recreate all csv/RDS files (TRUE) or just csv/RDS files you do not have (FALSE).
 
 \section{Statistics}
 Creates linear models and more accurate spatial stats for all the drivers.
