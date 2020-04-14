@@ -61,21 +61,32 @@ dim(ndvi2000) #2889 4587 NDVI data is in comperable to lat lon format
 
 # I would prefer na.last = "keep" and then use na.omit = T within my ta_pscor function
 
-set.seed(101)
-z<-array(NA,dim=c(3,4,5))
-z[,,1]<-runif(12)
-z[,,2]<-runif(12)
-z[,,3]<-runif(12)
-z[,,4]<-runif(12)
-z[,,5]<-runif(12)
+#--------------------------------------------------------------------------------------------------
+# To locate which cell index give you std deviation zero for timeseries
 
-a<-lapply(seq(dim(z)[3]), function(x) z[ , , x])
+z<-readRDS("./data/csvFiles/NDVIdetrendedDataArray1990to2018.RDS")
 
-b<-apply(simplify2array(a), 1:2, FUN=function(x){rank(x)/sum(is.finite(x))})
+zm<-apply(z, c(1,2), mean)
 
-a<-apply(z,MARGIN=c(1,2),FUN=function(x){rank(x)/sum(is.finite(x))})
+#z1<-z[301:303,301:303,1]
 
-library(abind)
-asub(z[1,1,])
+#z2<-zm[301:303,301:303]
+
+#indm<-which(z2 < 1e-8,arr.ind=T)
+
+indmat<-which(z[,,1]==zm, arr.ind = T)
+
+nrow(indmat) #675
+
+badmat<-zm
+badmat[!indmat]<-NA
+
+xx<-zm[indmat]
+
+xxt<-as.data.frame(table(xx))
+xxt
+
+
+z[1094,240,]
 
 
