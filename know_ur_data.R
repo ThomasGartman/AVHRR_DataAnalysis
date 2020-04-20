@@ -89,4 +89,32 @@ xxt
 
 z[1094,240,]
 
+###########################################################################
+
+# understand VectorizeMatrices.R using toy example: need to check
+
+vectors <- lapply(list(data1, data2, xmatrix, ymatrix), as.vector) # This line will make a list
+                                                                   # with the values reading along column 
+                                                                   # for each matrix 
+
+alteredVectors <- vectors
+for(i in 1:length(vectors)){
+  alteredVectors[[i]] <- vectors[[i]][!Reduce("|", lapply(vectors, is.na))]
+}
+
+finalVectors <- alteredVectors
+for(i in 1:length(alteredVectors))
+{
+  finalVectors[[i]] <- alteredVectors[[i]][!Reduce("|", lapply(alteredVectors, is.infinite))]
+}
+
+
+
+
+
+
+
+
+
+
 

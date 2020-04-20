@@ -18,69 +18,124 @@ source("scripts/ModelScene.R")
 source("scripts/SpatialMatrixSignificance.R")
 source("scripts/SpatiallyCorrectedModels.R")
 
-AVHRRStatistics <- function()
-{
+AVHRRStatistics <- function(){
+  
   ########################################
-  #Read in Data
+  # Read in Data
   ########################################
+  
   #Coordinates
-  xMatrix <- t(as.matrix(read.csv("data/csvFiles/AVHRR_X_CoordinateMatrix.csv"), header = FALSE))
-  yMatrix <- t(as.matrix(read.csv("data/csvFiles/AVHRR_Y_CoordinateMatrix.csv"), header = FALSE))
+  xMatrix <- t(readRDS("data/csvFiles/AVHRR_X_CoordinateMatrix.RDS"))
+  yMatrix <- t(readRDS("data/csvFiles/AVHRR_Y_CoordinateMatrix.RDS"))
   
   #Predictor 1 - Time Averaged NDVI
-  NDVItempAveMatrixLong <- as.matrix(read.csv("data/csvFiles/AVHRR_NDVItempAveMatrix1990to2018.csv"), header = FALSE)
-  NDVItempAveMatrixNo2010 <- as.matrix(read.csv("data/csvFiles/AVHRR_NDVItempAveMatrix1990to2018No2010.csv"), header = FALSE)
+  NDVItempAveMatrixLong <- readRDS("data/csvFiles/AVHRR_NDVItempAveMatrix1990to2018.RDS")
+  NDVItempAveMatrixNo2010 <- readRDS("data/csvFiles/AVHRR_NDVItempAveMatrix1990to2018No2010.RDS")
   
   #Predictor 2 - Population
-  LandscanPopulation <- as.matrix(read.csv("data/csvFiles/AVHRR_Landscan_2004.csv"))
+  #LandscanPopulation <- as.matrix(read.csv("data/csvFiles/AVHRR_Landscan_2004.csv")) # why only 2004? should not it be avg of (2003,2004)
   
+  # possible bug: sometimes forget adding header =F in read.csv, dim = 4587 by 2888 (when header =T), but 4587 by 2889 (when header =F)
+  
+  LandscanPopulationArray <- readRDS("data/csvFiles/landscanArray.RDS")
+  LandscanPopulation <- LandscanPopulationArray[,,5] # for 2004
+ 
   #Predictor 3 - Agriculture
-  NLCDAgriculture <- as.matrix(read.csv("data/csvFiles/AVHRR_NLCD_Agriculture_Average_2001and2006.csv"))
+  NLCDAgriculture <- readRDS("data/csvFiles/AVHRR_NLCD_Agriculture_Average_2001and2006.RDS")
   
   #Predictor 4 - Development
-  developmentNLCDMatrix <- as.matrix(read.csv("data/csvFiles/AVHRR_NLCD_Development_Average_2001and2006.csv"), header = FALSE)
+  developmentNLCDMatrix <- readRDS("data/csvFiles/AVHRR_NLCD_Development_Average_2001and2006.RDS")
   
   #Predictor 5 - Elevation
-  elevationMatrix <- as.matrix(read.csv("data/csvFiles/AVHRR_USGS_MeanElevationPrepared.csv"), header = FALSE)
+  elevationMatrix <- readRDS("data/csvFiles/AVHRR_USGS_MeanElevationPrepared.RDS")
   
   #Predictor 6 - Change in Elevation
-  slopeMatrix <- as.matrix(read.csv("data/csvFiles/AVHRR_USGS_StandardDeviationPrepared.csv"), header = FALSE)
+  slopeMatrix <- readRDS("data/csvFiles/AVHRR_USGS_StandardDeviationPrepared.RDS")
   
   #Our transformed synchrony variable as the observed variable
-  transformedMatrixPearson <- as.matrix(read.csv("data/csvFiles/AVHRR_TransformedLongUSA1990to2018.csv"), header = FALSE)
-  transformedMatrixSpearman <- as.matrix(read.csv("data/csvFiles/AVHRR_TransformedLongUSA1990to2018Spearman.csv"), header = FALSE)
-  transformedMatrixPearsonNo2010 <- as.matrix(read.csv("data/csvFiles/AVHRR_TransformedLongUSANo2010.csv"), header = FALSE)
-  transformedMatrixSpearmanNo2010 <- as.matrix(read.csv("data/csvFiles/AVHRR_TransformedLongUSANo2010Spearman.csv"), header = FALSE)
+  transformedMatrixPearson <- readRDS("data/csvFiles/AVHRR_TransformedLongUSA1990to2018.RDS")
+  transformedMatrixSpearman <- readRDS("data/csvFiles/AVHRR_TransformedLongUSA1990to2018Spearman.RDS")
+  transformedMatrixPearsonNo2010 <- readRDS("data/csvFiles/AVHRR_TransformedLongUSANo2010.RDS")
+  transformedMatrixSpearmanNo2010 <- readRDS("data/csvFiles/AVHRR_TransformedLongUSANo2010Spearman.RDS")
   
   drivers <- list(NDVItempAveMatrixLong, LandscanPopulation, NLCDAgriculture, developmentNLCDMatrix, elevationMatrix, slopeMatrix)
   driversNo2010 <- list(NDVItempAveMatrixNo2010, LandscanPopulation, NLCDAgriculture, developmentNLCDMatrix, elevationMatrix, slopeMatrix)
+  
   ########################################
   # Linear OLS Models
   ########################################
-  CLLinearModel <- ModelScene(transformedMatrixPearson[3601:3650, 1301:1330], NDVItempAveMatrixLong[3601:3650, 1301:1330], LandscanPopulation[3601:3650, 1301:1330], NLCDAgriculture[3601:3650, 1301:1330])
-  STLLinearModel <- ModelScene(transformedMatrixPearson[2851:2931, 1386:1435], NDVItempAveMatrixLong[2851:2931, 1386:1435], LandscanPopulation[2851:2931, 1386:1435], NLCDAgriculture[2851:2931, 1386:1435])
-  MNLinearModel <- ModelScene(transformedMatrixPearson[2551:2610, 701:770], NDVItempAveMatrixLong[2551:2610, 701:770], LandscanPopulation[2551:2610, 701:770], NLCDAgriculture[2551:2610, 701:770])
-  SLCLinearModel <- ModelScene(transformedMatrixPearson[1031:1075, 1146:1180], NDVItempAveMatrixLong[1031:1075, 1146:1180], LandscanPopulation[1031:1075, 1146:1180], NLCDAgriculture[1031:1075, 1146:1180])
-  LVLinearModel <- ModelScene(transformedMatrixPearson[676:720, 1591:1650], NDVItempAveMatrixLong[676:720, 1591:1650], LandscanPopulation[676:720, 1591:1650], NLCDAgriculture[676:720, 1591:1650])
-  PageLinearModel <- ModelScene(transformedMatrixPearson[1028:1035, 1578:1585], NDVItempAveMatrixLong[1028:1035, 1578:1585], LandscanPopulation[1028:1035, 1578:1585], NLCDAgriculture[1028:1035, 1578:1585])
-  PXLinearModel <- ModelScene(transformedMatrixPearson[891:990, 1911:1990], NDVItempAveMatrixLong[891:990, 1911:1990], LandscanPopulation[891:990, 1911:1990], NLCDAgriculture[891:990, 1911:1990])
-  RenoLinearModel <- ModelScene(transformedMatrixPearson[361:381, 1141:1180], NDVItempAveMatrixLong[361:381, 1141:1180], LandscanPopulation[361:381, 1141:1180], NLCDAgriculture[361:381, 1141:1180])
-  CHLinearModel <- ModelScene(transformedMatrixPearson[3051:3095, 1001:1045], NDVItempAveMatrixLong[3051:3095, 1001:1045], LandscanPopulation[3051:3095, 1001:1045], NLCDAgriculture[3051:3095, 1001:1045])
-  NOLALinearModel <- ModelScene(transformedMatrixPearson[2976:3035, 2351:2380], NDVItempAveMatrixLong[2976:3035, 2351:2380], LandscanPopulation[2976:3035, 2351:2380], NLCDAgriculture[2976:3035, 2351:2380])
-  NYCLinearModel <- ModelScene(transformedMatrixPearson[4171:4250, 851:910], NDVItempAveMatrixLong[4171:4250, 851:910], LandscanPopulation[4171:4250, 851:910], NLCDAgriculture[4171:4250, 851:910])
-  SFLinearModel <- ModelScene(transformedMatrixPearson[91:160, 1261:1380], NDVItempAveMatrixLong[91:160, 1261:1380], LandscanPopulation[91:160, 1261:1380], NLCDAgriculture[91:160, 1261:1380])
+  
+  #--------------- first choose some co-ord range for target zones ------------------
+  
+  # Interior Cities
+  xy_CL <- list(x=c(3601:3650),y=c(1301:1330)) # around Charleston, WV
+  xy_STL <- list(x=c(2851:2931),y=c(1386:1435)) # around St. Louis, MO
+  xy_MN <- list(x=c(2551:2610),y=c(701:770)) # around Minneapolis, MN
+  xy_SLC <- list(x=c(1031:1075),y=c(1146:1180)) # around Salt lake city, UT
+  
+  # Desert Cities
+  xy_LV <- list(x=c(676:720),y=c(1591:1650)) # around Las Vegas, NV
+  xy_PG <- list(x=c(1028:1035),y=c(1578:1585)) # around Page, AZ
+  xy_PX <- list(x=c(891:990),y=c(1911:1990)) # around Phoenix, AZ
+  xy_RN <- list(x=c(361:381),y=c(1141:1180)) # around Reno, NV
+  
+  # Coastal Cities
+  xy_CH <- list(x=c(3051:3095),y=c(1001:1045)) # around Chicago, IL
+  xy_NOLA <- list(x=c(2976:3035),y=c(2351:2380)) # around New Orleans, LA
+  xy_NYC <- list(x=c(4171:4250),y=c(851:910)) # around New York City, NY
+  xy_SF <- list(x=c(91:160),y=c(1261:1380)) # around San Francisco, CA
+  
+  #--------------- Now, make linear model for the target zones ------------------
+  
+  # Interior Cities
+  CLLinearModel <- ModelScene(transformedMatrixPearson[xy_CL$x, xy_CL$y], NDVItempAveMatrixLong[xy_CL$x, xy_CL$y], 
+                              LandscanPopulation[xy_CL$x, xy_CL$y], NLCDAgriculture[xy_CL$x, xy_CL$y])
+  STLLinearModel <- ModelScene(transformedMatrixPearson[xy_STL$x, xy_STL$y], NDVItempAveMatrixLong[xy_STL$x, xy_STL$y], 
+                               LandscanPopulation[xy_STL$x, xy_STL$y], NLCDAgriculture[xy_STL$x, xy_STL$y])
+  MNLinearModel <- ModelScene(transformedMatrixPearson[xy_MN$x, xy_MN$y], NDVItempAveMatrixLong[xy_MN$x, xy_MN$y], 
+                              LandscanPopulation[xy_MN$x, xy_MN$y], NLCDAgriculture[xy_MN$x, xy_MN$y])
+  SLCLinearModel <- ModelScene(transformedMatrixPearson[xy_SLC$x, xy_SLC$y], NDVItempAveMatrixLong[xy_SLC$x, xy_SLC$y], 
+                               LandscanPopulation[xy_SLC$x, xy_SLC$y], NLCDAgriculture[xy_SLC$x, xy_SLC$y])
+  
+  # Desert Cities
+  LVLinearModel <- ModelScene(transformedMatrixPearson[xy_LV$x, xy_LV$y], NDVItempAveMatrixLong[xy_LV$x, xy_LV$y], 
+                              LandscanPopulation[xy_LV$x, xy_LV$y], NLCDAgriculture[xy_LV$x, xy_LV$y])
+  PageLinearModel <- ModelScene(transformedMatrixPearson[xy_PG$x, xy_PG$y], NDVItempAveMatrixLong[xy_PG$x, xy_PG$y], 
+                                LandscanPopulation[xy_PG$x, xy_PG$y], NLCDAgriculture[xy_PG$x, xy_PG$y])
+  PXLinearModel <- ModelScene(transformedMatrixPearson[xy_PX$x, xy_PX$y], NDVItempAveMatrixLong[xy_PX$x, xy_PX$y], 
+                              LandscanPopulation[xy_PX$x, xy_PX$y], NLCDAgriculture[xy_PX$x, xy_PX$y])
+  RenoLinearModel <- ModelScene(transformedMatrixPearson[xy_RN$x, xy_RN$y], NDVItempAveMatrixLong[xy_RN$x, xy_RN$y], 
+                                LandscanPopulation[xy_RN$x, xy_RN$y], NLCDAgriculture[xy_RN$x, xy_RN$y])
+  
+  # Coastal Cities
+  CHLinearModel <- ModelScene(transformedMatrixPearson[xy_CH$x, xy_CH$y], NDVItempAveMatrixLong[xy_CH$x, xy_CH$y], 
+                              LandscanPopulation[xy_CH$x, xy_CH$y], NLCDAgriculture[xy_CH$x, xy_CH$y])
+  NOLALinearModel <- ModelScene(transformedMatrixPearson[xy_NOLA$x, xy_NOLA$y], NDVItempAveMatrixLong[xy_NOLA$x, xy_NOLA$y], 
+                                LandscanPopulation[xy_NOLA$x, xy_NOLA$y], NLCDAgriculture[xy_NOLA$x, xy_NOLA$y])
+  NYCLinearModel <- ModelScene(transformedMatrixPearson[xy_NYC$x, xy_NYC$y], NDVItempAveMatrixLong[xy_NYC$x, xy_NYC$y], 
+                               LandscanPopulation[xy_NYC$x, xy_NYC$y], NLCDAgriculture[xy_NYC$x, xy_NYC$y])
+  SFLinearModel <- ModelScene(transformedMatrixPearson[xy_SF$x, xy_SF$y], NDVItempAveMatrixLong[xy_SF$x, xy_SF$y], 
+                              LandscanPopulation[xy_SF$x, xy_SF$y], NLCDAgriculture[xy_SF$x, xy_SF$y])
+  
+  #---------------- Now, calculate VIF (variation inflation factor to detect multi-collinearity) ----------------------------
   
   VIFInterior <- as.vector(c(VIF(CLLinearModel), VIF(STLLinearModel), VIF(MNLinearModel), VIF(SLCLinearModel)))
   VIFDesert <- as.vector(c(VIF(LVLinearModel), VIF(PageLinearModel), VIF(PXLinearModel), VIF(RenoLinearModel)))
   VIFCoastal <- as.vector(c(VIF(CHLinearModel), VIF(NOLALinearModel), VIF(NYCLinearModel), VIF(SFLinearModel)))
   
+  #-------------------- Now, make a summary from the model results for each target zone ----------------------------------------
+  
+  # Interior Cities
   stargazer(CLLinearModel, STLLinearModel, MNLinearModel, SLCLinearModel, 
             title = "Linear Models for Interior Cities", align = TRUE,
             column.sep.width = "-5pt", omit.stat = "f",
             column.labels = c("Charleston, WV", "Kansas City, MO", "Minneapolis, MN", "Salt Lake City, UT"),
             covariate.labels=c("NDVI", "Population", "Agriculture"),
             dep.var.labels = "Logit Transformed Synchrony")
+  
   stargazer(VIFInterior, title = "VIF for Interior Cities",  summary = FALSE)
+  
+  # Desert Cities
   stargazer(LVLinearModel, PageLinearModel, PXLinearModel, RenoLinearModel, 
             title = "Linear Models for Desert Cities", align = TRUE,
             column.sep.width = "-5pt", omit.stat = "f",
@@ -88,6 +143,8 @@ AVHRRStatistics <- function()
             covariate.labels=c("NDVI", "Population", "Agriculture"),
             dep.var.labels = "Logit Transformed Synchrony")
   stargazer(VIFDesert, title = "VIF for Desert Cities", summary = FALSE)
+  
+  # Coastal Cities
   stargazer(CHLinearModel, NOLALinearModel, NYCLinearModel, SFLinearModel,
             title = "Linear Models for Coastal Cities", align = TRUE,
             column.sep.width = "-5pt", omit.stat = "f",
@@ -99,234 +156,424 @@ AVHRRStatistics <- function()
   ##########################################
   # Spatially Corrected Models 
   ##########################################
+  
   Categories <- c("Max Temporal Average NDVI", "Landscan Population", "NLCD Percent Agriculture", "NLCD Development Index", "Elevation", "Slope")
   
-  CharlestonPearson <- SpatiallyCorrectedModels(transformedMatrixPearson, drivers, xMatrix, yMatrix, 3601:3650, 1301:1330)
-  Charleston_PearsonCorrelation <- CharlestonPearson[[1]]
-  Charleston_PearsonPValue <- CharlestonPearson[[2]]
+  #----------- Interior Cities: for Pearson and SPearman based correlation matrices --------------
   
-  CharlestonSpearman <- SpatiallyCorrectedModels(transformedMatrixSpearman, drivers, xMatrix, yMatrix, 3601:3650, 1301:1330)
-  Charleston_SpearmanCorrelation <- CharlestonSpearman[[1]]
-  Charleston_SpearmanPValue <- CharlestonSpearman[[2]]
+  # Charleston, WV
+  CharlestonPearson <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearson, 
+                                                drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                xrange = xy_CL$x, yrange = xy_CL$y)
+  Charleston_PearsonCorrelation <- CharlestonPearson$correlation
+  Charleston_PearsonPValue <- CharlestonPearson$pvalue
   
-  ChicagoPearson <- SpatiallyCorrectedModels(transformedMatrixPearson, drivers, xMatrix, yMatrix, 3051:3095, 1001:1045)
-  Chicago_PearsonCorrelation <- ChicagoPearson[[1]]
-  Chicago_PearsonPValue <- ChicagoPearson[[2]]
+  CharlestonSpearman <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearman, 
+                                                 drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                 xrange = xy_CL$x, yrange = xy_CL$y)
+  Charleston_SpearmanCorrelation <- CharlestonSpearman$correlation
+  Charleston_SpearmanPValue <- CharlestonSpearman$pvalue
   
-  ChicagoSpearman <- SpatiallyCorrectedModels(transformedMatrixSpearman, drivers, xMatrix, yMatrix, 3051:3095, 1001:1045)
-  Chicago_SpearmanCorrelation <- ChicagoSpearman[[1]]
-  Chicago_SpearmanPValue <- ChicagoSpearman[[2]]
+  # Kansas City, MO 
+  SaintLouisPearson <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearson, 
+                                                drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                xrange = xy_STL$x, yrange = xy_STL$y)
+  SaintLouis_PearsonCorrelation <- SaintLouisPearson$correlation
+  SaintLouis_PearsonPValue <- SaintLouisPearson$pvalue
   
-  LasVegasPearson <- SpatiallyCorrectedModels(transformedMatrixPearson, drivers, xMatrix, yMatrix, 676:720, 1591:1610)
-  LasVegas_PearsonCorrelation <- LasVegasPearson[[1]]
-  LasVegas_PearsonPValue <- LasVegasPearson[[2]]
+  SaintLouisSpearman <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearman, 
+                                                 drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                 xrange = xy_STL$x, yrange = xy_STL$y)
+  SaintLouis_SpearmanCorrelation <- SaintLouisSpearman$correlation
+  SaintLouis_SpearmanPValue <- SaintLouisSpearman$pvalue
   
-  LasVegasSpearman <- SpatiallyCorrectedModels(transformedMatrixSpearman, drivers, xMatrix, yMatrix, 676:720, 1591:1610)
-  LasVegas_SpearmanCorrelation <- LasVegasSpearman[[1]]
-  LasVegas_SpearmanPValue <- LasVegasSpearman[[2]]
+  #Minneapolis, MN 
+  MinneapolisPearson <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearson, 
+                                                 drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                 xrange = xy_MN$x, yrange = xy_MN$y)
+  Minneapolis_PearsonCorrelation <- MinneapolisPearson$correlation
+  Minneapolis_PearsonPValue <- MinneapolisPearson$pvalue
   
-  MinneapolisPearson <- SpatiallyCorrectedModels(transformedMatrixPearson, drivers, xMatrix, yMatrix, 2551:2610, 701:770)
-  Minneapolis_PearsonCorrelation <- MinneapolisPearson[[1]]
-  Minneapolis_PearsonPValue <- MinneapolisPearson[[2]]
+  MinneapolisSpearman <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearman, 
+                                                  drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                  xrange = xy_MN$x, yrange = xy_MN$y)
+  Minneapolis_SpearmanCorrelation <- MinneapolisSpearman$correlation
+  Minneapolis_SpearmanPValue <- MinneapolisSpearman$pvalue
   
-  MinneapolisSpearman <- SpatiallyCorrectedModels(transformedMatrixSpearman, drivers, xMatrix, yMatrix, 2551:2610, 701:770)
-  Minneapolis_SpearmanCorrelation <- MinneapolisSpearman[[1]]
-  Minneapolis_SpearmanPValue <- MinneapolisSpearman[[2]]
+  # Salt Lake City, UT
+  SaltLakeCityPearson <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearson, 
+                                                  drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                  xrange = xy_SLC$x, yrange = xy_SLC$y)
+  SaltLakeCity_PearsonCorrelation <- SaltLakeCityPearson$correlation
+  SaltLakeCity_PearsonPValue <- SaltLakeCityPearson$pvalue
   
-  NewOrleansPearson <- SpatiallyCorrectedModels(transformedMatrixPearson, drivers, xMatrix, yMatrix, 2976:3035, 2351:2380)
-  NewOrleans_PearsonCorrelation <- NewOrleansPearson[[1]]
-  NewOrleans_PearsonPValue <- NewOrleansPearson[[2]]
+  SaltLakeCitySpearman <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearman, 
+                                                   drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                   xrange = xy_SLC$x, yrange = xy_SLC$y)
+  SaltLakeCity_SpearmanCorrelation <- SaltLakeCitySpearman$correlation
+  SaltLakeCity_SpearmanPValue <- SaltLakeCitySpearman$pvalue
   
-  NewOrleansSpearman <- SpatiallyCorrectedModels(transformedMatrixSpearman, drivers, xMatrix, yMatrix, 2976:3035, 2351:2380)
-  NewOrleans_SpearmanCorrelation <- NewOrleansSpearman[[1]]
-  NewOrleans_SpearmanPValue <- NewOrleansSpearman[[2]]
+  #----------- Desert Cities: for Pearson and SPearman based correlation matrices --------------
   
-  NewYorkPearson <- SpatiallyCorrectedModels(transformedMatrixPearson, drivers, xMatrix, yMatrix, 4171:4250, 851:910)
-  NewYork_PearsonCorrelation <- NewYorkPearson[[1]]
-  NewYork_PearsonPValue <- NewYorkPearson[[2]]
+  # Las Vegas, NV 
+  LasVegasPearson <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearson, 
+                                              drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                              xrange = xy_LV$x, yrange = xy_LV$y)
+  LasVegas_PearsonCorrelation <- LasVegasPearson$correlation
+  LasVegas_PearsonPValue <- LasVegasPearson$pvalue
   
-  NewYorkSpearman <- SpatiallyCorrectedModels(transformedMatrixSpearman, drivers, xMatrix, yMatrix, 4171:4250, 851:910)
-  NewYork_SpearmanCorrelation <- NewYorkSpearman[[1]]
-  NewYork_SpearmanPValue <- NewYorkSpearman[[2]]
+  LasVegasSpearman <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearman, 
+                                               drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                               xrange = xy_LV$x, yrange = xy_LV$y)
+  LasVegas_SpearmanCorrelation <- LasVegasSpearman$correlation
+  LasVegas_SpearmanPValue <- LasVegasSpearman$pvalue
   
-  PagePearson <- SpatiallyCorrectedModels(transformedMatrixPearson, drivers, xMatrix, yMatrix, 1028:1035, 1578:1585)
-  Page_PearsonCorrelation <- PagePearson[[1]]
-  Page_PearsonPValue <- PagePearson[[2]]
+  # Page, AZ 
+  PagePearson <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearson, 
+                                          drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                          xrange = xy_PG$x, yrange = xy_PG$y)
+  Page_PearsonCorrelation <- PagePearson$correlation
+  Page_PearsonPValue <- PagePearson$pvalue
   
-  PageSpearman <- SpatiallyCorrectedModels(transformedMatrixSpearman, drivers, xMatrix, yMatrix, 1028:1035, 1578:1585)
-  Page_SpearmanCorrelation <- PageSpearman[[1]]
-  Page_SpearmanPValue <- PageSpearman[[2]]
+  PageSpearman <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearman, 
+                                           drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                           xrange = xy_PG$x, yrange = xy_PG$y)
+  Page_SpearmanCorrelation <- PageSpearman$correlation
+  Page_SpearmanPValue <- PageSpearman$pvalue
   
-  PhoenixPearson <- SpatiallyCorrectedModels(transformedMatrixPearson, drivers, xMatrix, yMatrix, 891:990, 1911:1990)
-  Phoenix_PearsonCorrelation <- PhoenixPearson[[1]]
-  Phoenix_PearsonPValue <- PhoenixPearson[[2]]
+  # Phoenix, AZ 
+  PhoenixPearson <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearson, 
+                                             drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                             xrange = xy_PX$x, yrange = xy_PX$y)
+  Phoenix_PearsonCorrelation <- PhoenixPearson$correlation
+  Phoenix_PearsonPValue <- PhoenixPearson$pvalue
   
-  PhoenixSpearman <- SpatiallyCorrectedModels(transformedMatrixSpearman, drivers, xMatrix, yMatrix, 891:990, 1911:1990)
-  Phoenix_SpearmanCorrelation <- PhoenixSpearman[[1]]
-  Phoenix_SpearmanPValue <- PhoenixSpearman[[2]]
+  PhoenixSpearman <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearman, 
+                                              drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                              xrange = xy_PX$x, yrange = xy_PX$y)
+  Phoenix_SpearmanCorrelation <- PhoenixSpearman$correlation
+  Phoenix_SpearmanPValue <- PhoenixSpearman$pvalue
   
-  RenoPearson <- SpatiallyCorrectedModels(transformedMatrixPearson, drivers, xMatrix, yMatrix, 361:381, 1141:1180)
-  Reno_PearsonCorrelation <- RenoPearson[[1]]
-  Reno_PearsonPValue <- RenoPearson[[2]]
+  # Reno, NV
+  RenoPearson <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearson, 
+                                          drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                          xrange = xy_RN$x, yrange = xy_RN$y)
+  Reno_PearsonCorrelation <- RenoPearson$correlation
+  Reno_PearsonPValue <- RenoPearson$pvalue
   
-  RenoSpearman <- SpatiallyCorrectedModels(transformedMatrixSpearman, drivers, xMatrix, yMatrix, 361:381, 1141:1180)
-  Reno_SpearmanCorrelation <- RenoSpearman[[1]]
-  Reno_SpearmanPValue <- RenoSpearman[[2]]
+  RenoSpearman <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearman, 
+                                           drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                           xrange = xy_RN$x, yrange = xy_RN$y)
+  Reno_SpearmanCorrelation <- RenoSpearman$correlation
+  Reno_SpearmanPValue <- RenoSpearman$pvalue
   
-  SaltLakeCityPearson <- SpatiallyCorrectedModels(transformedMatrixPearson, drivers, xMatrix, yMatrix, 1031:1075, 1146:1180)
-  SaltLakeCity_PearsonCorrelation <- SaltLakeCityPearson[[1]]
-  SaltLakeCity_PearsonPValue <- SaltLakeCityPearson[[2]]
+  #----------- Coastal Cities: for Pearson and SPearman based correlation matrices --------------
   
-  SaltLakeCitySpearman <- SpatiallyCorrectedModels(transformedMatrixSpearman, drivers, xMatrix, yMatrix, 1031:1075, 1146:1180)
-  SaltLakeCity_SpearmanCorrelation <- SaltLakeCitySpearman[[1]]
-  SaltLakeCity_SpearmanPValue <- SaltLakeCitySpearman[[2]]
+  # Chicago, IL 
+  ChicagoPearson <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearson, 
+                                             drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                             xrange = xy_CH$x, yrange = xy_CH$y)
+  Chicago_PearsonCorrelation <- ChicagoPearson$correlation
+  Chicago_PearsonPValue <- ChicagoPearson$pvalue
   
-  SaintLouisPearson <- SpatiallyCorrectedModels(transformedMatrixPearson, drivers, xMatrix, yMatrix, 2851:2931, 1386:1435)
-  SaintLouis_PearsonCorrelation <- SaintLouisPearson[[1]]
-  SaintLouis_PearsonPValue <- SaintLouisPearson[[2]]
+  ChicagoSpearman <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearman, 
+                                              drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                              xrange = xy_CH$x, yrange = xy_CH$y)
+  Chicago_SpearmanCorrelation <- ChicagoSpearman$correlation
+  Chicago_SpearmanPValue <- ChicagoSpearman$pvalue
   
-  SaintLouisSpearman <- SpatiallyCorrectedModels(transformedMatrixSpearman, drivers, xMatrix, yMatrix, 2851:2931, 1386:1435)
-  SaintLouis_SpearmanCorrelation <- SaintLouisSpearman[[1]]
-  SaintLouis_SpearmanPValue <- SaintLouisSpearman[[2]]
+  # New Orleans, LA
+  NewOrleansPearson <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearson, 
+                                                drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                xrange = xy_NOLA$x, yrange = xy_NOLA$y)
+  NewOrleans_PearsonCorrelation <- NewOrleansPearson$correlation
+  NewOrleans_PearsonPValue <- NewOrleansPearson$pvalue
   
-  SanFranciscoPearson <- SpatiallyCorrectedModels(transformedMatrixPearson, drivers, xMatrix, yMatrix, 91:160, 1261:1380)
-  SanFrancisco_PearsonCorrelation <- SanFranciscoPearson[[1]]
-  SanFrancisco_PearsonPValue <- SanFranciscoPearson[[2]]
+  NewOrleansSpearman <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearman, 
+                                                 drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                 xrange = xy_NOLA$x, yrange = xy_NOLA$y)
+  NewOrleans_SpearmanCorrelation <- NewOrleansSpearman$correlation
+  NewOrleans_SpearmanPValue <- NewOrleansSpearman$pvalue
   
-  SanFranciscoSpearman <- SpatiallyCorrectedModels(transformedMatrixSpearman, drivers, xMatrix, yMatrix, 91:160, 1261:1380)
-  SanFrancisco_SpearmanCorrelation <- SanFranciscoSpearman[[1]]
-  SanFrancisco_SpearmanPValue <- SanFranciscoSpearman[[2]]
+  # New York City, NY 
+  NewYorkPearson <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearson, 
+                                             drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                             xrange = xy_NYC$x, yrange = xy_NYC$y)
+  NewYork_PearsonCorrelation <- NewYorkPearson$correlation
+  NewYork_PearsonPValue <- NewYorkPearson$pvalue
   
-  PearsonDataframe <- rotate_df(data.frame(Categories, Charleston_PearsonCorrelation, Charleston_PearsonPValue, 
-                                           Chicago_PearsonCorrelation, Chicago_PearsonPValue, LasVegas_PearsonCorrelation, LasVegas_PearsonPValue, 
-                                           Minneapolis_PearsonCorrelation, Minneapolis_PearsonPValue, NewOrleans_PearsonCorrelation, NewOrleans_PearsonPValue, 
-                                           NewYork_PearsonCorrelation, NewYork_PearsonPValue, Page_PearsonCorrelation, Page_PearsonPValue, 
-                                           Phoenix_PearsonCorrelation, Phoenix_PearsonPValue, Reno_PearsonCorrelation, Reno_PearsonPValue, 
-                                           SaltLakeCity_PearsonCorrelation, SaltLakeCity_PearsonPValue, SanFrancisco_PearsonCorrelation, SanFrancisco_PearsonPValue,
-                                           SaintLouis_PearsonCorrelation, SaintLouis_PearsonPValue))
+  NewYorkSpearman <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearman, 
+                                              drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                              xrange = xy_NYC$x, yrange = xy_NYC$y)
+  NewYork_SpearmanCorrelation <- NewYorkSpearman$correlation
+  NewYork_SpearmanPValue <- NewYorkSpearman$pvalue
   
-  SpearmanDataframe <- rotate_df(data.frame(Categories, Charleston_SpearmanCorrelation, Charleston_SpearmanPValue, 
-                                            Chicago_SpearmanCorrelation, Chicago_SpearmanPValue, LasVegas_SpearmanCorrelation, LasVegas_SpearmanPValue, 
-                                            Minneapolis_SpearmanCorrelation, Minneapolis_SpearmanPValue, NewOrleans_SpearmanCorrelation, NewOrleans_SpearmanPValue, 
-                                            NewYork_SpearmanCorrelation, NewYork_SpearmanPValue, Page_SpearmanCorrelation, Page_SpearmanPValue, 
-                                            Phoenix_SpearmanCorrelation, Phoenix_SpearmanPValue, Reno_SpearmanCorrelation, Reno_SpearmanPValue, 
-                                            SaltLakeCity_SpearmanCorrelation, SaltLakeCity_SpearmanPValue, SanFrancisco_SpearmanCorrelation, SanFrancisco_SpearmanPValue,
-                                            SaintLouis_SpearmanCorrelation, SaintLouis_SpearmanPValue))
+  #San Francisco, CA
+  SanFranciscoPearson <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearson, 
+                                                  drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                  xrange = xy_SF$x, yrange = xy_SF$y)
+  SanFrancisco_PearsonCorrelation <- SanFranciscoPearson$correlation
+  SanFrancisco_PearsonPValue <- SanFranciscoPearson$pvalue
   
-  CharlestonPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrixPearsonNo2010, driversNo2010, xMatrix, yMatrix, 3601:3650, 1301:1330)
-  Charleston_PearsonNo2010Correlation <- CharlestonPearsonNo2010[[1]]
-  Charleston_PearsonNo2010PValue <- CharlestonPearsonNo2010[[2]]
+  SanFranciscoSpearman <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearman, 
+                                                   drivers = drivers, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                   xrange = xy_SF$x, yrange = xy_SF$y)
+  SanFrancisco_SpearmanCorrelation <- SanFranciscoSpearman$correlation
+  SanFrancisco_SpearmanPValue <- SanFranciscoSpearman$pvalue
   
-  CharlestonSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrixSpearmanNo2010, driversNo2010, xMatrix, yMatrix, 3601:3650, 1301:1330)
-  Charleston_SpearmanNo2010Correlation <- CharlestonSpearmanNo2010[[1]]
-  Charleston_SpearmanNo2010PValue <- CharlestonSpearmanNo2010[[2]]
+  # saving results in a data frame
+  PearsonDataframe <- data.frame(
+                                 # Interior cities: "Charleston, WV", "Kansas City, MO", "Minneapolis, MN", "Salt Lake City, UT"
+                                 Charleston_PearsonCorrelation, Charleston_PearsonPValue, 
+                                 SaintLouis_PearsonCorrelation, SaintLouis_PearsonPValue,
+                                 Minneapolis_PearsonCorrelation, Minneapolis_PearsonPValue,
+                                 SaltLakeCity_PearsonCorrelation, SaltLakeCity_PearsonPValue,
+                                 # Desert cities: "Las Vegas, NV", "Page, AZ", "Phoenix, AZ", "Reno, NV"
+                                 LasVegas_PearsonCorrelation, LasVegas_PearsonPValue, 
+                                 Page_PearsonCorrelation, Page_PearsonPValue, 
+                                 Phoenix_PearsonCorrelation, Phoenix_PearsonPValue,
+                                 Reno_PearsonCorrelation, Reno_PearsonPValue, 
+                                 # Coastal cities: "Chicago, IL", "New Orleans, LA", "New York City, NY", "San Francisco, CA"
+                                 Chicago_PearsonCorrelation, Chicago_PearsonPValue, 
+                                 NewOrleans_PearsonCorrelation, NewOrleans_PearsonPValue, 
+                                 NewYork_PearsonCorrelation, NewYork_PearsonPValue, 
+                                 SanFrancisco_PearsonCorrelation, SanFrancisco_PearsonPValue
+                                 )
+  row.names(PearsonDataframe) <- Categories
+  PearsonDataframe<-rotate_df(PearsonDataframe)
   
-  ChicagoPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrixPearsonNo2010, driversNo2010, xMatrix, yMatrix, 3051:3095, 1001:1045)
-  Chicago_PearsonNo2010Correlation <- ChicagoPearsonNo2010[[1]]
-  Chicago_PearsonNo2010PValue <- ChicagoPearsonNo2010[[2]]
+  SpearmanDataframe <- data.frame(
+                                  # Interior cities: "Charleston, WV", "Kansas City, MO", "Minneapolis, MN", "Salt Lake City, UT"
+                                  Charleston_SpearmanCorrelation, Charleston_SpearmanPValue, 
+                                  SaintLouis_SpearmanCorrelation, SaintLouis_SpearmanPValue,
+                                  Minneapolis_SpearmanCorrelation, Minneapolis_SpearmanPValue,
+                                  SaltLakeCity_SpearmanCorrelation, SaltLakeCity_SpearmanPValue,
+                                  # Desert cities: "Las Vegas, NV", "Page, AZ", "Phoenix, AZ", "Reno, NV"
+                                  LasVegas_SpearmanCorrelation, LasVegas_SpearmanPValue, 
+                                  Page_SpearmanCorrelation, Page_SpearmanPValue, 
+                                  Phoenix_SpearmanCorrelation, Phoenix_SpearmanPValue,
+                                  Reno_SpearmanCorrelation, Reno_SpearmanPValue, 
+                                  # Coastal cities: "Chicago, IL", "New Orleans, LA", "New York City, NY", "San Francisco, CA"
+                                  Chicago_SpearmanCorrelation, Chicago_SpearmanPValue, 
+                                  NewOrleans_SpearmanCorrelation, NewOrleans_SpearmanPValue, 
+                                  NewYork_SpearmanCorrelation, NewYork_SpearmanPValue, 
+                                  SanFrancisco_SpearmanCorrelation, SanFrancisco_SpearmanPValue
+                                  )
+  row.names(SpearmanDataframe) <- Categories
+  SpearmanDataframe<-rotate_df(SpearmanDataframe)
   
-  ChicagoSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrixSpearmanNo2010, driversNo2010, xMatrix, yMatrix, 3051:3095, 1001:1045)
-  Chicago_SpearmanNo2010Correlation <- ChicagoSpearmanNo2010[[1]]
-  Chicago_SpearmanNo2010PValue <- ChicagoSpearmanNo2010[[2]]
+  saveRDS(PearsonDataframe, "data/csvFiles/AVHRR_PearsonCorrelationData.RDS")
+  saveRDS(SpearmanDataframe, "data/csvFiles/AVHRR_SpearmanCorrelationData.RDS")
   
-  LasVegasPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrixPearsonNo2010, driversNo2010, xMatrix, yMatrix, 676:720, 1591:1610)
-  LasVegas_PearsonNo2010Correlation <- LasVegasPearsonNo2010[[1]]
-  LasVegas_PearsonNo2010PValue <- LasVegasPearsonNo2010[[2]]
+  ######################################################################
+  # Spatially Corrected Models but excluding 2010
+  ######################################################################
   
-  LasVegasSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrixSpearmanNo2010, driversNo2010, xMatrix, yMatrix, 676:720, 1591:1610)
-  LasVegas_SpearmanNo2010Correlation <- LasVegasSpearmanNo2010[[1]]
-  LasVegas_SpearmanNo2010PValue <- LasVegasSpearmanNo2010[[2]]
+  #----------- Interior Cities: for Pearson and SPearman based correlation matrices, excluding 2010 --------------
   
-  MinneapolisPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrixPearsonNo2010, driversNo2010, xMatrix, yMatrix, 2551:2610, 701:770)
-  Minneapolis_PearsonNo2010Correlation <- MinneapolisPearsonNo2010[[1]]
-  Minneapolis_PearsonNo2010PValue <- MinneapolisPearsonNo2010[[2]]
+  # Charleston, WV
+  CharlestonPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearsonNo2010, 
+                                                drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                xrange = xy_CL$x, yrange = xy_CL$y)
+  Charleston_PearsonNo2010Correlation <- CharlestonPearsonNo2010$correlation
+  Charleston_PearsonNo2010PValue <- CharlestonPearsonNo2010$pvalue
   
-  MinneapolisSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrixSpearmanNo2010, driversNo2010, xMatrix, yMatrix, 2551:2610, 701:770)
-  Minneapolis_SpearmanNo2010Correlation <- MinneapolisSpearmanNo2010[[1]]
-  Minneapolis_SpearmanNo2010PValue <- MinneapolisSpearmanNo2010[[2]]
+  CharlestonSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearmanNo2010, 
+                                                       drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                       xrange = xy_CL$x, yrange = xy_CL$y)
+  Charleston_SpearmanNo2010Correlation <- CharlestonSpearmanNo2010$correlation
+  Charleston_SpearmanNo2010PValue <- CharlestonSpearmanNo2010$pvalue
   
-  NewOrleansPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrixPearsonNo2010, driversNo2010, xMatrix, yMatrix, 2976:3035, 2351:2380)
-  NewOrleans_PearsonNo2010Correlation <- NewOrleansPearsonNo2010[[1]]
-  NewOrleans_PearsonNo2010PValue <- NewOrleansPearsonNo2010[[2]]
+  # Kansas City, MO 
+  SaintLouisPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearsonNo2010, 
+                                                      drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                      xrange = xy_STL$x, yrange = xy_STL$y)
+  SaintLouis_PearsonNo2010Correlation <- SaintLouisPearsonNo2010$correlation
+  SaintLouis_PearsonNo2010PValue <- SaintLouisPearsonNo2010$pvalue
   
-  NewOrleansSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrixSpearmanNo2010, driversNo2010, xMatrix, yMatrix, 2976:3035, 2351:2380)
-  NewOrleans_SpearmanNo2010Correlation <- NewOrleansSpearmanNo2010[[1]]
-  NewOrleans_SpearmanNo2010PValue <- NewOrleansSpearmanNo2010[[2]]
+  SaintLouisSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearmanNo2010, 
+                                                       drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                       xrange = xy_STL$x, yrange = xy_STL$y)
+  SaintLouis_SpearmanNo2010Correlation <- SaintLouisSpearmanNo2010$correlation
+  SaintLouis_SpearmanNo2010PValue <- SaintLouisSpearmanNo2010$pvalue
   
-  NewYorkPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrixPearsonNo2010, driversNo2010, xMatrix, yMatrix, 4171:4250, 851:910)
-  NewYork_PearsonNo2010Correlation <- NewYorkPearsonNo2010[[1]]
-  NewYork_PearsonNo2010PValue <- NewYorkPearsonNo2010[[2]]
+  #Minneapolis, MN 
+  MinneapolisPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearsonNo2010, 
+                                                       drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                       xrange = xy_MN$x, yrange = xy_MN$y)
+  Minneapolis_PearsonNo2010Correlation <- MinneapolisPearsonNo2010$correlation
+  Minneapolis_PearsonNo2010PValue <- MinneapolisPearsonNo2010$pvalue
   
-  NewYorkSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrixSpearmanNo2010, driversNo2010, xMatrix, yMatrix, 4171:4250, 851:910)
-  NewYork_SpearmanNo2010Correlation <- NewYorkSpearmanNo2010[[1]]
-  NewYork_SpearmanNo2010PValue <- NewYorkSpearmanNo2010[[2]]
+  MinneapolisSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearmanNo2010, 
+                                                        drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                        xrange = xy_MN$x, yrange = xy_MN$y)
+  Minneapolis_SpearmanNo2010Correlation <- MinneapolisSpearmanNo2010$correlation
+  Minneapolis_SpearmanNo2010PValue <- MinneapolisSpearmanNo2010$pvalue
   
-  PagePearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrixPearsonNo2010, driversNo2010, xMatrix, yMatrix, 1028:1035, 1578:1585)
-  Page_PearsonNo2010Correlation <- PagePearsonNo2010[[1]]
-  Page_PearsonNo2010PValue <- PagePearsonNo2010[[2]]
+  # Salt Lake City, UT
+  SaltLakeCityPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearsonNo2010, 
+                                                        drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                        xrange = xy_SLC$x, yrange = xy_SLC$y)
+  SaltLakeCity_PearsonNo2010Correlation <- SaltLakeCityPearsonNo2010$correlation
+  SaltLakeCity_PearsonNo2010PValue <- SaltLakeCityPearsonNo2010$pvalue
   
-  PageSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrixSpearmanNo2010, driversNo2010, xMatrix, yMatrix, 1028:1035, 1578:1585)
-  Page_SpearmanNo2010Correlation <- PageSpearmanNo2010[[1]]
-  Page_SpearmanNo2010PValue <- PageSpearmanNo2010[[2]]
+  SaltLakeCitySpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearmanNo2010, 
+                                                         drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                         xrange = xy_SLC$x, yrange = xy_SLC$y)
+  SaltLakeCity_SpearmanNo2010Correlation <- SaltLakeCitySpearmanNo2010$correlation
+  SaltLakeCity_SpearmanNo2010PValue <- SaltLakeCitySpearmanNo2010$pvalue
   
-  PhoenixPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrixPearsonNo2010, driversNo2010, xMatrix, yMatrix, 891:990, 1911:1990)
-  Phoenix_PearsonNo2010Correlation <- PhoenixPearsonNo2010[[1]]
-  Phoenix_PearsonNo2010PValue <- PhoenixPearsonNo2010[[2]]
+  #----------- Desert Cities: for Pearson and SPearman based correlation matrices, excluding 2010 --------------
   
-  PhoenixSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrixSpearmanNo2010, driversNo2010, xMatrix, yMatrix, 891:990, 1911:1990)
-  Phoenix_SpearmanNo2010Correlation <- PhoenixSpearmanNo2010[[1]]
-  Phoenix_SpearmanNo2010PValue <- PhoenixSpearmanNo2010[[2]]
+  # Las Vegas, NV 
+  LasVegasPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearsonNo2010, 
+                                                    drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                    xrange = xy_LV$x, yrange = xy_LV$y)
+  LasVegas_PearsonNo2010Correlation <- LasVegasPearsonNo2010$correlation
+  LasVegas_PearsonNo2010PValue <- LasVegasPearsonNo2010$pvalue
   
-  RenoPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrixPearsonNo2010, driversNo2010, xMatrix, yMatrix, 361:381, 1141:1180)
-  Reno_PearsonNo2010Correlation <- RenoPearsonNo2010[[1]]
-  Reno_PearsonNo2010PValue <- RenoPearsonNo2010[[2]]
+  LasVegasSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearmanNo2010, 
+                                                     drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                     xrange = xy_LV$x, yrange = xy_LV$y)
+  LasVegas_SpearmanNo2010Correlation <- LasVegasSpearmanNo2010$correlation
+  LasVegas_SpearmanNo2010PValue <- LasVegasSpearmanNo2010$pvalue
   
-  RenoSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrixSpearmanNo2010, driversNo2010, xMatrix, yMatrix, 361:381, 1141:1180)
-  Reno_SpearmanNo2010Correlation <- RenoSpearmanNo2010[[1]]
-  Reno_SpearmanNo2010PValue <- RenoSpearmanNo2010[[2]]
+  # Page, AZ  
+  PagePearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearsonNo2010, 
+                                                drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                xrange = xy_PG$x, yrange = xy_PG$y)
+  Page_PearsonNo2010Correlation <- PagePearsonNo2010$correlation
+  Page_PearsonNo2010PValue <- PagePearsonNo2010$pvalue
   
-  SaltLakeCityPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrixPearsonNo2010, driversNo2010, xMatrix, yMatrix, 1031:1075, 1146:1180)
-  SaltLakeCity_PearsonNo2010Correlation <- SaltLakeCityPearsonNo2010[[1]]
-  SaltLakeCity_PearsonNo2010PValue <- SaltLakeCityPearsonNo2010[[2]]
+  PageSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearmanNo2010, 
+                                                 drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                 xrange = xy_PG$x, yrange = xy_PG$y)
+  Page_SpearmanNo2010Correlation <- PageSpearmanNo2010$correlation
+  Page_SpearmanNo2010PValue <- PageSpearmanNo2010$pvalue
   
-  SaltLakeCitySpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrixSpearmanNo2010, driversNo2010, xMatrix, yMatrix, 1031:1075, 1146:1180)
-  SaltLakeCity_SpearmanNo2010Correlation <- SaltLakeCitySpearmanNo2010[[1]]
-  SaltLakeCity_SpearmanNo2010PValue <- SaltLakeCitySpearmanNo2010[[2]]
+  # Phoenix, AZ 
+  PhoenixPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearsonNo2010, 
+                                                   drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                   xrange = xy_PX$x, yrange = xy_PX$y)
+  Phoenix_PearsonNo2010Correlation <- PhoenixPearsonNo2010$correlation
+  Phoenix_PearsonNo2010PValue <- PhoenixPearsonNo2010$pvalue
   
-  SaintLouisPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrixPearsonNo2010, driversNo2010, xMatrix, yMatrix, 2851:2931, 1386:1435)
-  SaintLouis_PearsonNo2010Correlation <- SaintLouisPearsonNo2010[[1]]
-  SaintLouis_PearsonNo2010PValue <- SaintLouisPearsonNo2010[[2]]
+  PhoenixSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearmanNo2010, 
+                                                    drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                    xrange = xy_PX$x, yrange = xy_PX$y)
+  Phoenix_SpearmanNo2010Correlation <- PhoenixSpearmanNo2010$correlation
+  Phoenix_SpearmanNo2010PValue <- PhoenixSpearmanNo2010$pvalue
   
-  SaintLouisSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrixSpearmanNo2010, driversNo2010, xMatrix, yMatrix, 2851:2931, 1386:1435)
-  SaintLouis_SpearmanNo2010Correlation <- SaintLouisSpearmanNo2010[[1]]
-  SaintLouis_SpearmanNo2010PValue <- SaintLouisSpearmanNo2010[[2]]
+  # Reno, NV
+  RenoPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearsonNo2010, 
+                                                drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                xrange = xy_RN$x, yrange = xy_RN$y)
+  Reno_PearsonNo2010Correlation <- RenoPearsonNo2010$correlation
+  Reno_PearsonNo2010PValue <- RenoPearsonNo2010$pvalue
   
-  SanFranciscoPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrixPearsonNo2010, driversNo2010, xMatrix, yMatrix, 91:160, 1261:1380)
-  SanFrancisco_PearsonNo2010Correlation <- SanFranciscoPearsonNo2010[[1]]
-  SanFrancisco_PearsonNo2010PValue <- SanFranciscoPearsonNo2010[[2]]
+  RenoSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearmanNo2010, 
+                                                 drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                 xrange = xy_RN$x, yrange = xy_RN$y)
+  Reno_SpearmanNo2010Correlation <- RenoSpearmanNo2010$correlation
+  Reno_SpearmanNo2010PValue <- RenoSpearmanNo2010$pvalue
   
-  SanFranciscoSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrixSpearmanNo2010, driversNo2010, xMatrix, yMatrix, 91:160, 1261:1380)
-  SanFrancisco_SpearmanNo2010Correlation <- SanFranciscoSpearmanNo2010[[1]]
-  SanFrancisco_SpearmanNo2010PValue <- SanFranciscoSpearmanNo2010[[2]]
+  #----------- Coastal Cities: for Pearson and SPearman based correlation matrices, excluding 2010 --------------
   
-  PearsonNo2010Dataframe <- rotate_df(data.frame(Categories, Charleston_PearsonNo2010Correlation, Charleston_PearsonNo2010PValue, 
-                                           Chicago_PearsonNo2010Correlation, Chicago_PearsonNo2010PValue, LasVegas_PearsonNo2010Correlation, LasVegas_PearsonNo2010PValue, 
-                                           Minneapolis_PearsonNo2010Correlation, Minneapolis_PearsonNo2010PValue, NewOrleans_PearsonNo2010Correlation, NewOrleans_PearsonNo2010PValue, 
-                                           NewYork_PearsonNo2010Correlation, NewYork_PearsonNo2010PValue, Page_PearsonNo2010Correlation, Page_PearsonNo2010PValue, 
-                                           Phoenix_PearsonNo2010Correlation, Phoenix_PearsonNo2010PValue, Reno_PearsonNo2010Correlation, Reno_PearsonNo2010PValue, 
-                                           SaltLakeCity_PearsonNo2010Correlation, SaltLakeCity_PearsonNo2010PValue, SanFrancisco_PearsonNo2010Correlation, SanFrancisco_PearsonNo2010PValue,
-                                           SaintLouis_PearsonNo2010Correlation, SaintLouis_PearsonNo2010PValue))
+  # Chicago, IL 
+  ChicagoPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearsonNo2010, 
+                                                   drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                   xrange = xy_CH$x, yrange = xy_CH$y)
+  Chicago_PearsonNo2010Correlation <- ChicagoPearsonNo2010$correlation
+  Chicago_PearsonNo2010PValue <- ChicagoPearsonNo2010$pvalue
   
-  SpearmanNo2010Dataframe <- rotate_df(data.frame(Categories, Charleston_SpearmanNo2010Correlation, Charleston_SpearmanNo2010PValue, 
-                                           Chicago_SpearmanNo2010Correlation, Chicago_SpearmanNo2010PValue, LasVegas_SpearmanNo2010Correlation, LasVegas_SpearmanNo2010PValue, 
-                                           Minneapolis_SpearmanNo2010Correlation, Minneapolis_SpearmanNo2010PValue, NewOrleans_SpearmanNo2010Correlation, NewOrleans_SpearmanNo2010PValue, 
-                                           NewYork_SpearmanNo2010Correlation, NewYork_SpearmanNo2010PValue, Page_SpearmanNo2010Correlation, Page_SpearmanNo2010PValue, 
-                                           Phoenix_SpearmanNo2010Correlation, Phoenix_SpearmanNo2010PValue, Reno_SpearmanNo2010Correlation, Reno_SpearmanNo2010PValue, 
-                                           SaltLakeCity_SpearmanNo2010Correlation, SaltLakeCity_SpearmanNo2010PValue, SanFrancisco_SpearmanNo2010Correlation, SanFrancisco_SpearmanNo2010PValue,
-                                           SaintLouis_SpearmanNo2010Correlation, SaintLouis_SpearmanNo2010PValue))
+  ChicagoSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearmanNo2010, 
+                                                    drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                    xrange = xy_CH$x, yrange = xy_CH$y)
+  Chicago_SpearmanNo2010Correlation <- ChicagoSpearmanNo2010$correlation
+  Chicago_SpearmanNo2010PValue <- ChicagoSpearmanNo2010$pvalue
   
-  write.csv(PearsonDataframe, "data/csvFiles/AVHRR_PearsonCorrelationData.csv", row.names=TRUE)
-  write.csv(SpearmanDataframe, "data/csvFiles/AVHRR_SpearmanCorrelationData.csv", row.names=TRUE)
-  write.csv(PearsonNo2010Dataframe, "data/csvFiles/AVHRR_PearsonNo2010CorrelationData.csv", row.names=TRUE)
-  write.csv(SpearmanNo2010Dataframe, "data/csvFiles/AVHRR_SpearmanNo2010CorrelationData.csv", row.names=TRUE)
+  # New Orleans, LA 
+  NewOrleansPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearsonNo2010, 
+                                                      drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                      xrange = xy_NOLA$x, yrange = xy_NOLA$y)
+  NewOrleans_PearsonNo2010Correlation <- NewOrleansPearsonNo2010$correlation
+  NewOrleans_PearsonNo2010PValue <- NewOrleansPearsonNo2010$pvalue
+  
+  NewOrleansSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearmanNo2010, 
+                                                       drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                       xrange = xy_NOLA$x, yrange = xy_NOLA$y)
+  NewOrleans_SpearmanNo2010Correlation <- NewOrleansSpearmanNo2010$correlation
+  NewOrleans_SpearmanNo2010PValue <- NewOrleansSpearmanNo2010$pvalue
+  
+  # New York City, NY
+  NewYorkPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearsonNo2010, 
+                                                   drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                   xrange = xy_NYC$x, yrange = xy_NYC$y)
+  NewYork_PearsonNo2010Correlation <- NewYorkPearsonNo2010$correlation
+  NewYork_PearsonNo2010PValue <- NewYorkPearsonNo2010$pvalue
+  
+  NewYorkSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearmanNo2010, 
+                                                    drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                    xrange = xy_NYC$x, yrange = xy_NYC$y)
+  NewYork_SpearmanNo2010Correlation <- NewYorkSpearmanNo2010$correlation
+  NewYork_SpearmanNo2010PValue <- NewYorkSpearmanNo2010$pvalue
+  
+  # San Francisco, CA 
+  SanFranciscoPearsonNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixPearsonNo2010, 
+                                                        drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                        xrange = xy_SF$x, yrange = xy_SF$y)
+  SanFrancisco_PearsonNo2010Correlation <- SanFranciscoPearsonNo2010$correlation
+  SanFrancisco_PearsonNo2010PValue <- SanFranciscoPearsonNo2010$pvalue
+  
+  SanFranciscoSpearmanNo2010 <- SpatiallyCorrectedModels(transformedMatrix = transformedMatrixSpearmanNo2010, 
+                                                         drivers = driversNo2010, xMatrix = xMatrix, yMatrix = yMatrix, 
+                                                         xrange = xy_SF$x, yrange = xy_SF$y)
+  SanFrancisco_SpearmanNo2010Correlation <- SanFranciscoSpearmanNo2010$correlation
+  SanFrancisco_SpearmanNo2010PValue <- SanFranciscoSpearmanNo2010$pvalue
+  
+  
+  # saving results in a data frame
+  PearsonNo2010Dataframe <- data.frame(
+    # Interior cities: "Charleston, WV", "Kansas City, MO", "Minneapolis, MN", "Salt Lake City, UT"
+    Charleston_PearsonNo2010Correlation, Charleston_PearsonNo2010PValue, 
+    SaintLouis_PearsonNo2010Correlation, SaintLouis_PearsonNo2010PValue,
+    Minneapolis_PearsonNo2010Correlation, Minneapolis_PearsonNo2010PValue,
+    SaltLakeCity_PearsonNo2010Correlation, SaltLakeCity_PearsonNo2010PValue,
+    # Desert cities: "Las Vegas, NV", "Page, AZ", "Phoenix, AZ", "Reno, NV"
+    LasVegas_PearsonNo2010Correlation, LasVegas_PearsonNo2010PValue, 
+    Page_PearsonNo2010Correlation, Page_PearsonNo2010PValue, 
+    Phoenix_PearsonNo2010Correlation, Phoenix_PearsonNo2010PValue,
+    Reno_PearsonNo2010Correlation, Reno_PearsonNo2010PValue, 
+    # Coastal cities: "Chicago, IL", "New Orleans, LA", "New York City, NY", "San Francisco, CA"
+    Chicago_PearsonNo2010Correlation, Chicago_PearsonNo2010PValue, 
+    NewOrleans_PearsonNo2010Correlation, NewOrleans_PearsonNo2010PValue, 
+    NewYork_PearsonNo2010Correlation, NewYork_PearsonNo2010PValue, 
+    SanFrancisco_PearsonNo2010Correlation, SanFrancisco_PearsonNo2010PValue
+  )
+  row.names(PearsonNo2010Dataframe) <- Categories
+  PearsonNo2010Dataframe<-rotate_df(PearsonNo2010Dataframe)
+  
+  SpearmanNo2010Dataframe <- data.frame(
+    # Interior cities: "Charleston, WV", "Kansas City, MO", "Minneapolis, MN", "Salt Lake City, UT"
+    Charleston_SpearmanNo2010Correlation, Charleston_SpearmanNo2010PValue, 
+    SaintLouis_SpearmanNo2010Correlation, SaintLouis_SpearmanNo2010PValue,
+    Minneapolis_SpearmanNo2010Correlation, Minneapolis_SpearmanNo2010PValue,
+    SaltLakeCity_SpearmanNo2010Correlation, SaltLakeCity_SpearmanNo2010PValue,
+    # Desert cities: "Las Vegas, NV", "Page, AZ", "Phoenix, AZ", "Reno, NV"
+    LasVegas_SpearmanNo2010Correlation, LasVegas_SpearmanNo2010PValue, 
+    Page_SpearmanNo2010Correlation, Page_SpearmanNo2010PValue, 
+    Phoenix_SpearmanNo2010Correlation, Phoenix_SpearmanNo2010PValue,
+    Reno_SpearmanNo2010Correlation, Reno_SpearmanNo2010PValue, 
+    # Coastal cities: "Chicago, IL", "New Orleans, LA", "New York City, NY", "San Francisco, CA"
+    Chicago_SpearmanNo2010Correlation, Chicago_SpearmanNo2010PValue, 
+    NewOrleans_SpearmanNo2010Correlation, NewOrleans_SpearmanNo2010PValue, 
+    NewYork_SpearmanNo2010Correlation, NewYork_SpearmanNo2010PValue, 
+    SanFrancisco_SpearmanNo2010Correlation, SanFrancisco_SpearmanNo2010PValue
+  )
+  row.names(SpearmanNo2010Dataframe) <- Categories
+  SpearmanNo2010Dataframe<-rotate_df(SpearmanNo2010Dataframe)
+  
+  saveRDS(PearsonNo2010Dataframe, "data/csvFiles/AVHRR_PearsonNo2010CorrelationData.RDS")
+  saveRDS(SpearmanNo2010Dataframe, "data/csvFiles/AVHRR_SpearmanNo2010CorrelationData.RDS")
+  
 }
