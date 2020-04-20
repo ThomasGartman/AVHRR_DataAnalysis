@@ -92,22 +92,48 @@ z[1094,240,]
 ###########################################################################
 
 # understand VectorizeMatrices.R using toy example: need to check
+xmatrix <- t(readRDS("data/csvFiles/AVHRR_X_CoordinateMatrix.RDS"))
+ymatrix <- t(readRDS("data/csvFiles/AVHRR_Y_CoordinateMatrix.RDS"))
+xmatrix<-xmatrix[1:5,1:5]
+ymatrix<-ymatrix[1:5,1:5]
 
+set.seed(101)
+data1<-matrix(runif(25,min=0,max=1),nrow=5)
+data2<-matrix(runif(25,min=0,max=1),nrow=5)
+
+data1[1:2,4:5]<-NA
+data2[3,5]<-NA
+data2[5,5]<-Inf
 vectors <- lapply(list(data1, data2, xmatrix, ymatrix), as.vector) # This line will make a list
                                                                    # with the values reading along column 
                                                                    # for each matrix 
 
 alteredVectors <- vectors
+length(alteredVectors[[1]]) #25
+
 for(i in 1:length(vectors)){
   alteredVectors[[i]] <- vectors[[i]][!Reduce("|", lapply(vectors, is.na))]
 }
+length(alteredVectors[[1]]) #20 # so the above code only reports values for the indicies which remain non-NA for 
+                                #  every list element in vectors
 
 finalVectors <- alteredVectors
-for(i in 1:length(alteredVectors))
-{
-  finalVectors[[i]] <- alteredVectors[[i]][!Reduce("|", lapply(alteredVectors, is.infinite))]
+length(finalVectors[[2]]) #20
+
+for(i in 1:length(alteredVectors)){
+  finalVectors[[i]] <- alteredVectors[[i]][!Reduce("|", lapply(alteredVectors, is.infinite))] 
 }
 
+# so the above code only reports values for the indicies which remain finite for 
+#  every list element in vectors
+
+length(finalVectors[[2]]) #19
+
+# ok, code checked!
+
+############################################################################################################
+
+# Qs about VIF concept?
 
 
 
