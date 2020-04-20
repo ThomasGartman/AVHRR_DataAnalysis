@@ -66,28 +66,46 @@ dim(ndvi2000) #2889 4587 NDVI data is in comperable to lat lon format
 
 z<-readRDS("./data/csvFiles/NDVIdetrendedDataArray1990to2018.RDS")
 
-zm<-apply(z, c(1,2), mean)
+zm<-apply(z, c(1,2), var) 
 
-#z1<-z[301:303,301:303,1]
+#z<-z[500:510,500:505,]
+#zm<-apply(z, c(1,2), var)
 
-#z2<-zm[301:303,301:303]
+# Now, if the variance of cell values throughout the years = 0 then that means 
+# those cells have same values throughout the years
 
-#indm<-which(z2 < 1e-8,arr.ind=T)
+indmat<-which(zm==0, arr.ind = T) # these are the indices for which cells have same value 
+                                          #  through out the years
 
-indmat<-which(z[,,1]==zm, arr.ind = T)
-
-nrow(indmat) #675
-
-badmat<-zm
-badmat[!indmat]<-NA
-
+nrow(indmat) #622 : so we got 622 cells which have zeros throughout the years
 xx<-zm[indmat]
+(xxt<-as.data.frame(table(xx)))
 
-xxt<-as.data.frame(table(xx))
-xxt
+#----------- plotting cell values = 0 for all years on map------------------
+library(rasterVis)
+m<-z[,,1]
+
+# first invert vertically the map
+mi<-m[,ncol(m):1]
+zmi<-zm[,ncol(zm):1]
+badid<-which(zmi==0, arr.ind = T)
+
+col1<-colorRampPalette(brewer.pal(n=9,"YlGn")) 
+
+pdf("./plot_for_same_value_at_cells.pdf",height=5,width=10)
+levelplot(mi,margin=F,col.regions=col1,xlab="x-coord",ylab="y-coord",main="detrended NDVI for 1990")+
+  layer(panel.points(badid[,1],badid[,2], pch=20, cex=0.3, col='red'))
+dev.off()
+
+#mr<-raster(t(m))
+#levelplot(m[500:600,500:600],margin=F,col.regions=col1,xlab="x-coord",main="myplot")
+
+# how to mark a point on map
+#col1<-colorRampPalette(brewer.pal(n=9,"YlGn")) 
+#levelplot(mi,margin=F,col.regions=col1)+
+#layer(panel.points(200,400, pch=21, cex=2, colour='black', fill='red'))
 
 
-z[1094,240,]
 
 ###########################################################################
 
