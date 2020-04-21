@@ -6,7 +6,7 @@
 #'	2. Vectorize all matrices.
 #'	3. Internally check to ensure all vectors have consistant NAs, then remove them (keep track of what was removed)
 #'	4. Begin constructing models
-require("stargazer")
+
 require("fmsb")
 require("sjmisc")
 
@@ -33,12 +33,19 @@ AVHRRStatistics <- function(){
   NDVItempAveMatrixNo2010 <- readRDS("data/csvFiles/AVHRR_NDVItempAveMatrix1990to2018No2010.RDS")
   
   #Predictor 2 - Population
-  #LandscanPopulation <- as.matrix(read.csv("data/csvFiles/AVHRR_Landscan_2004.csv")) # why only 2004? should not it be avg of (2003,2004)
+  #LandscanPopulation <- as.matrix(read.csv("data/csvFiles/AVHRR_Landscan_2004.csv")) 
+  # possible bug in reading csv: sometimes forget adding header =F in read.csv, dim = 4587 by 2888 (when header =T), 
+  #     but 4587 by 2889 (when header =F)
   
-  # possible bug: sometimes forget adding header =F in read.csv, dim = 4587 by 2888 (when header =T), but 4587 by 2889 (when header =F)
+  # why only 2004? should not it be avg of (2003,2004)?
+  #--------------------------------------------------------------------------------------------------------------------
+  # What Thomas replied to me:
+  # He wanted to pick the mid-year of 1990 to 2018 range - so choosing 2004 as Jude told him.
+  # But he had also plan to check whether choosing 2004 and avg(2003, 2004) would give different results?
+  #--------------------------------------------------------------------------------------------------------------------
   
   LandscanPopulationArray <- readRDS("data/csvFiles/landscanArray.RDS")
-  LandscanPopulation <- LandscanPopulationArray[,,5] # for 2004
+  LandscanPopulation <- LandscanPopulationArray[,,5] # for 2004 only
  
   #Predictor 3 - Agriculture
   NLCDAgriculture <- readRDS("data/csvFiles/AVHRR_NLCD_Agriculture_Average_2001and2006.RDS")
@@ -123,36 +130,32 @@ AVHRRStatistics <- function(){
   VIFDesert <- as.vector(c(VIF(LVLinearModel), VIF(PageLinearModel), VIF(PXLinearModel), VIF(RenoLinearModel)))
   VIFCoastal <- as.vector(c(VIF(CHLinearModel), VIF(NOLALinearModel), VIF(NYCLinearModel), VIF(SFLinearModel)))
   
-  #-------------------- Now, make a summary from the model results for each target zone ----------------------------------------
+  #-------------------- Now, saving results from the linear model and VIF for all target zone ----------------------------------------
   
-  # Interior Cities
-  stargazer(CLLinearModel, STLLinearModel, MNLinearModel, SLCLinearModel, 
-            title = "Linear Models for Interior Cities", align = TRUE,
-            column.sep.width = "-5pt", omit.stat = "f",
-            column.labels = c("Charleston, WV", "Kansas City, MO", "Minneapolis, MN", "Salt Lake City, UT"),
-            covariate.labels=c("NDVI", "Population", "Agriculture"),
-            dep.var.labels = "Logit Transformed Synchrony")
+  Interior_LinearModel_VIF<-list(Charleston_lm=CLLinearModel,
+                             StLouis_lm=STLLinearModel,
+                             Minneapolis_lm=MNLinearModel,
+                             SaltLakeCity_lm=SLCLinearModel,
+                             VIFInterior=VIFInterior)
   
-  stargazer(VIFInterior, title = "VIF for Interior Cities",  summary = FALSE)
+  Desert_LinearModel_VIF<-list(LasVegas_lm=LVLinearModel, 
+                               Page_lm=PageLinearModel, 
+                               Phoenix_lm=PXLinearModel, 
+                               Reno_lm=RenoLinearModel,
+                               VIFDesert=VIFDesert)
   
-  # Desert Cities
-  stargazer(LVLinearModel, PageLinearModel, PXLinearModel, RenoLinearModel, 
-            title = "Linear Models for Desert Cities", align = TRUE,
-            column.sep.width = "-5pt", omit.stat = "f",
-            column.labels = c("Las Vegas, NV", "Page, AZ", "Phoenix, AZ", "Reno, NV"),
-            covariate.labels=c("NDVI", "Population", "Agriculture"),
-            dep.var.labels = "Logit Transformed Synchrony")
-  stargazer(VIFDesert, title = "VIF for Desert Cities", summary = FALSE)
+  Coastal_LinearModel_VIF<-list(Chicago_lm=CHLinearModel,
+                                NewOrleans_lm=NOLALinearModel, 
+                                NewYorkCity_lm=NYCLinearModel, 
+                                SanFrancisco_lm=SFLinearModel,
+                                VIFCoastal=VIFCoastal)
   
-  # Coastal Cities
-  stargazer(CHLinearModel, NOLALinearModel, NYCLinearModel, SFLinearModel,
-            title = "Linear Models for Coastal Cities", align = TRUE,
-            column.sep.width = "-5pt", omit.stat = "f",
-            column.labels = c("Chicago, IL", "New Orleans, LA", "New York City, NY", "San Francisco, CA"),
-            covariate.labels=c("NDVI", "Population", "Agriculture"),
-            dep.var.labels = "Logit Transformed Synchrony")
-  stargazer(VIFInterior, title = "VIF for Coastal Cities", summary = FALSE)
+  all_lm_VIF_res<-list(Interior_LinearModel_VIF=Interior_LinearModel_VIF,
+                       Desert_LinearModel_VIF=Desert_LinearModel_VIF,
+                       Coastal_LinearModel_VIF=Coastal_LinearModel_VIF)
   
+  saveRDS(all_lm_VIF_res,"data/csvFiles/all_lm_VIF_res.RDS")
+ 
   ##########################################
   # Spatially Corrected Models 
   ##########################################

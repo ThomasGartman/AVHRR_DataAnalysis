@@ -16,22 +16,34 @@ require("SpatialPack")
 
 Sourcing scripts:
 ```{r sourcing_files, echo = FALSE}
-source("scripts/AVHRRDataGenerator.R")
-source("scripts/AVHRRStatistics.R")
+source("./scripts/mtime.R")
 ```
 
 \section{Data Generation}
 We first need to generate the data for the analysis.
 ```{r data_generator, echo=F}
-AVHRRDataGenerator(force = TRUE)
+source("scripts/AVHRRDataGenerator.R")
+AVHRRDataGenerator(force = F)
 ```
 You can control the variable force to control whether or not you wish to recreate all csv/RDS files (TRUE) or just csv/RDS files you do not have (FALSE).
 
 \section{Statistics}
+
 Creates linear models and more accurate spatial stats for all the drivers.
-```{r}
-#AVHRRStatistics()
+```{r get_statistics, echo=F, cache=T,cache.extra=list(mtime("scripts/AVHRRStatistics.R"),mtime("scripts/VectorizeMatrices.R"),mtime("scripts/ModelScene.R"),mtime("scripts/SpatialMatrixSignificance.R"),mtime("scripts/SpatiallyCorrectedModels.R"))}
+source("scripts/AVHRRStatistics.R")
+AVHRRStatistics()
 ```
+
+```{r print_statistics, echo=F}
+source("scripts/get_summary_table_for_lm_VIF.R")
+
+all_lm_VIF_res<-readRDS("data/csvFiles/all_lm_VIF_res.RDS")
+get_summary_table_for_lm_VIF(all_lm_VIF_res,targetzone="interior",type="text")
+get_summary_table_for_lm_VIF(all_lm_VIF_res,targetzone="desert",type="text")
+get_summary_table_for_lm_VIF(all_lm_VIF_res,targetzone="coastal",type="text")
+```    
+
 
 \section{Exploratory Map Analysis}
 ```{r}
