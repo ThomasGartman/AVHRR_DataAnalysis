@@ -325,48 +325,70 @@ AVHRRStatistics <- function(){
   SanFrancisco_SpearmanPValue <- SanFranciscoSpearman$pvalue
   
   # saving results in a data frame
-  PearsonDataframe <- data.frame(
+  PearsonDataframe_cor <- data.frame(
                                  # Interior cities: "Charleston, WV", "Kansas City, MO", "Minneapolis, MN", "Salt Lake City, UT"
-                                 Charleston_PearsonCorrelation, Charleston_PearsonPValue, 
-                                 SaintLouis_PearsonCorrelation, SaintLouis_PearsonPValue,
-                                 Minneapolis_PearsonCorrelation, Minneapolis_PearsonPValue,
-                                 SaltLakeCity_PearsonCorrelation, SaltLakeCity_PearsonPValue,
+                                 Charleston_PearsonCorrelation, SaintLouis_PearsonCorrelation, 
+                                 Minneapolis_PearsonCorrelation, SaltLakeCity_PearsonCorrelation, 
                                  # Desert cities: "Las Vegas, NV", "Page, AZ", "Phoenix, AZ", "Reno, NV"
-                                 LasVegas_PearsonCorrelation, LasVegas_PearsonPValue, 
-                                 Page_PearsonCorrelation, Page_PearsonPValue, 
-                                 Phoenix_PearsonCorrelation, Phoenix_PearsonPValue,
-                                 Reno_PearsonCorrelation, Reno_PearsonPValue, 
+                                 LasVegas_PearsonCorrelation, Page_PearsonCorrelation, 
+                                 Phoenix_PearsonCorrelation,  Reno_PearsonCorrelation, 
                                  # Coastal cities: "Chicago, IL", "New Orleans, LA", "New York City, NY", "San Francisco, CA"
-                                 Chicago_PearsonCorrelation, Chicago_PearsonPValue, 
-                                 NewOrleans_PearsonCorrelation, NewOrleans_PearsonPValue, 
-                                 NewYork_PearsonCorrelation, NewYork_PearsonPValue, 
-                                 SanFrancisco_PearsonCorrelation, SanFrancisco_PearsonPValue
+                                 Chicago_PearsonCorrelation,  NewOrleans_PearsonCorrelation, 
+                                 NewYork_PearsonCorrelation,  SanFrancisco_PearsonCorrelation 
                                  )
-  row.names(PearsonDataframe) <- Categories
-  PearsonDataframe<-rotate_df(PearsonDataframe)
   
-  SpearmanDataframe <- data.frame(
+  PearsonDataframe_pval <- data.frame(
+    # Interior cities: "Charleston, WV", "Kansas City, MO", "Minneapolis, MN", "Salt Lake City, UT"
+    Charleston_PearsonPValue, SaintLouis_PearsonPValue,
+    Minneapolis_PearsonPValue, SaltLakeCity_PearsonPValue,
+    # Desert cities: "Las Vegas, NV", "Page, AZ", "Phoenix, AZ", "Reno, NV"
+    LasVegas_PearsonPValue, Page_PearsonPValue, 
+    Phoenix_PearsonPValue, Reno_PearsonPValue, 
+    # Coastal cities: "Chicago, IL", "New Orleans, LA", "New York City, NY", "San Francisco, CA"
+    Chicago_PearsonPValue, NewOrleans_PearsonPValue, 
+    NewYork_PearsonPValue, SanFrancisco_PearsonPValue
+  )
+  
+  row.names(PearsonDataframe_cor) <-  row.names(PearsonDataframe_pval) <- Categories
+  PearsonDataframe_cor<-rotate_df(PearsonDataframe_cor)
+  PearsonDataframe_pval<-rotate_df(PearsonDataframe_pval)
+  
+  PearsonDataframe<-list(PearsonDataframe_cor=PearsonDataframe_cor,
+                         PearsonDataframe_pval=PearsonDataframe_pval)
+  
+  SpearmanDataframe_cor <- data.frame(
                                   # Interior cities: "Charleston, WV", "Kansas City, MO", "Minneapolis, MN", "Salt Lake City, UT"
-                                  Charleston_SpearmanCorrelation, Charleston_SpearmanPValue, 
-                                  SaintLouis_SpearmanCorrelation, SaintLouis_SpearmanPValue,
-                                  Minneapolis_SpearmanCorrelation, Minneapolis_SpearmanPValue,
-                                  SaltLakeCity_SpearmanCorrelation, SaltLakeCity_SpearmanPValue,
+                                  Charleston_SpearmanCorrelation, SaintLouis_SpearmanCorrelation, 
+                                  Minneapolis_SpearmanCorrelation, SaltLakeCity_SpearmanCorrelation, 
                                   # Desert cities: "Las Vegas, NV", "Page, AZ", "Phoenix, AZ", "Reno, NV"
-                                  LasVegas_SpearmanCorrelation, LasVegas_SpearmanPValue, 
-                                  Page_SpearmanCorrelation, Page_SpearmanPValue, 
-                                  Phoenix_SpearmanCorrelation, Phoenix_SpearmanPValue,
-                                  Reno_SpearmanCorrelation, Reno_SpearmanPValue, 
+                                  LasVegas_SpearmanCorrelation, Page_SpearmanCorrelation, 
+                                  Phoenix_SpearmanCorrelation,  Reno_SpearmanCorrelation, 
                                   # Coastal cities: "Chicago, IL", "New Orleans, LA", "New York City, NY", "San Francisco, CA"
-                                  Chicago_SpearmanCorrelation, Chicago_SpearmanPValue, 
-                                  NewOrleans_SpearmanCorrelation, NewOrleans_SpearmanPValue, 
-                                  NewYork_SpearmanCorrelation, NewYork_SpearmanPValue, 
-                                  SanFrancisco_SpearmanCorrelation, SanFrancisco_SpearmanPValue
+                                  Chicago_SpearmanCorrelation, NewOrleans_SpearmanCorrelation, 
+                                  NewYork_SpearmanCorrelation, SanFrancisco_SpearmanCorrelation 
                                   )
-  row.names(SpearmanDataframe) <- Categories
-  SpearmanDataframe<-rotate_df(SpearmanDataframe)
   
-  saveRDS(PearsonDataframe, "data/csvFiles/AVHRR_PearsonCorrelationData.RDS")
-  saveRDS(SpearmanDataframe, "data/csvFiles/AVHRR_SpearmanCorrelationData.RDS")
+  SpearmanDataframe_pval <- data.frame(
+    # Interior cities: "Charleston, WV", "Kansas City, MO", "Minneapolis, MN", "Salt Lake City, UT"
+     Charleston_SpearmanPValue, SaintLouis_SpearmanPValue,
+     Minneapolis_SpearmanPValue, SaltLakeCity_SpearmanPValue,
+    # Desert cities: "Las Vegas, NV", "Page, AZ", "Phoenix, AZ", "Reno, NV"
+     LasVegas_SpearmanPValue, Page_SpearmanPValue, 
+     Phoenix_SpearmanPValue, Reno_SpearmanPValue, 
+    # Coastal cities: "Chicago, IL", "New Orleans, LA", "New York City, NY", "San Francisco, CA"
+     Chicago_SpearmanPValue,  NewOrleans_SpearmanPValue, 
+     NewYork_SpearmanPValue, SanFrancisco_SpearmanPValue
+  )
+  
+  row.names(SpearmanDataframe_cor) <- row.names(SpearmanDataframe_pval) <- Categories
+  SpearmanDataframe_cor<-rotate_df(SpearmanDataframe_cor)
+  SpearmanDataframe_pval<-rotate_df(SpearmanDataframe_pval)
+  
+  SpearmanDataframe<-list(SpearmanDataframe_cor=SpearmanDataframe_cor,
+                          SpearmanDataframe_pval=SpearmanDataframe_pval)
+  
+  saveRDS(PearsonDataframe, "data/csvFiles/AVHRR_PearsonCorrelationData.RDS") # A list of two dataframes
+  saveRDS(SpearmanDataframe, "data/csvFiles/AVHRR_SpearmanCorrelationData.RDS") # A list of two dataframes
   
   ######################################################################
   # Spatially Corrected Models but excluding 2010
@@ -536,47 +558,69 @@ AVHRRStatistics <- function(){
   
   
   # saving results in a data frame
-  PearsonNo2010Dataframe <- data.frame(
+  PearsonNo2010Dataframe_cor <- data.frame(
     # Interior cities: "Charleston, WV", "Kansas City, MO", "Minneapolis, MN", "Salt Lake City, UT"
-    Charleston_PearsonNo2010Correlation, Charleston_PearsonNo2010PValue, 
-    SaintLouis_PearsonNo2010Correlation, SaintLouis_PearsonNo2010PValue,
-    Minneapolis_PearsonNo2010Correlation, Minneapolis_PearsonNo2010PValue,
-    SaltLakeCity_PearsonNo2010Correlation, SaltLakeCity_PearsonNo2010PValue,
+    Charleston_PearsonNo2010Correlation, SaintLouis_PearsonNo2010Correlation, 
+    Minneapolis_PearsonNo2010Correlation, SaltLakeCity_PearsonNo2010Correlation, 
     # Desert cities: "Las Vegas, NV", "Page, AZ", "Phoenix, AZ", "Reno, NV"
-    LasVegas_PearsonNo2010Correlation, LasVegas_PearsonNo2010PValue, 
-    Page_PearsonNo2010Correlation, Page_PearsonNo2010PValue, 
-    Phoenix_PearsonNo2010Correlation, Phoenix_PearsonNo2010PValue,
-    Reno_PearsonNo2010Correlation, Reno_PearsonNo2010PValue, 
+    LasVegas_PearsonNo2010Correlation, Page_PearsonNo2010Correlation, 
+    Phoenix_PearsonNo2010Correlation,  Reno_PearsonNo2010Correlation, 
     # Coastal cities: "Chicago, IL", "New Orleans, LA", "New York City, NY", "San Francisco, CA"
-    Chicago_PearsonNo2010Correlation, Chicago_PearsonNo2010PValue, 
-    NewOrleans_PearsonNo2010Correlation, NewOrleans_PearsonNo2010PValue, 
-    NewYork_PearsonNo2010Correlation, NewYork_PearsonNo2010PValue, 
-    SanFrancisco_PearsonNo2010Correlation, SanFrancisco_PearsonNo2010PValue
+    Chicago_PearsonNo2010Correlation, NewOrleans_PearsonNo2010Correlation, 
+    NewYork_PearsonNo2010Correlation, SanFrancisco_PearsonNo2010Correlation
   )
-  row.names(PearsonNo2010Dataframe) <- Categories
-  PearsonNo2010Dataframe<-rotate_df(PearsonNo2010Dataframe)
   
-  SpearmanNo2010Dataframe <- data.frame(
+  PearsonNo2010Dataframe_pval <- data.frame(
     # Interior cities: "Charleston, WV", "Kansas City, MO", "Minneapolis, MN", "Salt Lake City, UT"
-    Charleston_SpearmanNo2010Correlation, Charleston_SpearmanNo2010PValue, 
-    SaintLouis_SpearmanNo2010Correlation, SaintLouis_SpearmanNo2010PValue,
-    Minneapolis_SpearmanNo2010Correlation, Minneapolis_SpearmanNo2010PValue,
-    SaltLakeCity_SpearmanNo2010Correlation, SaltLakeCity_SpearmanNo2010PValue,
+    Charleston_PearsonNo2010PValue, SaintLouis_PearsonNo2010PValue,
+    Minneapolis_PearsonNo2010PValue, SaltLakeCity_PearsonNo2010PValue,
     # Desert cities: "Las Vegas, NV", "Page, AZ", "Phoenix, AZ", "Reno, NV"
-    LasVegas_SpearmanNo2010Correlation, LasVegas_SpearmanNo2010PValue, 
-    Page_SpearmanNo2010Correlation, Page_SpearmanNo2010PValue, 
-    Phoenix_SpearmanNo2010Correlation, Phoenix_SpearmanNo2010PValue,
-    Reno_SpearmanNo2010Correlation, Reno_SpearmanNo2010PValue, 
+    LasVegas_PearsonNo2010PValue, Page_PearsonNo2010PValue,
+    Phoenix_PearsonNo2010PValue, Reno_PearsonNo2010PValue, 
     # Coastal cities: "Chicago, IL", "New Orleans, LA", "New York City, NY", "San Francisco, CA"
-    Chicago_SpearmanNo2010Correlation, Chicago_SpearmanNo2010PValue, 
-    NewOrleans_SpearmanNo2010Correlation, NewOrleans_SpearmanNo2010PValue, 
-    NewYork_SpearmanNo2010Correlation, NewYork_SpearmanNo2010PValue, 
-    SanFrancisco_SpearmanNo2010Correlation, SanFrancisco_SpearmanNo2010PValue
+    Chicago_PearsonNo2010PValue, NewOrleans_PearsonNo2010PValue, 
+    NewYork_PearsonNo2010PValue, SanFrancisco_PearsonNo2010PValue
   )
-  row.names(SpearmanNo2010Dataframe) <- Categories
-  SpearmanNo2010Dataframe<-rotate_df(SpearmanNo2010Dataframe)
   
-  saveRDS(PearsonNo2010Dataframe, "data/csvFiles/AVHRR_PearsonNo2010CorrelationData.RDS")
-  saveRDS(SpearmanNo2010Dataframe, "data/csvFiles/AVHRR_SpearmanNo2010CorrelationData.RDS")
+  row.names(PearsonNo2010Dataframe_cor) <-  row.names(PearsonNo2010Dataframe_pval) <- Categories
+  PearsonNo2010Dataframe_cor<-rotate_df(PearsonNo2010Dataframe_cor)
+  PearsonNo2010Dataframe_pval<-rotate_df(PearsonNo2010Dataframe_pval)
+  
+  PearsonNo2010Dataframe<-list(PearsonNo2010Dataframe_cor=PearsonNo2010Dataframe_cor,
+                         PearsonNo2010Dataframe_pval=PearsonNo2010Dataframe_pval)
+  
+  SpearmanNo2010Dataframe_cor <- data.frame(
+    # Interior cities: "Charleston, WV", "Kansas City, MO", "Minneapolis, MN", "Salt Lake City, UT"
+    Charleston_SpearmanNo2010Correlation, SaintLouis_SpearmanNo2010Correlation, 
+    Minneapolis_SpearmanNo2010Correlation, SaltLakeCity_SpearmanNo2010Correlation, 
+    # Desert cities: "Las Vegas, NV", "Page, AZ", "Phoenix, AZ", "Reno, NV"
+    LasVegas_SpearmanNo2010Correlation, Page_SpearmanNo2010Correlation, Page_SpearmanNo2010PValue, 
+    Phoenix_SpearmanNo2010Correlation, Reno_SpearmanNo2010Correlation, 
+    # Coastal cities: "Chicago, IL", "New Orleans, LA", "New York City, NY", "San Francisco, CA"
+    Chicago_SpearmanNo2010Correlation, NewOrleans_SpearmanNo2010Correlation, 
+    NewYork_SpearmanNo2010Correlation, SanFrancisco_SpearmanNo2010Correlation
+  )
+  
+  SpearmanNo2010Dataframe_pval <- data.frame(
+    # Interior cities: "Charleston, WV", "Kansas City, MO", "Minneapolis, MN", "Salt Lake City, UT"
+    Charleston_SpearmanNo2010PValue, SaintLouis_SpearmanNo2010PValue,
+    Minneapolis_SpearmanNo2010PValue, SaltLakeCity_SpearmanNo2010PValue,
+    # Desert cities: "Las Vegas, NV", "Page, AZ", "Phoenix, AZ", "Reno, NV"
+    LasVegas_SpearmanNo2010PValue, Page_SpearmanNo2010PValue, 
+    Phoenix_SpearmanNo2010PValue, Reno_SpearmanNo2010PValue, 
+    # Coastal cities: "Chicago, IL", "New Orleans, LA", "New York City, NY", "San Francisco, CA"
+    Chicago_SpearmanNo2010PValue, NewOrleans_SpearmanNo2010PValue, 
+    NewYork_SpearmanNo2010PValue, SanFrancisco_SpearmanNo2010PValue
+  )
+  
+  row.names(SpearmanNo2010Dataframe_cor) <- row.names(SpearmanNo2010Dataframe_pval) <- Categories
+  SpearmanNo2010Dataframe_cor<-rotate_df(SpearmanNo2010Dataframe_cor)
+  SpearmanNo2010Dataframe_pval<-rotate_df(SpearmanNo2010Dataframe_pval)
+  
+  SpearmanNo2010Dataframe<-list(SpearmanNo2010Dataframe_cor=SpearmanNo2010Dataframe_cor,
+                          SpearmanNo2010Dataframe_pval=SpearmanNo2010Dataframe_pval)
+  
+  saveRDS(PearsonNo2010Dataframe, "data/csvFiles/AVHRR_PearsonNo2010CorrelationData.RDS") # A list of two dataframes
+  saveRDS(SpearmanNo2010Dataframe, "data/csvFiles/AVHRR_SpearmanNo2010CorrelationData.RDS") # A list of two dataframes
   
 }
