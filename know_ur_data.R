@@ -151,9 +151,61 @@ length(finalVectors[[2]]) #19
 
 ############################################################################################################
 
-# Qs about VIF concept?
+# How to interpret results from OLS model? for example choose coastal cities: chicago and new orleans
 
+# Our model:
+#   Response ~ beta0 + beta1 * pred1 + beta2 * pred2 + beta3 * pred3 
+#   Response = Pearson NDVI syn mat
+#   pred1 = temporal avg 1990-2018 NDVI syn mat
+#   pred2 = population from 2004 mat
+#   pred3 = Agriculture (avg. for 2001, 2006)
 
+# Table 3 showed 
+# chicago, new orleans both have all 4 predictors which had significant p value, i.e., 
+#             corresponding coefficients (beta's) were significantly different than zero 
+# But for chicago Rsq value was much greater than new orleans.
+# That means our model was good in explaining ~68% variance in our data for chicago, but not for new orleans.
+# That also means to explain variance in new orleans data there could be some other linear predictors.
+
+# The basic concept is:
+
+# There is no established association/relationship between p-value and R-square. This all depends on the data (i.e.; contextual).
+# R-square value tells you how much variation is explained by your model. So 0.1 R-square means 
+# that your model explains 10% of variation within the data. The greater R-square 
+# the better the model. Whereas p-value tells you about the F statistic hypothesis 
+# testing of the "fit of the intercept-only model and your model are equal". So if the p-value 
+# is less than the significance level (usually 0.05) then your model fits the data well.
+
+# Thus you have four scenarios:
+#1) low R-square and low p-value (p-value <= 0.05)
+#2) low R-square and high p-value (p-value > 0.05)
+#3) high R-square and low p-value
+#4) high R-square and high p-value
+
+# Interpretation:
+#1) means that your model doesn't explain much of variation of the data but it is significant (better than not having a model)
+#2) means that your model doesn't explain much of variation of the data and it is not significant (worst scenario)
+#3) means your model explains a lot of variation within the data and is significant (best scenario)
+#4) means that your model explains a lot of variation within the data but is not significant (model is worthless)
+
+################################################################################################################
+# Interpret VIF? 
+# VIF = 1/(1-Rsq), VIF > 1 means there is multicollinearity, i.e. correlation between your predictors
+# Higher VIF = less reliable regression results = indicates what percentage the variance 
+#   (i.e. the standard error squared) is inflated for each coefficient
+
+# For example, for new orleans VIF = 1.094, the variance of a particular coefficient is 9.4% bigger 
+#                                     than what you would expect if there was no multicollinearity 
+# For chicago, VIF was much greater than new orleans.
+
+#############################################################################################################
+
+# My comments:
+# For charleston, page, chicago (with higher VIF) may be we should make a model with interaction terms (GAM?)
+
+##############################################################################################################
+
+# Interpret Spatially corrected model-results:
 
 
 
