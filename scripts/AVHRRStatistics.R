@@ -594,7 +594,7 @@ AVHRRStatistics <- function(){
     Charleston_SpearmanNo2010Correlation, SaintLouis_SpearmanNo2010Correlation, 
     Minneapolis_SpearmanNo2010Correlation, SaltLakeCity_SpearmanNo2010Correlation, 
     # Desert cities: "Las Vegas, NV", "Page, AZ", "Phoenix, AZ", "Reno, NV"
-    LasVegas_SpearmanNo2010Correlation, Page_SpearmanNo2010Correlation, Page_SpearmanNo2010PValue, 
+    LasVegas_SpearmanNo2010Correlation, Page_SpearmanNo2010Correlation, 
     Phoenix_SpearmanNo2010Correlation, Reno_SpearmanNo2010Correlation, 
     # Coastal cities: "Chicago, IL", "New Orleans, LA", "New York City, NY", "San Francisco, CA"
     Chicago_SpearmanNo2010Correlation, NewOrleans_SpearmanNo2010Correlation, 

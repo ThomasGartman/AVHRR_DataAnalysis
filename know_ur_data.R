@@ -205,7 +205,15 @@ length(finalVectors[[2]]) #19
 
 ##############################################################################################################
 
-# Interpret Spatially corrected model-results:
+# My comments:
+# For spatially corrected model I could not find any significant difference between including or excluding 2010.
+# I think Thomas started to think something special about 2010 for some buggy results he got initially.
+
+###############################################################################################################
+
+
+
+
 
 
 

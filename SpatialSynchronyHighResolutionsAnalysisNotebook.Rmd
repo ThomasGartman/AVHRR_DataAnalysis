@@ -35,15 +35,85 @@ source("scripts/AVHRRStatistics.R")
 AVHRRStatistics()
 ```
 
-```{r print_statistics, echo=F}
+```{r print_statistics_linermodel, echo=F}
 source("scripts/get_summary_table_for_lm_VIF.R")
 
 all_lm_VIF_res<-readRDS("data/csvFiles/all_lm_VIF_res.RDS")
 get_summary_table_for_lm_VIF(all_lm_VIF_res,targetzone="interior",type="text")
 get_summary_table_for_lm_VIF(all_lm_VIF_res,targetzone="desert",type="text")
 get_summary_table_for_lm_VIF(all_lm_VIF_res,targetzone="coastal",type="text")
-```    
+```
 
+```{r get_plot_spatiallycorrectedmodel, echo=F, results="hide"}
+#--------Interpret Spatially corrected model-results: plots to be saved in the figures/ folder ------------
+if(!dir.exists("./figures")){
+  dir.create("./figures")
+}
+
+# Plotter function to generate multipanel pdf plots to interpret Spatially corrected model-results
+# Args: 
+# res = output list of length two (corr and pval) from Spatial corrected model statistics
+# nametag = a character vector
+# plotlegend = logical, default=F
+
+Spatial_corrected_res_plotter<-function(res,nametag,plotlegend=F){
+  
+  res_cor<-res[[1]]
+  res_p<-res[[2]]
+  
+  rn<-rownames(res_cor)
+  res_cor$City<-res_p$City<-sub('_.*$','', rn)
+  colnames(res_cor)<-c("Temp_avg_NDVI","Population","Agriculture","Development","Elevation","Slope","City")
+  colnames(res_p)<-c("p.Temp_avg_NDVI","p.Population","p.Agriculture","p.Development","p.Elevation","p.Slope","City")
+  
+  res_cor<-as.matrix(res_cor)
+  res_p<-as.matrix(res_p)
+  
+  pdf(paste("./figures/Spatially_corrected_model_results_modifiedttest_",nametag,".pdf",sep=""),height=5,width=9)
+  op<-par(mar=c(3,3,1,1),mgp=c(3,1,0),mfrow=c(4,3),oma=c(2,2,0,0))
+  for(i in 1:nrow(res_cor)){
+    plot(res_p[i,1:6],res_cor[i,1:6],
+         xlim=c(0,1),ylim=c(-1,1),
+         col="black",bg=rainbow(6),pch=21,
+         xlab="",ylab="",cex.lab=2)
+    abline(h=0,col="grey")
+    abline(v=0.1)
+    abline(v=0.05,lty="dashed")
+    abline(v=0.01,lty="dotted")
+    legend("topright",res_p[i,7],bty="n")
+  }
+  mtext("correlation coefficient", side=2, line=47, adj=-1.5)
+  mtext("p-value", side=1, line=2.8, adj=-1.2)
+  par(op)
+  dev.off()
+  
+  if(plotlegend==T){
+    pdf(paste("./figures/Spatially_corrected_model_results_modifiedttest_legend.pdf",sep=""),height=1,width=16)
+    op<-par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0))
+    plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
+    legend("center", legend = colnames(res_cor)[1:6], pch=21, pt.bg=rainbow(6),
+           x.intersp = 0.2,
+           cex = 1.8, xpd = TRUE, horiz = T, inset = c(0,0), 
+           bty = "n")
+    par(op)
+    dev.off()
+  }
+  
+}
+
+# call the plotter function
+res<-readRDS("data/csvFiles/AVHRR_PearsonCorrelationData.RDS")
+Spatial_corrected_res_plotter(res=res,nametag="pearson",plotlegend=T)
+
+res<-readRDS("data/csvFiles/AVHRR_SpearmanCorrelationData.RDS")
+Spatial_corrected_res_plotter(res=res,nametag="spearman",plotlegend=F)
+
+res<-readRDS("data/csvFiles/AVHRR_PearsonNo2010CorrelationData.RDS")
+Spatial_corrected_res_plotter(res=res,nametag="pearson_no2010",plotlegend=F)
+
+res<-readRDS("data/csvFiles/AVHRR_SpearmanNo2010CorrelationData.RDS")
+Spatial_corrected_res_plotter(res=res,nametag="spearman_no2010",plotlegend=F)
+```    
 
 \section{Exploratory Map Analysis}
 ```{r}
