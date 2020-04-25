@@ -70,7 +70,7 @@ Spatial_corrected_res_plotter<-function(res,nametag,plotlegend=F){
   res_p<-as.matrix(res_p)
   
   pdf(paste("./figures/Spatially_corrected_model_results_modifiedttest_",nametag,".pdf",sep=""),height=5,width=9)
-  op<-par(mar=c(3,3,1,1),mgp=c(3,1,0),mfrow=c(4,3),oma=c(2,2,0,0))
+  op<-par(mar=c(3,3,1,1),mgp=c(3,1,0),mfcol=c(4,3),oma=c(2,2,0,0))
   for(i in 1:nrow(res_cor)){
     plot(res_p[i,1:6],res_cor[i,1:6],
          xlim=c(0,1),ylim=c(-1,1),
