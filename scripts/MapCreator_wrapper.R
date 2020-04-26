@@ -9,12 +9,15 @@ source("scripts/MapCreator.R")
 # Yrange = a vector specifying range for y-coordinates from the whole US map
 # nametag = a charcter, generally I use the focal city name around which the plot scene to be drawn
 # brklist = a named list, specifying brk argument for each of the 7 matrices
-# resloc = a character - location folder to save the 7 output png plots, default "image/"
+# resloc = a character - location folder to save the 7 output png plots, default "images/"
 
+
+Xrange=c(1926:2025)
+Yrange=c(1486:1585)
 MapCreator_wrapper<-function(synchronyMatrix,
                              landscanMatrix,temporalAverageNDVIMatrix,agricultureNLCDMatrix,
                              developmentNLCDMatrix,elevationMatrix,slopeMatrix,
-                             Xrange,Yrange,nametag,brklist,resloc="image/"){
+                             Xrange,Yrange,nametag,brklist,resloc="images/"){
   
   # Observed response matrix
   synchronyMatrix <- synchronyMatrix[Xrange, Yrange]
@@ -61,6 +64,36 @@ MapCreator_wrapper<-function(synchronyMatrix,
              legendLabel = "Meters", xOffset = xOffset, yOffset = yOffset, numColors = 32, brk = brklist$slopebreaks)
   
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
