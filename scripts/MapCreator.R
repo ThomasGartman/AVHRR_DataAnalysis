@@ -3,11 +3,13 @@
 #' You can either create a map with a synchrony scale of 0 to 1 or -1 to 1
 #' 
 #' @param data A Matrix
-#' @param fileName The name given to the .png file the image is saved on.
-#' @param title The title of the image.
-#' @param numColors The number of colors to have
+#' @param fileName A character: the name given to the .png file the image is saved on.
+#' @param title A character for the title of the image.
+#' @param legendLabel A character for the label for legend
 #' @param xOffset Where the x coordinates should start counting from
 #' @param yOffset Where the y coordinates should start counting from
+#' @param numColors An integer for the number of colors to have
+#' @param brk An integer, default NULL, number of breaks in color scale
 #' 
 #' @return A .png image of the synchronyMatrix in the current working directory.
 #' 
@@ -20,10 +22,9 @@ require("fields")
 require("ggplot2")
 
 source("scripts/MatrixToDataFrame.R")
-MapCreator <- function(data, fileName, title, legendLabel, xOffset, yOffset, numColors, brk = NULL)
-{
-  if(is.null(brk))
-  {
+MapCreator <- function(data, fileName, title, legendLabel, xOffset, yOffset, numColors, brk = NULL){
+  
+  if(is.null(brk)){
     brk = seq(from = min(data, na.rm = TRUE), to = max(data, na.rm = TRUE), length.out = numColors + 1)
   }
   
@@ -58,5 +59,5 @@ MapCreator <- function(data, fileName, title, legendLabel, xOffset, yOffset, num
   
   ggsave(fileName, device = png(), units = "in")
   dev.off()
-  return()
+  #return()
 }

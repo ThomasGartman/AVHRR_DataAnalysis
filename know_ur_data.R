@@ -211,6 +211,41 @@ length(finalVectors[[2]]) #19
 
 ###############################################################################################################
 
+# Checking GenerateMaps.R
+
+# Q for Thomas:
+
+# why always you put 32+1 = 33 for length of color scale? 1989 to 2018 = 30 yrs, we are considering from 1990 to 2018.
+
+# also search for "# Q for Thomas:" in GenerateMaps.R
+
+
+set.seed(101)
+data<-matrix(runif(9),nrow=3,ncol=3)
+
+
+xVector <- rep(NA, dim(data)[[1]]*dim(data)[[2]])
+yVector <- rep(NA, dim(data)[[1]]*dim(data)[[2]])
+zVector <- rep(NA, dim(data)[[1]]*dim(data)[[2]])
+
+for(i in 1:dim(data)[[1]]){
+  for(j in 1:dim(data)[[2]]){
+    xVector[((i - 1) * dim(data)[[2]]) + j] <- i 
+    yVector[((i - 1) * dim(data)[[2]]) + j] <- j
+    zVector[((i - 1) * dim(data)[[2]]) + j] <- data[i, j]
+  }
+}
+
+newDataFrame <- data.frame(x = xVector, y = yVector, data = zVector)
+
+which(data!="xxx",arr.ind=T)
+as.vector(data)
+
+
+
+
+
+
 
 
 
