@@ -89,7 +89,7 @@ MapCreator_wrapper(synchronyMatrix = synchronyMatrix,
                    developmentNLCDMatrix = developmentNLCDMatrix, 
                    elevationMatrix = elevationMatrix, 
                    slopeMatrix = slopeMatrix,
-                   Xrange=c(1926:2025),Yrange=c(1486:1585),nametag = "GC",brklist,resloc="image/")
+                   Xrange=c(1926:2025),Yrange=c(1486:1585),nametag = "GC",brklist,resloc="images/")
 
 ########################################
 # Central Valley
@@ -101,7 +101,7 @@ MapCreator_wrapper(synchronyMatrix = synchronyMatrix,
                    developmentNLCDMatrix = developmentNLCDMatrix, 
                    elevationMatrix = elevationMatrix, 
                    slopeMatrix = slopeMatrix,
-                   Xrange=c(151:400),Yrange=c(1001:1700),nametag = "C.Valley",brklist,resloc="image/")
+                   Xrange=c(151:400),Yrange=c(1001:1700),nametag = "C.Valley",brklist,resloc="images/")
 
 ############################################# INTERIOR CITY ####################################################
 
@@ -115,7 +115,7 @@ MapCreator_wrapper(synchronyMatrix = synchronyMatrix,
                    developmentNLCDMatrix = developmentNLCDMatrix, 
                    elevationMatrix = elevationMatrix, 
                    slopeMatrix = slopeMatrix,
-                   Xrange=c(3601:3650),Yrange=c(1301:1330),nametag = "CL",brklist,resloc="image/")
+                   Xrange=c(3601:3650),Yrange=c(1301:1330),nametag = "CL",brklist,resloc="images/")
 
 ########################################
 # St. Louis, MO, Interior City
@@ -127,7 +127,7 @@ MapCreator_wrapper(synchronyMatrix = synchronyMatrix,
                    developmentNLCDMatrix = developmentNLCDMatrix, 
                    elevationMatrix = elevationMatrix, 
                    slopeMatrix = slopeMatrix,
-                   Xrange=c(2851:2931),Yrange=c(1386:1435),nametag = "St.Louis",brklist,resloc="image/")
+                   Xrange=c(2851:2931),Yrange=c(1386:1435),nametag = "St.Louis",brklist,resloc="images/")
 
 ########################################
 # Minneapolis, Interior City
@@ -139,7 +139,7 @@ MapCreator_wrapper(synchronyMatrix = synchronyMatrix,
                    developmentNLCDMatrix = developmentNLCDMatrix, 
                    elevationMatrix = elevationMatrix, 
                    slopeMatrix = slopeMatrix,
-                   Xrange=c(2551:2610),Yrange=c(701:770),nametag = "MN",brklist,resloc="image/")
+                   Xrange=c(2551:2610),Yrange=c(701:770),nametag = "MN",brklist,resloc="images/")
 
 ########################################
 # Salt Lake City, Interior City
@@ -151,7 +151,7 @@ MapCreator_wrapper(synchronyMatrix = synchronyMatrix,
                    developmentNLCDMatrix = developmentNLCDMatrix, 
                    elevationMatrix = elevationMatrix, 
                    slopeMatrix = slopeMatrix,
-                   Xrange=c(1031:1075),Yrange=c(1146:1180),nametag = "SLC",brklist,resloc="image/")
+                   Xrange=c(1031:1075),Yrange=c(1146:1180),nametag = "SLC",brklist,resloc="images/")
 
 
 ############################################# DESERT CITY ####################################################
@@ -166,7 +166,7 @@ MapCreator_wrapper(synchronyMatrix = synchronyMatrix,
                    developmentNLCDMatrix = developmentNLCDMatrix, 
                    elevationMatrix = elevationMatrix, 
                    slopeMatrix = slopeMatrix,
-                   Xrange=c(676:720),Yrange=c(1591:1650),nametag = "LV",brklist,resloc="image/")
+                   Xrange=c(676:720),Yrange=c(1591:1650),nametag = "LV",brklist,resloc="images/")
 
 ########################################
 # Reno, Desert City
@@ -178,7 +178,7 @@ MapCreator_wrapper(synchronyMatrix = synchronyMatrix,
                    developmentNLCDMatrix = developmentNLCDMatrix, 
                    elevationMatrix = elevationMatrix, 
                    slopeMatrix = slopeMatrix,
-                   Xrange=c(361:381),Yrange=c(1141:1180),nametag = "Reno",brklist,resloc="image/")
+                   Xrange=c(361:381),Yrange=c(1141:1180),nametag = "Reno",brklist,resloc="images/")
 
 ########################################
 # Page, Desert City
@@ -190,7 +190,7 @@ MapCreator_wrapper(synchronyMatrix = synchronyMatrix,
                    developmentNLCDMatrix = developmentNLCDMatrix, 
                    elevationMatrix = elevationMatrix, 
                    slopeMatrix = slopeMatrix,
-                   Xrange=c(1026:1038),Yrange=c(1578:1585),nametag = "Page",brklist,resloc="image/")
+                   Xrange=c(1026:1038),Yrange=c(1578:1585),nametag = "Page",brklist,resloc="images/")
 
 ########################################
 # Pheonix, Desert City
@@ -202,7 +202,7 @@ MapCreator_wrapper(synchronyMatrix = synchronyMatrix,
                    developmentNLCDMatrix = developmentNLCDMatrix, 
                    elevationMatrix = elevationMatrix, 
                    slopeMatrix = slopeMatrix,
-                   Xrange=c(891:990),Yrange=c(1911:1990),nametag = "PX",brklist,resloc="image/")
+                   Xrange=c(891:990),Yrange=c(1911:1990),nametag = "PX",brklist,resloc="images/")
 
 ############################################# COASTAL CITY ####################################################
 
@@ -216,7 +216,7 @@ MapCreator_wrapper(synchronyMatrix = synchronyMatrix,
                    developmentNLCDMatrix = developmentNLCDMatrix, 
                    elevationMatrix = elevationMatrix, 
                    slopeMatrix = slopeMatrix,
-                   Xrange=c(3051:3095),Yrange=c(1001:1045),nametag = "CH",brklist,resloc="image/")
+                   Xrange=c(3051:3095),Yrange=c(1001:1045),nametag = "CH",brklist,resloc="images/")
 
 ########################################
 # New Orleans, Coastal City
@@ -228,7 +228,7 @@ MapCreator_wrapper(synchronyMatrix = synchronyMatrix,
                    developmentNLCDMatrix = developmentNLCDMatrix, 
                    elevationMatrix = elevationMatrix, 
                    slopeMatrix = slopeMatrix,
-                   Xrange=c(2976:3035),Yrange=c(2351:2380),nametag = "NOLA",brklist,resloc="image/")
+                   Xrange=c(2976:3035),Yrange=c(2351:2380),nametag = "NOLA",brklist,resloc="images/")
 
 ########################################
 # New York City, Coastal City
@@ -240,7 +240,7 @@ MapCreator_wrapper(synchronyMatrix = synchronyMatrix,
                    developmentNLCDMatrix = developmentNLCDMatrix, 
                    elevationMatrix = elevationMatrix, 
                    slopeMatrix = slopeMatrix,
-                   Xrange=c(4171:4250),Yrange=c(851:910),nametag = "NYC",brklist,resloc="image/")
+                   Xrange=c(4171:4250),Yrange=c(851:910),nametag = "NYC",brklist,resloc="images/")
 
 ########################################
 # San Francisco Bay Area, Coastal City
@@ -252,7 +252,7 @@ MapCreator_wrapper(synchronyMatrix = synchronyMatrix,
                    developmentNLCDMatrix = developmentNLCDMatrix, 
                    elevationMatrix = elevationMatrix, 
                    slopeMatrix = slopeMatrix,
-                   Xrange=c(91:160),Yrange=c(1261:1380),nametag = "SF",brklist,resloc="image/")
+                   Xrange=c(91:160),Yrange=c(1261:1380),nametag = "SF",brklist,resloc="images/")
 
 
 
@@ -267,7 +267,7 @@ MapCreator_wrapper(synchronyMatrix = synchronyMatrix,
                    developmentNLCDMatrix = developmentNLCDMatrix, 
                    elevationMatrix = elevationMatrix, 
                    slopeMatrix = slopeMatrix,
-                   Xrange=c(1:4587),Yrange=c(1:2889),nametag = "USA",brklist,resloc="image/")
+                   Xrange=c(1:4587),Yrange=c(1:2889),nametag = "USA",brklist,resloc="images/")
 
 
 
