@@ -6,7 +6,7 @@ source("scripts/MapCreator_wrapper.R")
 #           Read in Data
 ########################################
 
-numColors<-25 # number of color in colorscale pallette
+numColors<-25+1 # number of color in colorscale pallette: 1/25 increment from 0 to 1
 
 #Coordinates
 xMatrix <- readRDS("data/csvFiles/AVHRR_X_CoordinateMatrix.RDS")
