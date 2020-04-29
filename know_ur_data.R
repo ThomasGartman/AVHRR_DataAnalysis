@@ -216,6 +216,9 @@ length(finalVectors[[2]]) #19
 # Q for Thomas:
 
 # why always you put 32+1 = 33 for length of color scale? 1989 to 2018 = 30 yrs, we are considering from 1990 to 2018.
+# After I talked to Thomas, it is clear that there is no particular reason, he just tried to figure out about the color pallete
+# by copying code from StackOverFlow.
+# So, now I am replacing this with numColors variable.
 
 # also search for "# Q for Thomas:" in GenerateMaps.R
 

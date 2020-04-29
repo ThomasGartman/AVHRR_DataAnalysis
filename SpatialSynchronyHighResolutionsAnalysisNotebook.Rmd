@@ -113,11 +113,16 @@ Spatial_corrected_res_plotter(res=res,nametag="pearson_no2010",plotlegend=F)
 
 res<-readRDS("data/csvFiles/AVHRR_SpearmanNo2010CorrelationData.RDS")
 Spatial_corrected_res_plotter(res=res,nametag="spearman_no2010",plotlegend=F)
+
+# Shya's Comments:
+# I personally think, excluding 2010 has no significant difference in model prediction.
+# I also think to compare between different cities within each category: like between Las Vegas and Pheonix (both Desert cities),
+# we should consider same scan area (the model scene) around the target city to get which predictor is significant?
 ```    
 
 \section{Exploratory Map Analysis}
-```{r}
-#source("scripts/GenerateMaps.R")
+```{r get_model_scenes, echo=F, message=F, cache=T,cache.extra=list(mtime("scripts/GenerateMaps.R"),mtime("scripts/AVHRRDataGenerator.R"),mtime("scripts/MapCreator_wrapper.R"),mtime("scripts/MapCreator.R"),mtime("scripts/MatrixToDataFrame.R"))}
+source("scripts/GenerateMaps.R")
 ```
 This code should create ggplot2 maps of some of the data in R. Good to visualize results in AVHRR coordinates before spending time converting to Arc.
 
