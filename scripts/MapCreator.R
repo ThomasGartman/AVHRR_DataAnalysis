@@ -46,7 +46,7 @@ MapCreator <- function(data, fileName, title, legendLabel, xOffset, yOffset, num
       guide = guide_colorbar(
         direction = "vertical", 
         label.position = "right", 
-        label.theme = element_text(size = 8, hjust = .5))) + 
+        label.theme = element_text(size = 8, hjust = .5, angle=0))) + 
     theme_light() +
     xlab("Horizontal Coordinates (Kilometers)") + 
     ylab("Vertical Coordinates (Kilometers)") + 
