@@ -31,7 +31,7 @@ MapCreator <- function(data, fileName, title, legendLabel, xOffset, yOffset, num
   tempdata <- data
   tempdata[which(tempdata < brk[[1]])] <- brk[[1]]
   dataFrame <- MatrixtoDataFrame(tempdata)
-  ggplot(dataFrame, aes(x = dataFrame$x + xOffset, y = dataFrame$y + yOffset, fill = dataFrame$data))  +
+  ggplot(dataFrame, aes(x = x + xOffset, y = y + yOffset, fill = data))  +
     geom_raster() + 
     scale_y_reverse() +
     coord_fixed(ratio = 1, expand = F) + 
@@ -46,7 +46,7 @@ MapCreator <- function(data, fileName, title, legendLabel, xOffset, yOffset, num
       guide = guide_colorbar(
         direction = "vertical", 
         label.position = "right", 
-        label.theme = element_text(size = 8, hjust = .5, angle=0))) + 
+        label.theme = element_text(size = 8, hjust = .5))) + 
     theme_light() +
     xlab("Horizontal Coordinates (Kilometers)") + 
     ylab("Vertical Coordinates (Kilometers)") + 
@@ -61,3 +61,5 @@ MapCreator <- function(data, fileName, title, legendLabel, xOffset, yOffset, num
   dev.off()
   #return()
 }
+
+require(tinytex) # not needed for the above function but needed just to knit the Rmd using checkpoint

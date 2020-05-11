@@ -3,15 +3,25 @@ title: "Spatial Synchrony at High Resolutions"
 output: pdf_document
 ---
 
+
+<!--checkpoint package-->
+```{r checkpoint_chunk, echo=F, warning=F, message=F, results="hide"}
+library(checkpoint)
+if (!dir.exists("./.checkpoint/")){
+  dir.create("./.checkpoint/")
+}
+checkpoint("2020-04-26",checkpointLocation = "./")
+```
+
 \section{Prereqs - R Libraries}
 Ensure you have all libraries listed below:
 ```{r, echo = FALSE}
-require("tseries")
-require("stargazer")
-require("fmsb")
-require("sjmisc")
-require("pracma")
-require("SpatialPack")
+#require("tseries")
+#require("stargazer")
+#require("fmsb")
+#require("sjmisc")
+#require("pracma")
+#require("SpatialPack")
 ```
 
 Sourcing scripts:
